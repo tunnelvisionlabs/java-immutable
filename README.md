@@ -2,6 +2,8 @@
 
 [![Join the chat at https://gitter.im/tunnelvisionlabs/java-immutable](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tunnelvisionlabs/java-immutable?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+[![Build Status](https://travis-ci.org/tunnelvisionlabs/java-immutable.svg?branch=master)](https://travis-ci.org/tunnelvisionlabs/java-immutable)
+
 This project is a complete port of the [System.Collections.Immutable][1] assembly to support Java 6 and newer.
 
 [1]: https://www.nuget.org/packages/System.Collections.Immutable
