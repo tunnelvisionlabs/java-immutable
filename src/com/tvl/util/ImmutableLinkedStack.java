@@ -177,6 +177,20 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
         return new Itr<T>(this);
     }
 
+    /**
+     * Reverses the order of the stack.
+     *
+     * @return The reversed stack.
+     */
+    ImmutableLinkedStack<T> reverse() {
+        ImmutableLinkedStack<T> result = clear();
+        for (ImmutableLinkedStack<T> f = this; !f.isEmpty(); f = f.pop()) {
+            result = result.push(f.peek());
+        }
+
+        return result;
+    }
+
     private static final class Itr<T> implements Iterator<T> {
 
         /**
