@@ -241,5 +241,12 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
             return result;
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

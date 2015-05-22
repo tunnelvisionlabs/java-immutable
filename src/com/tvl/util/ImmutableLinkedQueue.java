@@ -250,5 +250,12 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
             throw new NoSuchElementException();
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 }
