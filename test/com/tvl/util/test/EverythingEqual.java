@@ -11,7 +11,9 @@ class EverythingEqual<T> implements EqualityComparator<T> {
     }
 
     public static <T> EverythingEqual<T> instance() {
-        return (EverythingEqual<T>)INSTANCE;
+        @SuppressWarnings("unchecked") // safe; objects are never used
+        EverythingEqual<T> result = (EverythingEqual<T>)INSTANCE;
+        return result;
     }
 
     @Override

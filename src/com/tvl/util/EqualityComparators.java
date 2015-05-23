@@ -6,7 +6,6 @@ public abstract class EqualityComparators {
     /**
      * Gets a default {@link EqualityComparator} for instances of type {@code T}.
      *
-     * @param <T> The type of objects to compare.
      * @return A default {@link EqualityComparator} for instances of type {@code T}.
      */
     public static EqualityComparator<Object> defaultComparator() {
@@ -17,6 +16,7 @@ public abstract class EqualityComparators {
      * Gets a default {@link EqualityComparator} for instances of type {@code T}.
      *
      * @param <T> The type of objects to compare.
+     * @param clazz The type of objects to compare.
      * @return A default {@link EqualityComparator} for instances of type {@code T}.
      */
     public static <T> EqualityComparator<T> defaultComparator(Class<T> clazz) {
