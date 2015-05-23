@@ -2,6 +2,8 @@
 package com.tvl.util.test;
 
 import com.google.common.collect.Iterables;
+import java.text.Collator;
+import java.util.Comparator;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
@@ -13,6 +15,29 @@ public abstract class ImmutablesTestBase {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    protected static <T extends Comparable<T>> Comparator<T> defaultComparator() {
+        return new Comparator<T>() {
+            @Override
+            public int compare(T o1, T o2) {
+                return o1.compareTo(o2);
+            }
+        };
+    }
+
+    protected static Comparator<Object> ordinalComparator() {
+        Collator collator = Collator.getInstance();
+        collator.setDecomposition(Collator.NO_DECOMPOSITION);
+        collator.setStrength(Collator.IDENTICAL);
+        return collator;
+    }
+
+    protected static Comparator<Object> ordinalIgnoreCaseComparator() {
+        Collator collator = Collator.getInstance();
+        collator.setDecomposition(Collator.NO_DECOMPOSITION);
+        collator.setStrength(Collator.TERTIARY);
+        return collator;
+    }
 
     protected static <T> void assertEqualSequences(Iterable<? extends T> left, Iterable<? extends T> right) {
         Object[] leftArray = Iterables.toArray(left, Object.class);
