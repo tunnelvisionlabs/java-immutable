@@ -4,9 +4,15 @@
 
 [![Build Status](https://travis-ci.org/tunnelvisionlabs/java-immutable.svg?branch=master)](https://travis-ci.org/tunnelvisionlabs/java-immutable)
 
-This project is a complete port of the [System.Collections.Immutable][1] assembly to support Java 6 and newer.
+This project is a complete port¹ of the [System.Collections.Immutable][1] assembly to support Java 6 and newer. An
+overview of the API mapping from .NET to Java is available in [API.md][2].
+
+¹ This project is an work-in-progress. We are working towards an initial release corresponding to
+[System.Collections.Immutable 1.1.36][3].
 
 [1]: https://www.nuget.org/packages/System.Collections.Immutable
+[2]: https://github.com/tunnelvisionlabs/java-immutable/blob/master/API.md
+[3]: https://www.nuget.org/packages/System.Collections.Immutable/1.1.36
 
 ## Releases
 
