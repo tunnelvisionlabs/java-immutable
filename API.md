@@ -46,5 +46,7 @@
 
 ## Immutable Collection Utilities
 
+| .NET Type | Java Type |
+| --- | --- |
 | `System.Collections.Immutable.ImmutableInterlocked` | *unknown* |
 | `System.Linq.ImmutableArrayExtensions` | *unknown* |
