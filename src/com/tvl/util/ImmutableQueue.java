@@ -19,6 +19,8 @@ public interface ImmutableQueue<T> extends Iterable<T> {
 
     /**
      * Gets an empty queue.
+     *
+     * @return The empty queue.
      */
     ImmutableQueue<T> clear();
 

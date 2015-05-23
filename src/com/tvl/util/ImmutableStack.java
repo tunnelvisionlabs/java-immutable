@@ -19,6 +19,8 @@ public interface ImmutableStack<T> extends Iterable<T> {
 
     /**
      * Gets an empty stack.
+     *
+     * @return The empty stack.
      */
     ImmutableStack<T> clear();
 

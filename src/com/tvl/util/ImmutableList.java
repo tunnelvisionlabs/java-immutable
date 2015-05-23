@@ -16,6 +16,8 @@ public interface ImmutableList<T> {
 
     /**
      * Gets an empty list that retains the same sort or unordered semantics that this instance has.
+     *
+     * @return The empty list.
      */
     ImmutableList<T> clear();
 

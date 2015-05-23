@@ -113,7 +113,9 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
     }
 
     public static <T> ImmutableLinkedQueue<T> empty() {
-        return (ImmutableLinkedQueue<T>)EMPTY_QUEUE;
+        @SuppressWarnings("unchecked") // safe
+        ImmutableLinkedQueue<T> result = (ImmutableLinkedQueue<T>)EMPTY_QUEUE;
+        return result;
     }
 
     /**
