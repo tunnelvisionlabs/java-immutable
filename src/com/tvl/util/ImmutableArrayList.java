@@ -109,9 +109,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return An immutable array.
      */
     public static <T> ImmutableArrayList<T> create(Iterable<T> items) {
-        if (items == null) {
-            throw new NullPointerException("items");
-        }
+        Requires.notNull(items, "items");
 
         throw new UnsupportedOperationException("Not implemented.");
     }
@@ -283,9 +281,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public int indexOf(T item, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
-        if (equalityComparator == null) {
-            throw new IllegalArgumentException("equalityComparator cannot be null");
-        }
+        Requires.notNull(equalityComparator, "equalityComparator");
 
         if (count == 0 && startIndex == 0) {
             return -1;
@@ -360,9 +356,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public int lastIndexOf(T item, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
-        if (equalityComparator == null) {
-            throw new IllegalArgumentException("equalityComparator cannot be null");
-        }
+        Requires.notNull(equalityComparator, "equalityComparator");
 
         if (startIndex == 0 && count == 0) {
             return -1;
@@ -997,9 +991,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         public boolean addAll(Iterable<? extends T> items) {
-            if (items == null) {
-                throw new IllegalArgumentException("items");
-            }
+            Requires.notNull(items, "items");
 
             Integer addedCount = Immutables.tryGetCount(items);
             if (addedCount != null) {
@@ -1016,9 +1008,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         public void addAll(T... items) {
-            if (items == null) {
-                throw new IllegalArgumentException("items");
-            }
+            Requires.notNull(items, "items");
 
             int offset = size();
             resize(size() + items.length);
@@ -1026,9 +1016,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         public void addAll(T[] items, int length) {
-            if (items == null) {
-                throw new NullPointerException("items");
-            }
+            Requires.notNull(items, "items");
 
             if (!(length >= 0)) {
                 throw new IllegalArgumentException("length");
@@ -1041,10 +1029,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         public void addAll(ImmutableArrayList<? extends T> items) {
-            if (items == null) {
-                throw new NullPointerException("items");
-            }
-
+            Requires.notNull(items, "items");
             addAll(items, items.size());
         }
 
@@ -1057,10 +1042,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         public void addAll(Builder<? extends T> items) {
-            if (items == null) {
-                throw new NullPointerException("items");
-            }
-
+            Requires.notNull(items, "items");
             addAll(items.elements, items.size());
         }
 
@@ -1119,9 +1101,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         public int indexOf(T o, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
-            if (equalityComparator == null) {
-                throw new NullPointerException("equalityComparator");
-            }
+            Requires.notNull(equalityComparator, "equalityComparator");
 
             if (count == 0 && startIndex == 0) {
                 return -1;

@@ -39,12 +39,8 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
      * @param backward The backward stack.
      */
     private ImmutableLinkedQueue(ImmutableLinkedStack<T> forward, ImmutableLinkedStack<T> backward) {
-        if (forward == null) {
-            throw new NullPointerException("forward");
-        }
-        if (backward == null) {
-            throw new NullPointerException("backward");
-        }
+        Requires.notNull(forward, "forward");
+        Requires.notNull(backward, "backward");
 
         this.forwards = forward;
         this.backwards = backward;
@@ -80,9 +76,7 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
      * @return The immutable collection.
      */
     public static <T> ImmutableLinkedQueue<T> create(T... items) {
-        if (items == null) {
-            throw new NullPointerException("items");
-        }
+        Requires.notNull(items, "items");
 
         ImmutableLinkedQueue<T> queue = empty();
         for (T item : items) {
@@ -100,9 +94,7 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
      * @return The immutable collection.
      */
     public static <T> ImmutableLinkedQueue<T> createAll(Iterable<? extends T> items) {
-        if (items == null) {
-            throw new NullPointerException("items");
-        }
+        Requires.notNull(items, "items");
 
         ImmutableLinkedQueue<T> queue = empty();
         for (T item : items) {
