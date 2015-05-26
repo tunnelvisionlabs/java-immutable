@@ -763,9 +763,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
          * @param capacity The initial capacity of the internal array.
          */
         Builder(int capacity) {
-            if (capacity < 0) {
-                throw new IllegalArgumentException("capacity");
-            }
+            Requires.argument(capacity >= 0, "capacity", "capacity must be greater than or equal to zero");
 
             @SuppressWarnings("unchecked") // safe
             T[] elementsArray = (T[])new Object[capacity];
@@ -791,9 +789,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
          * @throws IllegalArgumentException if {@code value} is less than {@link #size()}.
          */
         public void setCapacity(int value) {
-            if (value < count) {
-                throw new IllegalArgumentException("Capacity must be greater than or equal to count");
-            }
+            Requires.argument(value >= count, "value", "Capacity must be greater than or equal to count");
 
             if (value != elements.length) {
                 if (value > 0) {
@@ -824,9 +820,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
          * @throws IllegalArgumentException if {@code size} is less than 0.
          */
         public void resize(int size) {
-            if (size < 0) {
-                throw new IllegalArgumentException("size");
-            }
+            Requires.argument(size >= 0, "size", "size must be greater than or equal to zero");
 
             if (size < count) {
                 // truncation mode
