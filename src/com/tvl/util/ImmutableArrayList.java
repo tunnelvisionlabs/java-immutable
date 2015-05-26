@@ -109,9 +109,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return An immutable array.
      */
     public static <T> ImmutableArrayList<T> create(Iterable<T> items) {
-        if (items == null) {
-            throw new NullPointerException("items");
-        }
+        Requires.notNull(items, "items");
 
         throw new UnsupportedOperationException("Not implemented.");
     }
@@ -283,21 +281,14 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public int indexOf(T item, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
-        if (equalityComparator == null) {
-            throw new IllegalArgumentException("equalityComparator cannot be null");
-        }
+        Requires.notNull(equalityComparator, "equalityComparator");
 
         if (count == 0 && startIndex == 0) {
             return -1;
         }
 
-        if (!(startIndex >= 0 && startIndex < size())) {
-            throw new IllegalArgumentException("startIndex");
-        }
-
-        if (!(count >= 0 && startIndex + count <= size())) {
-            throw new IllegalArgumentException("count");
-        }
+        Requires.range(startIndex >= 0 && startIndex < size(), "startIndex");
+        Requires.range(count >= 0 && startIndex + count <= size(), "count");
 
         for (int i = startIndex; i < startIndex + count; i++) {
             if (equalityComparator.equals(array[i], item)) {
@@ -360,21 +351,14 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public int lastIndexOf(T item, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
-        if (equalityComparator == null) {
-            throw new IllegalArgumentException("equalityComparator cannot be null");
-        }
+        Requires.notNull(equalityComparator, "equalityComparator");
 
         if (startIndex == 0 && count == 0) {
             return -1;
         }
 
-        if (!(startIndex >= 0 && startIndex < size())) {
-            throw new IllegalArgumentException("startIndex");
-        }
-
-        if (!(count >= 0 && startIndex - count + 1 >= 0)) {
-            throw new IllegalArgumentException("count");
-        }
+        Requires.range(startIndex >= 0 && startIndex < size(), "startIndex");
+        Requires.range(count >= 0 && startIndex - count + 1 >= 0, "count");
 
         for (int i = startIndex; i >= startIndex - count + 1; i--) {
             if (equalityComparator.equals(item, array[i])) {
@@ -435,9 +419,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> add(int index, T element) {
-        if (!(index >= 0 && index <= size())) {
-            throw new IllegalArgumentException("index");
-        }
+        Requires.range(index >= 0 && index <= size(), "index");
 
         if (isEmpty()) {
             return create(element);
@@ -513,9 +495,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> set(int index, T value) {
-        if (!(index >= 0 && index <= size())) {
-            throw new IllegalArgumentException("index");
-        }
+        Requires.range(index >= 0 && index <= size(), "index");
 
         T[] tmp = array.clone();
         tmp[index] = value;
@@ -604,12 +584,8 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> remove(int index, int count) {
-        if (!(index >= 0 && index < size())) {
-            throw new IndexOutOfBoundsException("index");
-        }
-        if (!(count >= 0 && index + count <= size())) {
-            throw new IndexOutOfBoundsException("count");
-        }
+        Requires.range(index >= 0 && index < size(), "index");
+        Requires.range(count >= 0 && index + count <= size(), "count");
 
         T[] tmp = Arrays.copyOf(array, array.length - count);
         System.arraycopy(array, index + count, tmp, index, size() - index - count);
@@ -787,9 +763,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
          * @param capacity The initial capacity of the internal array.
          */
         Builder(int capacity) {
-            if (capacity < 0) {
-                throw new IllegalArgumentException("capacity");
-            }
+            Requires.argument(capacity >= 0, "capacity", "capacity must be greater than or equal to zero");
 
             @SuppressWarnings("unchecked") // safe
             T[] elementsArray = (T[])new Object[capacity];
@@ -815,9 +789,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
          * @throws IllegalArgumentException if {@code value} is less than {@link #size()}.
          */
         public void setCapacity(int value) {
-            if (value < count) {
-                throw new IllegalArgumentException("Capacity must be greater than or equal to count");
-            }
+            Requires.argument(value >= count, "value", "Capacity must be greater than or equal to count");
 
             if (value != elements.length) {
                 if (value > 0) {
@@ -848,9 +820,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
          * @throws IllegalArgumentException if {@code size} is less than 0.
          */
         public void resize(int size) {
-            if (size < 0) {
-                throw new IllegalArgumentException("size");
-            }
+            Requires.argument(size >= 0, "size", "size must be greater than or equal to zero");
 
             if (size < count) {
                 // truncation mode
@@ -881,9 +851,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
          */
         @Override
         public T get(int index) {
-            if (index >= size()) {
-                throw new IndexOutOfBoundsException("index");
-            }
+            Requires.range(index < size(), "index");
 
             return elements[index];
         }
@@ -899,9 +867,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
          */
         @Override
         public T set(int index, T element) {
-            if (index >= size()) {
-                throw new IndexOutOfBoundsException("index");
-            }
+            Requires.range(index < size(), "index");
 
             T result = get(index);
             elements[index] = element;
@@ -956,9 +922,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
          */
         @Override
         public void add(int index, T element) {
-            if (!(index >= 0 && index <= size())) {
-                throw new IndexOutOfBoundsException("index");
-            }
+            Requires.range(index >= 0 && index <= size(), "index");
 
             ensureCapacity(size() + 1);
             if (index < count) {
@@ -997,9 +961,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         public boolean addAll(Iterable<? extends T> items) {
-            if (items == null) {
-                throw new IllegalArgumentException("items");
-            }
+            Requires.notNull(items, "items");
 
             Integer addedCount = Immutables.tryGetCount(items);
             if (addedCount != null) {
@@ -1016,9 +978,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         public void addAll(T... items) {
-            if (items == null) {
-                throw new IllegalArgumentException("items");
-            }
+            Requires.notNull(items, "items");
 
             int offset = size();
             resize(size() + items.length);
@@ -1026,13 +986,8 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         public void addAll(T[] items, int length) {
-            if (items == null) {
-                throw new NullPointerException("items");
-            }
-
-            if (!(length >= 0)) {
-                throw new IllegalArgumentException("length");
-            }
+            Requires.notNull(items, "items");
+            Requires.range(length >= 0, "length");
 
             int offset = size();
             resize(offset + length);
@@ -1041,26 +996,17 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         public void addAll(ImmutableArrayList<? extends T> items) {
-            if (items == null) {
-                throw new NullPointerException("items");
-            }
-
+            Requires.notNull(items, "items");
             addAll(items, items.size());
         }
 
         public void addAll(ImmutableArrayList<? extends T> items, int length) {
-            if (length < 0) {
-                throw new IllegalArgumentException("length");
-            }
-
+            Requires.range(length >= 0, "length");
             addAll(items.array, length);
         }
 
         public void addAll(Builder<? extends T> items) {
-            if (items == null) {
-                throw new NullPointerException("items");
-            }
-
+            Requires.notNull(items, "items");
             addAll(items.elements, items.size());
         }
 
@@ -1077,9 +1023,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
         @Override
         public T remove(int index) {
-            if (!(index >= 0 && index < size())) {
-                throw new IndexOutOfBoundsException("index");
-            }
+            Requires.range(index >= 0 && index < size(), "index");
 
             T value = get(index);
             if (index < size() - 1) {
@@ -1119,21 +1063,14 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         public int indexOf(T o, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
-            if (equalityComparator == null) {
-                throw new NullPointerException("equalityComparator");
-            }
+            Requires.notNull(equalityComparator, "equalityComparator");
 
             if (count == 0 && startIndex == 0) {
                 return -1;
             }
 
-            if (!(startIndex >= 0 && startIndex < size())) {
-                throw new IndexOutOfBoundsException("startIndex");
-            }
-
-            if (!(count >= 0 && startIndex + count <= size())) {
-                throw new IndexOutOfBoundsException("count");
-            }
+            Requires.range(startIndex >= 0 && startIndex < size(), "startIndex");
+            Requires.range(count >= 0 && startIndex + count <= size(), "count");
 
             for (int i = startIndex; i < startIndex + count; i++) {
                 if (equalityComparator.equals(elements[i], o)) {

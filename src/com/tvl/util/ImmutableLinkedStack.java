@@ -42,9 +42,7 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
      * @param tail The rest of the elements on the stack.
      */
     private ImmutableLinkedStack(T head, ImmutableLinkedStack<T> tail) {
-        if (tail == null) {
-            throw new NullPointerException("tail");
-        }
+        Requires.notNull(tail, "tail");
 
         this.head = head;
         this.tail = tail;
@@ -79,9 +77,7 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
      * @return The immutable collection.
      */
     public static <T> ImmutableLinkedStack<T> create(T... items) {
-        if (items == null) {
-            throw new NullPointerException("items");
-        }
+        Requires.notNull(items, "items");
 
         ImmutableLinkedStack<T> stack = empty();
         for (T item : items) {
@@ -99,9 +95,7 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
      * @return The immutable collection.
      */
     public static <T> ImmutableLinkedStack<T> createAll(Iterable<? extends T> items) {
-        if (items == null) {
-            throw new NullPointerException("items");
-        }
+        Requires.notNull(items, "items");
 
         ImmutableLinkedStack<T> stack = empty();
         for (T item : items) {
