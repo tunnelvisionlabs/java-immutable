@@ -3,8 +3,14 @@ package com.tvl.util;
 
 import java.util.Collection;
 
+/**
+ * Provides static utility methods for working with immutable collection instances.
+ */
 public final class Immutables {
 
+    /**
+     * Prevents an instance of the {@link Immutables} class from being created.
+     */
     private Immutables() {
     }
 
