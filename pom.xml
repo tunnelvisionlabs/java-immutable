@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
@@ -24,6 +23,12 @@
         <bootclasspath.java6>${java6.home}/lib/rt.jar</bootclasspath.java6>
         <bootclasspath.testCompile>${bootclasspath.java6}</bootclasspath.testCompile>
         <bootclasspath.compile>${bootclasspath.java6}</bootclasspath.compile>
+
+        <!-- Base compiler configuration -->
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
+        <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     </properties>
 
     <url>https://github.com/tunnelvisionlabs/java-immutable</url>
@@ -132,30 +137,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <showWarnings>true</showWarnings>
-                    <showDeprecation>true</showDeprecation>
                     <compilerArgs>
                         <arg>-Xlint</arg>
                         <arg>-Xlint:-serial</arg>
                     </compilerArgs>
                 </configuration>
-
-                <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <configuration>
-                            <source>1.6</source>
-                            <target>1.6</target>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <configuration>
-                            <source>1.6</source>
-                            <target>1.6</target>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>
@@ -185,7 +171,6 @@
                 <version>3.0.1</version>
                 <configuration>
                     <findbugsXmlOutput>true</findbugsXmlOutput>
-                    <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
                     <xmlOutput>true</xmlOutput>
                 </configuration>
             </plugin>
