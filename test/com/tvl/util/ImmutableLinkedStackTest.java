@@ -1,9 +1,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-package com.tvl.util.test;
+package com.tvl.util;
 
 import com.google.common.collect.Iterables;
-import com.tvl.util.ImmutableLinkedStack;
-import com.tvl.util.ImmutableStack;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EmptyStackException;
