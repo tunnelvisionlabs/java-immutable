@@ -1,7 +1,5 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-package com.tvl.util.test;
-
-import com.tvl.util.EqualityComparator;
+package com.tvl.util;
 
 class EverythingEqual<T> implements EqualityComparator<T> {
 

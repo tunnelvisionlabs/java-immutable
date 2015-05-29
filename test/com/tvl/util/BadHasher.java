@@ -1,8 +1,5 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-package com.tvl.util.test;
-
-import com.tvl.util.EqualityComparator;
-import com.tvl.util.EqualityComparators;
+package com.tvl.util;
 
 class BadHasher<T> implements EqualityComparator<T> {
 
