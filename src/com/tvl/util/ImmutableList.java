@@ -12,7 +12,7 @@ import com.tvl.util.function.Predicate;
  *
  * @param <T> The type of element stored in the list.
  */
-public interface ImmutableList<T> {
+public interface ImmutableList<T> extends ReadOnlyList<T> {
 
     /**
      * Gets an empty list that retains the same sort or unordered semantics that this instance has.
