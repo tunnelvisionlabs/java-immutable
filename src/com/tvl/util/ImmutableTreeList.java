@@ -1185,8 +1185,8 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         }
 
         Node<T> sort() {
-            @SuppressWarnings("unchecked")
-            Comparator<? super T> comparator = (Comparator<? super T>)Comparators.defaultComparator();
+            @SuppressWarnings("unchecked") // will throw at runtime if invalid.
+            Comparator<? super T> comparator = (Comparator<? super T>)(Comparator<?>)Comparators.<Integer>defaultComparator();
             return sort(comparator);
         }
 
@@ -1212,8 +1212,8 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             Requires.range(index >= 0, "index");
             Requires.range(count >= 0, "count");
             if (comparator == null) {
-                @SuppressWarnings("unchecked")
-                Comparator<? super T> defaultComparator = (Comparator<? super T>)Comparators.defaultComparator();
+                @SuppressWarnings("unchecked") // will throw at runtime if invalid.
+                Comparator<? super T> defaultComparator = (Comparator<? super T>)(Comparator<?>)Comparators.<Integer>defaultComparator();
                 comparator = defaultComparator;
             }
 

@@ -816,7 +816,11 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
 
         Comparators<K, V> withValueComparator(EqualityComparator<? super V> valueComparator) {
             Requires.notNull(valueComparator, "valueComparator");
-            return valueComparator == this.valueComparator ? this : get(getKeyComparator(), valueComparator);
+            if (valueComparator == this.valueComparator) {
+                return this;
+            }
+
+            return get(getKeyComparator(), valueComparator);
         }
     }
 
