@@ -309,12 +309,12 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
 
         ImmutableArrayList.Builder<Integer> builder2 = ImmutableArrayList.createBuilder();
         builder2.add(4);
-        builder2.sort(ImmutablesTestBase.<Integer>defaultComparator());
+        builder2.sort(Comparators.<Integer>defaultComparator());
         assertEqualSequences(Arrays.asList(resultantArray), builder2);
 
         ImmutableArrayList.Builder<Integer> builder3 = ImmutableArrayList.createBuilder();
         builder3.add(4);
-        builder3.sort(0, 1, ImmutablesTestBase.<Integer>defaultComparator());
+        builder3.sort(0, 1, Comparators.<Integer>defaultComparator());
         assertEqualSequences(Arrays.asList(resultantArray), builder3);
     }
 
@@ -323,10 +323,10 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         ImmutableArrayList.Builder<Integer> builder = ImmutableArrayList.createBuilder();
         builder.addAll(2, 4, 1, 3);
 
-        builder.sort(builder.size(), 0, ImmutablesTestBase.<Integer>defaultComparator());
+        builder.sort(builder.size(), 0, Comparators.<Integer>defaultComparator());
         assertEqualSequences(Arrays.asList(2, 4, 1, 3), builder);
 
-        builder.sort(1, 2, ImmutablesTestBase.<Integer>defaultComparator());
+        builder.sort(1, 2, Comparators.<Integer>defaultComparator());
         assertEqualSequences(Arrays.asList(2, 1, 4, 3), builder);
     }
 
@@ -335,7 +335,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         ImmutableArrayList.Builder<Integer> builder = ImmutableArrayList.createBuilder();
         builder.addAll(2, 4, 1, 3);
         thrown.expect(instanceOf(IndexOutOfBoundsException.class));
-        builder.sort(-1, 2, ImmutablesTestBase.<Integer>defaultComparator());
+        builder.sort(-1, 2, Comparators.<Integer>defaultComparator());
     }
 
     @Test
@@ -343,7 +343,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         ImmutableArrayList.Builder<Integer> builder = ImmutableArrayList.createBuilder();
         builder.addAll(2, 4, 1, 3);
         thrown.expect(instanceOf(IndexOutOfBoundsException.class));
-        builder.sort(1, 4, ImmutablesTestBase.<Integer>defaultComparator());
+        builder.sort(1, 4, Comparators.<Integer>defaultComparator());
     }
 
     @Test
@@ -351,7 +351,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         ImmutableArrayList.Builder<Integer> builder = ImmutableArrayList.createBuilder();
         builder.addAll(2, 4, 1, 3);
         thrown.expect(instanceOf(IndexOutOfBoundsException.class));
-        builder.sort(0, -1, ImmutablesTestBase.<Integer>defaultComparator());
+        builder.sort(0, -1, Comparators.<Integer>defaultComparator());
     }
 
     @Test

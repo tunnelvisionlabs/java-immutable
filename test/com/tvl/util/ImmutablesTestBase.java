@@ -25,15 +25,6 @@ public abstract class ImmutablesTestBase {
         return 100;
     }
 
-    protected static <T extends Comparable<T>> Comparator<T> defaultComparator() {
-        return new Comparator<T>() {
-            @Override
-            public int compare(T o1, T o2) {
-                return o1.compareTo(o2);
-            }
-        };
-    }
-
     protected static StringComparator ordinalComparator() {
         Collator collator = Collator.getInstance();
         collator.setDecomposition(Collator.NO_DECOMPOSITION);
