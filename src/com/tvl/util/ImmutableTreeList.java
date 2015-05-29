@@ -276,7 +276,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
     @Override
     public <U> ImmutableTreeList<U> convertAll(Function<? super T, ? extends U> converter) {
         Requires.notNull(converter, "converter");
-        return ImmutableTreeList.<U>wrapNode(root.convertAll(converter));
+        return ImmutableTreeList.wrapNode(root.convertAll(converter));
     }
 
     @Override
@@ -949,6 +949,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
          * @return An empty node.
          */
         public static <T> Node<T> empty() {
+            @SuppressWarnings("unchecked") // safe
             Node<T> result = (Node<T>)EMPTY_NODE;
             return result;
         }
@@ -1184,7 +1185,9 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         }
 
         Node<T> sort() {
-            return sort(Comparators.defaultComparator());
+            @SuppressWarnings("unchecked")
+            Comparator<? super T> comparator = (Comparator<? super T>)Comparators.defaultComparator();
+            return sort(comparator);
         }
 
         Node<T> sort(Comparator<? super T> comparator) {
@@ -1209,7 +1212,9 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             Requires.range(index >= 0, "index");
             Requires.range(count >= 0, "count");
             if (comparator == null) {
-                comparator = Comparators.defaultComparator();
+                @SuppressWarnings("unchecked")
+                Comparator<? super T> defaultComparator = (Comparator<? super T>)Comparators.defaultComparator();
+                comparator = defaultComparator;
             }
 
             if (isEmpty() || count <= 0) {

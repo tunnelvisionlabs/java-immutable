@@ -12,7 +12,6 @@ import java.util.Comparator;
 import java.util.ListIterator;
 import java.util.Random;
 
-@SuppressWarnings("EmptyCatchBlock")
 public class ImmutableListTest extends ImmutableListTestBase {
     private enum Operation
     {
@@ -230,13 +229,13 @@ public class ImmutableListTest extends ImmutableListTestBase {
         try {
             list.add(1, 5);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             list.add(-1, 5);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         list = list.add(0, 10);
@@ -255,13 +254,13 @@ public class ImmutableListTest extends ImmutableListTestBase {
         try {
             list.add(7, 5);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             list.add(-1, 5);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
     }
 
@@ -282,13 +281,13 @@ public class ImmutableListTest extends ImmutableListTestBase {
         try {
             list.addAll(1, Collections.singletonList(1));
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             list.addAll(-1, Collections.singletonList(1));
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         list = list.addAll(0, Arrays.asList(1, 4, 5));
@@ -300,13 +299,13 @@ public class ImmutableListTest extends ImmutableListTestBase {
         try {
             list.addAll(6, Collections.singletonList(1));
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             list.addAll(-1, Collections.singletonList(1));
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
     }
 
@@ -318,13 +317,13 @@ public class ImmutableListTest extends ImmutableListTestBase {
         try {
             list.addAll(1, nonEmptyList);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             list.addAll(-1, nonEmptyList);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         list = list.addAll(0, ImmutableTreeList.create(1, 104, 105));
@@ -336,13 +335,13 @@ public class ImmutableListTest extends ImmutableListTestBase {
         try {
             list.addAll(106, nonEmptyList);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             list.addAll(-1, nonEmptyList);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
     }
 
@@ -436,19 +435,19 @@ public class ImmutableListTest extends ImmutableListTestBase {
         try {
             list.remove(0);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             list.remove(-1);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             list.remove(1);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         for (int i = 1; i <= 10; i++) {
@@ -504,13 +503,13 @@ public class ImmutableListTest extends ImmutableListTestBase {
         try {
             list.get(3);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             list.get(-1);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
     }
 
@@ -632,31 +631,31 @@ public class ImmutableListTest extends ImmutableListTestBase {
         try {
             list.remove(-1, 0);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             list.remove(0, -1);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             list.remove(4, 0);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             list.remove(0, 4);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             list.remove(2, 2);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         list.remove(3, 0);
@@ -751,26 +750,26 @@ public class ImmutableListTest extends ImmutableListTestBase {
         try {
             emptyList.get(-1);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             emptyList.get(0);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
             emptyList.get(1);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         ImmutableTreeList<Integer> listOfOne = emptyList.add(5);
         try {
             listOfOne.get(-1);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         Assert.assertEquals(5, (int)listOfOne.get(0));
@@ -778,7 +777,7 @@ public class ImmutableListTest extends ImmutableListTestBase {
         try {
             listOfOne.get(1);
             Assert.fail();
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
     }
 

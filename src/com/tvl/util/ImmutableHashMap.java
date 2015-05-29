@@ -509,6 +509,12 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
             throw new UnsupportedOperationException();
         }
 
+        @Override
+        public int hashCode() {
+            // This should never be called, as hash buckets don't know how to equate themselves.
+            throw new UnsupportedOperationException();
+        }
+
         /**
          * Adds the specified key.
          *
@@ -787,6 +793,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
         }
 
         static <K, V> Comparators<K, V> defaultComparators() {
+            @SuppressWarnings("unchecked") // safe
             Comparators<K, V> result = (Comparators<K, V>)DEFAULT;
             return result;
         }

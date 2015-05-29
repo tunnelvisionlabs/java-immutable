@@ -24,6 +24,7 @@ public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestB
         this.getListQuery(ImmutableTreeList.<Integer>empty()).copyTo(0, array, 0, 0);
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     @Test
     public void copyToTest() {
         ImmutableListQueries<Integer> listQuery = this.getListQuery(ImmutableTreeList.create(1, 2));
@@ -43,7 +44,7 @@ public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestB
 
         array = new Integer[1]; // shorter than source length
         listQuery.copyTo(0, array, 0, array.length);
-        assertEqualSequences(Arrays.asList(1), Arrays.asList(array));
+        assertEqualSequences(Collections.singletonList(1), Arrays.asList(array));
 
         array = new Integer[3];
         listQuery.copyTo(1, array, 2, 1);
@@ -490,7 +491,7 @@ public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestB
     private void binarySearchPartialSortedListHelper(ImmutableTreeList<Integer> inputData, int sortedIndex, int sortedLength) {
         Requires.range(sortedIndex >= 0, "sortedIndex");
         Requires.range(sortedLength > 0, "sortedLength");
-        inputData = inputData.sort(sortedIndex, sortedLength, Comparators.defaultComparator());
+        inputData = inputData.sort(sortedIndex, sortedLength, Comparators.<Integer>defaultComparator());
         int min = inputData.get(sortedIndex);
         int max = inputData.get(sortedIndex + sortedLength - 1);
 
@@ -525,10 +526,7 @@ public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestB
     @Test
     public void iteratorTest() {
         Iterable<Integer> iterable = getIterableOf(1);
-        assertEqualSequences(Arrays.asList(1), iterable); // exercises the iterator
-
-        Iterable<?> iterableNonGeneric = iterable;
-        assertEqualSequences(Arrays.<Object>asList(1), iterableNonGeneric); // exercises the enumerator
+        assertEqualSequences(Collections.singletonList(1), iterable); // exercises the iterator
     }
 
     protected abstract <T> void removeAllTestHelper(ImmutableTreeList<T> list, Predicate<? super T> test);

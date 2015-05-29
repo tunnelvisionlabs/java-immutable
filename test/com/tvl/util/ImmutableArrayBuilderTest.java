@@ -4,6 +4,7 @@ package com.tvl.util;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -26,6 +27,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         ImmutableArrayList.createBuilder(-1);
     }
 
+    @SuppressWarnings("ForLoopReplaceableByForEach")
     @Test
     public void normalConstructionValueType() {
         ImmutableArrayList.Builder<Integer> builder = ImmutableArrayList.createBuilder(3);
@@ -43,6 +45,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         Assert.assertEquals((Object)7, builder.get(2));
     }
 
+    @SuppressWarnings("ForLoopReplaceableByForEach")
     @Test
     public void normalConstructionRefType() {
         ImmutableArrayList.Builder<GenericParameterHelper> builder = ImmutableArrayList.createBuilder(3);
@@ -63,10 +66,10 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
     @Test
     public void addRangeIterable() {
         ImmutableArrayList.Builder<Integer> builder = ImmutableArrayList.createBuilder(2);
-        builder.addAll((Iterable<Integer>)Arrays.asList(1));
+        builder.addAll((Iterable<Integer>)Collections.singletonList(1));
         Assert.assertEquals(1, builder.size());
 
-        builder.addAll((Iterable<Integer>)Arrays.asList(2));
+        builder.addAll((Iterable<Integer>)Collections.singletonList(2));
         Assert.assertEquals(2, builder.size());
 
         // Exceed capacity
@@ -127,7 +130,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
     @Test
     public void addRangeDerivedArray() {
         ImmutableArrayList.Builder<Object> builder = ImmutableArrayList.createBuilder();
-        builder.addAll(Arrays.<String>asList("a", "b"));
+        builder.addAll(Arrays.asList("a", "b"));
         assertEqualSequences(Arrays.asList("a", "b"), builder);
     }
 
@@ -141,7 +144,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
     @Test
     public void addRangeDerivedBuilder() {
         ImmutableArrayList.Builder<String> builder = ImmutableArrayList.createBuilder();
-        builder.addAll(new String[] { "a", "b" });
+        builder.addAll("a", "b");
 
         ImmutableArrayList.Builder<Object> builderBase = ImmutableArrayList.createBuilder();
         builderBase.addAll(builder);
@@ -218,7 +221,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         Assert.assertTrue(builder.remove((Integer)3));
         assertEqualSequences(Arrays.asList(2, 4), builder);
         Assert.assertTrue(builder.remove((Integer)4));
-        assertEqualSequences(Arrays.asList(2), builder);
+        assertEqualSequences(Collections.singletonList(2), builder);
         Assert.assertTrue(builder.remove((Integer)2));
         Assert.assertEquals(0, builder.size());
     }
@@ -232,7 +235,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         builder.remove(1);
         assertEqualSequences(Arrays.asList(2, 4), builder);
         builder.remove(1);
-        assertEqualSequences(Arrays.asList(2), builder);
+        assertEqualSequences(Collections.singletonList(2), builder);
         builder.remove(0);
         Assert.assertEquals(0, builder.size());
     }
@@ -272,11 +275,11 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
 
         builder.remove(0);
         builder.reverse();
-        assertEqualSequences(Arrays.asList(2), builder);
+        assertEqualSequences(Collections.singletonList(2), builder);
 
         builder.remove(0);
         builder.reverse();
-        assertEqualSequences(Arrays.asList(), builder);
+        assertEqualSequences(Collections.emptyList(), builder);
     }
 
     @Test
@@ -353,7 +356,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
 
     @Test
     @Ignore("String comparators are not currently working as expected.")
-    public void sortComparer() {
+    public void sortComparator() {
         ImmutableArrayList.Builder<String> builder1 = ImmutableArrayList.createBuilder();
         ImmutableArrayList.Builder<String> builder2 = ImmutableArrayList.createBuilder();
         builder1.addAll("c", "B", "a");
@@ -380,7 +383,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         try {
             builder.get(2);
             Assert.fail("Expected an exception");
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
 
         // Expand the accessible region of the array beyond the current capacity.
@@ -394,7 +397,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         try {
             builder.get(4);
             Assert.fail("Expected an exception");
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
     }
 
@@ -590,7 +593,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
     }
 
     @Test
-    public void moveToImmutableAddRangeToCapcity() {
+    public void moveToImmutableAddRangeToCapacity() {
         Integer[] array = { 1, 2, 3, 4, 5 };
         ImmutableArrayList.Builder<Integer> builder = ImmutableArrayList.createBuilder(array.length);
         builder.addAll(array);
@@ -665,7 +668,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
 
     @Override
     protected <T> Iterable<T> getIterableOf(T... contents) {
-        ImmutableArrayList.Builder<T> builder = ImmutableArrayList.<T>createBuilder(contents.length);
+        ImmutableArrayList.Builder<T> builder = ImmutableArrayList.createBuilder(contents.length);
         builder.addAll(Arrays.asList(contents));
         return builder;
     }

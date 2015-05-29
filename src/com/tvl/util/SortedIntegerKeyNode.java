@@ -83,6 +83,7 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
     }
 
     public static <T> SortedIntegerKeyNode<T> emptyNode() {
+        @SuppressWarnings("unchecked") // safe
         SortedIntegerKeyNode<T> result = (SortedIntegerKeyNode<T>)EMPTY_NODE;
         return result;
     }

@@ -5,24 +5,26 @@ import java.util.Comparator;
 
 final class Comparators {
 
-    static Comparator<Object> defaultComparator() {
-        return ComparableComparator.INSTANCE;
+    static <T extends Comparable<T>> Comparator<T> defaultComparator() {
+        @SuppressWarnings("unchecked")
+        Comparator<T> result = (ComparableComparator<T>)ComparableComparator.INSTANCE;
+        return result;
     }
 
-    private static final class ComparableComparator implements Comparator<Object> {
-        static final ComparableComparator INSTANCE = new ComparableComparator();
+    private static final class ComparableComparator<T extends Comparable<T>> implements Comparator<T> {
+        static final ComparableComparator<?> INSTANCE = new ComparableComparator<Integer>();
 
         @Override
-        public int compare(Object o1, Object o2) {
-            if (!(o1 instanceof Comparable<?>)) {
-                throw new UnsupportedOperationException("o1 is not comparable");
+        public int compare(T o1, T o2) {
+            if (o1 == o2) {
+                return 0;
+            } else if (o1 == null) {
+                return -1;
+            } else if (o2 == null) {
+                return 1;
             }
 
-            if (!(o2 instanceof Comparable<?>)) {
-                throw new UnsupportedOperationException("o2 is not comparable");
-            }
-
-            return ((Comparable)o1).compareTo(o2);
+            return o1.compareTo(o2);
         }
     }
 }
