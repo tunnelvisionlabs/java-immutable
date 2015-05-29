@@ -5,7 +5,6 @@ import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -669,44 +668,5 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         ImmutableArrayList.Builder<T> builder = ImmutableArrayList.<T>createBuilder(contents.length);
         builder.addAll(Arrays.asList(contents));
         return builder;
-    }
-
-    private static class Range implements Iterable<Integer> {
-
-        private final int start;
-        private final int count;
-
-        public Range(int start, int count) {
-            this.start = start;
-            this.count = count;
-        }
-
-        @Override
-        public Iterator<Integer> iterator() {
-            return new Iterator<Integer>() {
-                private int current = start;
-                private int remaining = count;
-
-                @Override
-                public boolean hasNext() {
-                    return remaining != 0;
-                }
-
-                @Override
-                public Integer next() {
-                    if (remaining == 0) {
-                        throw new NoSuchElementException();
-                    }
-
-                    remaining--;
-                    return current++;
-                }
-
-                @Override
-                public void remove() {
-                    throw new UnsupportedOperationException("Not supported");
-                }
-            };
-        }
     }
 }
