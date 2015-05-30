@@ -1083,19 +1083,53 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
         @Override
         public int lastIndexOf(Object o) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            if (isEmpty()) {
+                return -1;
+            }
+
+            return lastIndexOf((T)o, size() - 1, size(), EqualityComparators.defaultComparator());
         }
 
         public int lastIndexOf(T o, int startIndex) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            if (size() == 0 && startIndex == 0) {
+                return -1;
+            }
+
+            Requires.range(startIndex >= 0 && startIndex < size(), "startIndex");
+
+            return lastIndexOf(o, startIndex, startIndex + 1, EqualityComparators.defaultComparator());
         }
 
         public int lastIndexOf(T o, int startIndex, int count) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return lastIndexOf(o, startIndex, count, EqualityComparators.defaultComparator());
         }
 
         public int lastIndexOf(T o, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.notNull(equalityComparator, "equalityComparator");
+
+            if (count == 0 && startIndex == 0) {
+                return -1;
+            }
+
+            Requires.range(startIndex >= 0 && startIndex < size(), "startIndex");
+            Requires.range(count >= 0 && startIndex - count + 1 >= 0, "count");
+
+            if (equalityComparator == EqualityComparators.defaultComparator()) {
+                int result = Arrays.asList(elements).subList(startIndex - count + 1, startIndex + 1).lastIndexOf(o);
+                if (result >= 0) {
+                    result += startIndex - count + 1;
+                }
+
+                return result;
+            } else {
+                for (int i = startIndex; i >= startIndex - count + 1; i--) {
+                    if (equalityComparator.equals(o, elements[i])) {
+                        return i;
+                    }
+                }
+
+                return -1;
+            }
         }
 
         public void reverse() {
