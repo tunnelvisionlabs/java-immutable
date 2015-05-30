@@ -2,6 +2,8 @@
 package com.tvl.util;
 
 import com.google.common.collect.Iterables;
+import com.tvl.util.function.BiFunction;
+import com.tvl.util.function.Function;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -159,17 +161,42 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         Assert.assertTrue(builder.contains(1));
     }
 
-//        @Test
-//        public void IndexOf()
-//        {
-//            IndexOfTests.IndexOfTest(
-//                seq => (ImmutableArray<int>.Builder)this.GetEnumerableOf(seq),
-//                (b, v) => b.IndexOf(v),
-//                (b, v, i) => b.IndexOf(v, i),
-//                (b, v, i, c) => b.IndexOf(v, i, c),
-//                (b, v, i, c, eq) => b.IndexOf(v, i, c, eq));
-//        }
-//
+    @Test
+    public void indexOf() {
+        IndexOfTests.indexOfTest(
+            new Function<Iterable<Integer>, ImmutableArrayList.Builder<Integer>>() {
+                @Override
+                public ImmutableArrayList.Builder<Integer> apply(Iterable<Integer> sequence) {
+                    return (ImmutableArrayList.Builder<Integer>)getIterableOf(sequence, Integer.class);
+                }
+            },
+            new BiFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer>() {
+                @Override
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v) {
+                    return b.indexOf(v);
+                }
+            },
+            new IndexOfTests.TriFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer, Integer>() {
+                @Override
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer i) {
+                    return b.indexOf(v, i);
+                }
+            },
+            new IndexOfTests.QuadFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer, Integer, Integer>() {
+                @Override
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer i, Integer c) {
+                    return b.indexOf(v, i, c);
+                }
+            },
+            new IndexOfTests.PentFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer, Integer, EqualityComparator<? super Integer>, Integer>() {
+                @Override
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer i, Integer c, EqualityComparator<? super Integer> eq) {
+                    return b.indexOf(v, i, c, eq);
+                }
+            }
+        );
+    }
+
 //        @Test
 //        public void LastIndexOf()
 //        {

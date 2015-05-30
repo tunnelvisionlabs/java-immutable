@@ -1266,12 +1266,13 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             Requires.range(index + count <= size(), "count");
             Requires.notNull(equalityComparator, "equalityComparator");
 
-            int currentIndex = -1;
-            for (T value : this) {
-                currentIndex++;
-                if (equalityComparator.equals(item, value)) {
-                    return currentIndex;
+            Iterator<T> iterator = new Itr<T>(this, null, index, count, false);
+            while (iterator.hasNext()) {
+                if (equalityComparator.equals(item, iterator.next())) {
+                    return index;
                 }
+
+                index++;
             }
 
             return -1;
