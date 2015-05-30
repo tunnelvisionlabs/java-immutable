@@ -197,17 +197,52 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         );
     }
 
-//        @Test
-//        public void LastIndexOf()
-//        {
-//            IndexOfTests.LastIndexOfTest(
-//                seq => (ImmutableArray<int>.Builder)this.GetEnumerableOf(seq),
-//                (b, v) => b.LastIndexOf(v),
-//                (b, v, eq) => b.LastIndexOf(v, b.Count > 0 ? b.Count - 1 : 0, b.Count, eq),
-//                (b, v, i) => b.LastIndexOf(v, i),
-//                (b, v, i, c) => b.LastIndexOf(v, i, c),
-//                (b, v, i, c, eq) => b.LastIndexOf(v, i, c, eq));
-//        }
+    @Test
+    public void lastIndexOf() {
+        IndexOfTests.lastIndexOfTest(
+            new Function<Iterable<Integer>, ImmutableArrayList.Builder<Integer>>() {
+                @Override
+                public ImmutableArrayList.Builder<Integer> apply(Iterable<Integer> sequence) {
+                    return (ImmutableArrayList.Builder<Integer>)getIterableOf(sequence, Integer.class);
+                }
+            },
+            new BiFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer>() {
+                @Override
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v) {
+                    return b.lastIndexOf(v);
+                }
+            },
+            new IndexOfTests.TriFunction<ImmutableArrayList.Builder<Integer>, Integer, EqualityComparator<? super Integer>, Integer>() {
+                @Override
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, EqualityComparator<? super Integer> eq) {
+                    //return b.lastIndexOf(v, eq);
+                    if (b.isEmpty()) {
+                        return b.lastIndexOf(v, 0, 0, eq);
+                    } else {
+                        return b.lastIndexOf(v, b.size() - 1, b.size(), eq);
+                    }
+                }
+            },
+            new IndexOfTests.TriFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer, Integer>() {
+                @Override
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer i) {
+                    return b.lastIndexOf(v, i);
+                }
+            },
+            new IndexOfTests.QuadFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer, Integer, Integer>() {
+                @Override
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer i, Integer c) {
+                    return b.lastIndexOf(v, i, c);
+                }
+            },
+            new IndexOfTests.PentFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer, Integer, EqualityComparator<? super Integer>, Integer>() {
+                @Override
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer i, Integer c, EqualityComparator<? super Integer> eq) {
+                    return b.lastIndexOf(v, i, c, eq);
+                }
+            }
+        );
+    }
 
     @Test
     public void insert() {

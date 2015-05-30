@@ -358,7 +358,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
 
     @Override
     public int lastIndexOf(T item, int index, int count, EqualityComparator<? super T> equalityComparator) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return root.lastIndexOf(item, index, count, equalityComparator);
     }
 
     @Override
@@ -1279,7 +1279,21 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         }
 
         int lastIndexOf(T item, int index, int count, EqualityComparator<? super T> equalityComparator) {
-            throw new UnsupportedOperationException("Not supported yet");
+            Requires.notNull(equalityComparator, "equalityComparator");
+            Requires.range(index >= 0, "index");
+            Requires.range(count >= 0 && count <= size(), "count");
+            Requires.argument(index - count + 1 >= 0);
+
+            Iterator<T> iterator = new Itr<T>(this, null, index, count, true);
+            while (iterator.hasNext()) {
+                if (equalityComparator.equals(item, iterator.next())) {
+                    return index;
+                }
+
+                index--;
+            }
+
+            return -1;
         }
 
         void copyTo(T[] array) {

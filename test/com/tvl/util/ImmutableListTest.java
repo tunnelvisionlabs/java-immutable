@@ -588,24 +588,117 @@ public class ImmutableListTest extends ImmutableListTestBase {
         );
     }
 
-//[Fact]
-//public void LastIndexOf()
-//{
-//    IndexOfTests.LastIndexOfTest(
-//        seq => ImmutableList.CreateRange(seq),
-//        (b, v) => b.LastIndexOf(v),
-//        (b, v, eq) => b.LastIndexOf(v, eq),Arrays.asList(
-//        (b, v, i) => b.LastIndexOf(v, i),
-//        (b, v, i, c) => b.LastIndexOf(v, i, c),
-//        (b, v, i, c, eq) => b.LastIndexOf(v, i, c, eq));
-//    IndexOfTests.LastIndexOfTest(
-//        seq => (IImmutableList<int>)ImmutableList.CreateRange(seq),
-//        (b, v) => b.LastIndexOf(v),
-//        (b, v, eq) => b.LastIndexOf(v, eq),
-//        (b, v, i) => b.LastIndexOf(v, i),
-//        (b, v, i, c) => b.LastIndexOf(v, i, c),
-//        (b, v, i, c, eq) => b.LastIndexOf(v, i, c, eq));
-//}
+    @Test
+    public void lastIndexOf() {
+        IndexOfTests.lastIndexOfTest(
+            new Function<Iterable<Integer>, ImmutableTreeList<Integer>>() {
+                @Override
+                public ImmutableTreeList<Integer> apply(Iterable<Integer> sequence) {
+                    return ImmutableTreeList.createAll(sequence);
+                }
+            },
+            new BiFunction<ImmutableTreeList<Integer>, Integer, Integer>() {
+                @Override
+                public Integer apply(ImmutableTreeList<Integer> b, Integer v) {
+                    //return b.lastIndexOf(v);
+                    if (b.isEmpty()) {
+                        return b.lastIndexOf(v, 0, 0, EqualityComparators.defaultComparator());
+                    } else {
+                        return b.lastIndexOf(v, b.size() - 1, b.size(), EqualityComparators.defaultComparator());
+                    }
+                }
+            },
+            new IndexOfTests.TriFunction<ImmutableTreeList<Integer>, Integer, EqualityComparator<? super Integer>, Integer>() {
+                @Override
+                public Integer apply(ImmutableTreeList<Integer> b, Integer v, EqualityComparator<? super Integer> eq) {
+                    //return b.lastIndexOf(v, eq);
+                    if (b.isEmpty()) {
+                        return b.lastIndexOf(v, 0, 0, eq);
+                    } else {
+                        return b.lastIndexOf(v, b.size() - 1, b.size(), eq);
+                    }
+                }
+            },
+            new IndexOfTests.TriFunction<ImmutableTreeList<Integer>, Integer, Integer, Integer>() {
+                @Override
+                public Integer apply(ImmutableTreeList<Integer> b, Integer v, Integer i) {
+                    //return b.lastIndexOf(v, i);
+                    if (b.isEmpty()) {
+                        return b.lastIndexOf(v, i, 0, EqualityComparators.defaultComparator());
+                    } else {
+                        return b.lastIndexOf(v, i, i + 1, EqualityComparators.defaultComparator());
+                    }
+                }
+            },
+            new IndexOfTests.QuadFunction<ImmutableTreeList<Integer>, Integer, Integer, Integer, Integer>() {
+                @Override
+                public Integer apply(ImmutableTreeList<Integer> b, Integer v, Integer i, Integer c) {
+                    //return b.lastIndexOf(v, i, c);
+                    return b.lastIndexOf(v, i, c, EqualityComparators.defaultComparator());
+                }
+            },
+            new IndexOfTests.PentFunction<ImmutableTreeList<Integer>, Integer, Integer, Integer, EqualityComparator<? super Integer>, Integer>() {
+                @Override
+                public Integer apply(ImmutableTreeList<Integer> b, Integer v, Integer i, Integer c, EqualityComparator<? super Integer> eq) {
+                    return b.lastIndexOf(v, i, c, eq);
+                }
+            }
+        );
+        IndexOfTests.lastIndexOfTest(
+            new Function<Iterable<Integer>, ImmutableList<Integer>>() {
+                @Override
+                public ImmutableList<Integer> apply(Iterable<Integer> sequence) {
+                    return ImmutableTreeList.createAll(sequence);
+                }
+            },
+            new BiFunction<ImmutableList<Integer>, Integer, Integer>() {
+                @Override
+                public Integer apply(ImmutableList<Integer> b, Integer v) {
+                    //return b.lastIndexOf(v);
+                    if (b.isEmpty()) {
+                        return b.lastIndexOf(v, 0, 0, EqualityComparators.defaultComparator());
+                    } else {
+                        return b.lastIndexOf(v, b.size() - 1, b.size(), EqualityComparators.defaultComparator());
+                    }
+                }
+            },
+            new IndexOfTests.TriFunction<ImmutableList<Integer>, Integer, EqualityComparator<? super Integer>, Integer>() {
+                @Override
+                public Integer apply(ImmutableList<Integer> b, Integer v, EqualityComparator<? super Integer> eq) {
+                    //return b.lastIndexOf(v, eq);
+                    if (b.isEmpty()) {
+                        return b.lastIndexOf(v, 0, 0, eq);
+                    } else {
+                        return b.lastIndexOf(v, b.size() - 1, b.size(), eq);
+                    }
+                }
+            },
+            new IndexOfTests.TriFunction<ImmutableList<Integer>, Integer, Integer, Integer>() {
+                @Override
+                public Integer apply(ImmutableList<Integer> b, Integer v, Integer i) {
+                    //return b.lastIndexOf(v, i);
+                    if (b.isEmpty()) {
+                        return b.lastIndexOf(v, i, 0, EqualityComparators.defaultComparator());
+                    } else {
+                        return b.lastIndexOf(v, i, i + 1, EqualityComparators.defaultComparator());
+                    }
+                }
+            },
+            new IndexOfTests.QuadFunction<ImmutableList<Integer>, Integer, Integer, Integer, Integer>() {
+                @Override
+                public Integer apply(ImmutableList<Integer> b, Integer v, Integer i, Integer c) {
+                    //return b.lastIndexOf(v, i, c);
+                    return b.lastIndexOf(v, i, c, EqualityComparators.defaultComparator());
+                }
+            },
+            new IndexOfTests.PentFunction<ImmutableList<Integer>, Integer, Integer, Integer, EqualityComparator<? super Integer>, Integer>() {
+                @Override
+                public Integer apply(ImmutableList<Integer> b, Integer v, Integer i, Integer c, EqualityComparator<? super Integer> eq) {
+                    return b.lastIndexOf(v, i, c, eq);
+                }
+            }
+        );
+    }
 
     @Test
     public void replaceTest() {
