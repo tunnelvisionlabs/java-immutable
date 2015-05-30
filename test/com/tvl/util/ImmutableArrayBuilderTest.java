@@ -417,7 +417,6 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
     }
 
     @Test
-    @Ignore("String comparators are not currently working as expected.")
     public void sortComparator() {
         ImmutableArrayList.Builder<String> builder1 = ImmutableArrayList.createBuilder();
         ImmutableArrayList.Builder<String> builder2 = ImmutableArrayList.createBuilder();

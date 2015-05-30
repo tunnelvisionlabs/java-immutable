@@ -2,7 +2,6 @@
 package com.tvl.util;
 
 import com.google.common.collect.Iterables;
-import java.text.Collator;
 import java.util.Comparator;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -26,17 +25,11 @@ public abstract class ImmutablesTestBase {
     }
 
     protected static StringComparator ordinalComparator() {
-        Collator collator = Collator.getInstance();
-        collator.setDecomposition(Collator.NO_DECOMPOSITION);
-        collator.setStrength(Collator.IDENTICAL);
-        return new StringComparator(collator);
+        return OrdinalStringComparator.INSTANCE;
     }
 
     protected static StringComparator ordinalIgnoreCaseComparator() {
-        Collator collator = Collator.getInstance();
-        collator.setDecomposition(Collator.NO_DECOMPOSITION);
-        collator.setStrength(Collator.SECONDARY);
-        return new StringComparator(collator);
+        return OrdinalIgnoreCaseStringComparator.INSTANCE;
     }
 
     protected static <T> void assertEqualSequences(Iterable<? extends T> left, Iterable<? extends T> right) {
@@ -51,36 +44,67 @@ public abstract class ImmutablesTestBase {
         Assert.assertThat(leftArray, not(equalTo(rightArray)));
     }
 
-    protected static final class StringComparator implements Comparator<Object>, EqualityComparator<Object> {
-        private final Collator collator;
+    protected static abstract class StringComparator implements Comparator<String>, EqualityComparator<String> {
+    }
 
-        public StringComparator(Collator collator) {
-            this.collator = collator;
+    protected static final class OrdinalStringComparator extends StringComparator {
+        private static final StringComparator INSTANCE = new OrdinalStringComparator();
+
+        private final Comparator<? super String> comparator = Comparators.defaultComparator();
+        private final EqualityComparator<? super String> equalityComparator = EqualityComparators.defaultComparator();
+
+        @Override
+        public int compare(String o1, String o2) {
+            return comparator.compare(o1, o2);
         }
 
         @Override
-        public int compare(Object o1, Object o2) {
-            return collator.compare(o1, o2);
+        public boolean equals(String a, String b) {
+            return equalityComparator.equals(a, b);
         }
 
         @Override
-        public boolean equals(Object a, Object b) {
-            if (a != null && !(a instanceof String)) {
-                return EqualityComparators.defaultComparator().equals(a, b);
-            } else if (b != null && !(b instanceof String)) {
-                return EqualityComparators.defaultComparator().equals(a, b);
+        public int hashCode(String o) {
+            return equalityComparator.hashCode(o);
+        }
+    }
+
+    protected static final class OrdinalIgnoreCaseStringComparator extends StringComparator {
+        private static final StringComparator INSTANCE = new OrdinalIgnoreCaseStringComparator();
+
+        @Override
+        public int compare(String o1, String o2) {
+            if (o1 != null) {
+                o1 = o1.toUpperCase();
             }
 
-            return collator.equals((String)a, (String)b);
+            if (o2 != null) {
+                o2 = o2.toUpperCase();
+            }
+
+            return OrdinalStringComparator.INSTANCE.compare(o1, o2);
         }
 
         @Override
-        public int hashCode(Object o) {
-            if (o != null && !(o instanceof String)) {
-                return EqualityComparators.defaultComparator().hashCode(o);
+        public boolean equals(String a, String b) {
+            if (a != null) {
+                a = a.toUpperCase();
             }
 
-            return collator.getCollationKey((String)o).hashCode();
+            if (b != null) {
+                b = b.toUpperCase();
+            }
+
+            return OrdinalStringComparator.INSTANCE.equals(a, b);
+        }
+
+        @Override
+        public int hashCode(String o) {
+            if (o != null) {
+                o = o.toUpperCase();
+            }
+
+            return OrdinalStringComparator.INSTANCE.hashCode(o);
         }
     }
 }
