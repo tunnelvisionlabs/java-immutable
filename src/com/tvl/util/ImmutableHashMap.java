@@ -1,9 +1,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 package com.tvl.util;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * An immutable unordered map implementation.
@@ -11,7 +13,7 @@ import java.util.NoSuchElementException;
  * @param <K> The type of the key.
  * @param <V> The type of the value.
  */
-public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
+public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKeyCollection<K> {
 
     /**
      * An empty immutable map with default equality comparators.
@@ -74,11 +76,11 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
         return empty();
     }
 
-    public static <K, V> ImmutableHashMap<K, V> create(EqualityComparator<K> keyComparator) {
+    public static <K, V> ImmutableHashMap<K, V> create(EqualityComparator<? super K> keyComparator) {
         return ImmutableHashMap.<K, V>empty().withComparators(keyComparator);
     }
 
-    public static <K, V> ImmutableHashMap<K, V> create(EqualityComparator<K> keyComparator, EqualityComparator<V> valueComparator) {
+    public static <K, V> ImmutableHashMap<K, V> create(EqualityComparator<? super K> keyComparator, EqualityComparator<? super V> valueComparator) {
         return ImmutableHashMap.<K, V>empty().withComparators(keyComparator, valueComparator);
     }
 
@@ -86,11 +88,11 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
         return ImmutableHashMap.<K, V>empty().addAll(items);
     }
 
-    public static <K, V> ImmutableHashMap<K, V> createAll(EqualityComparator<K> keyComparator, Iterable<Map.Entry<K, V>> items) {
+    public static <K, V> ImmutableHashMap<K, V> createAll(EqualityComparator<? super K> keyComparator, Iterable<Map.Entry<K, V>> items) {
         return ImmutableHashMap.<K, V>create(keyComparator).addAll(items);
     }
 
-    public static <K, V> ImmutableHashMap<K, V> createAll(EqualityComparator<K> keyComparator, EqualityComparator<V> valueComparator, Iterable<Map.Entry<K, V>> items) {
+    public static <K, V> ImmutableHashMap<K, V> createAll(EqualityComparator<? super K> keyComparator, EqualityComparator<? super V> valueComparator, Iterable<Map.Entry<K, V>> items) {
         return ImmutableHashMap.create(keyComparator, valueComparator).addAll(items);
     }
 
@@ -98,11 +100,11 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
         return ImmutableHashMap.<K, V>create().toBuilder();
     }
 
-    public static <K, V> ImmutableHashMap.Builder<K, V> createBuilder(EqualityComparator<K> keyComparator) {
+    public static <K, V> ImmutableHashMap.Builder<K, V> createBuilder(EqualityComparator<? super K> keyComparator) {
         return ImmutableHashMap.<K, V>create(keyComparator).toBuilder();
     }
 
-    public static <K, V> ImmutableHashMap.Builder<K, V> createBuilder(EqualityComparator<K> keyComparator, EqualityComparator<V> valueComparator) {
+    public static <K, V> ImmutableHashMap.Builder<K, V> createBuilder(EqualityComparator<? super K> keyComparator, EqualityComparator<? super V> valueComparator) {
         return ImmutableHashMap.create(keyComparator, valueComparator).toBuilder();
     }
 
@@ -116,44 +118,131 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
         return new ImmutableHashMap<K, V>(comparators);
     }
 
-    private static <K, V> ImmutableHashMap<K, V> tryCastToImmutableMap(Iterable<Map.Entry<K, V>> sequence) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    private static <K, V> ImmutableHashMap<K, V> tryCastToImmutableMap(Iterable<? extends Map.Entry<K, V>> sequence) {
+        if (sequence instanceof ImmutableHashMap.EntrySet<?, ?>) {
+            return ((ImmutableHashMap.EntrySet<K, V>)sequence).getMap();
+        }
+
+        if (sequence instanceof ImmutableHashMap.Builder.EntrySet<?, ?>) {
+            return ((ImmutableHashMap.Builder.EntrySet<K, V>)sequence).getBuilder().toImmutable();
+        }
+        //var builder = sequence as Builder;
+        //if (builder != null)
+        //{
+        //    other = builder.ToImmutable();
+        //    return true;
+        //}
+
+        return null;
     }
 
     private static <K, V> boolean containsKey(K key, MutationInput<K, V> origin) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int hashCode = origin.getKeyComparator().hashCode(key);
+        HashBucket<K, V> bucket = origin.getRoot().getValueOrDefault(hashCode);
+        if (bucket != null) {
+            K equalKey = bucket.getKey(key, origin.getKeyOnlyComparator());
+            return equalKey != null;
+        }
+
+        return false;
     }
 
     private static <K, V> boolean contains(Map.Entry<K, V> keyValuePair, MutationInput<K, V> origin) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int hashCode = origin.getKeyComparator().hashCode(keyValuePair.getKey());
+        HashBucket<K, V> bucket = origin.getRoot().getValueOrDefault(hashCode);
+        if (bucket != null) {
+            KeyValuePair<K, V> entry = bucket.getEntry(keyValuePair.getKey(), origin.getKeyOnlyComparator());
+            return entry != null && origin.getValueComparator().equals(entry.getValue(), keyValuePair.getValue());
+        }
+
+        return false;
     }
 
     private static <K, V> V getValue(K key, MutationInput<K, V> origin) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int hashCode = origin.getKeyComparator().hashCode(key);
+        HashBucket<K, V> bucket = origin.getRoot().getValueOrDefault(hashCode);
+        if (bucket != null) {
+            return bucket.getValue(key, origin.getKeyOnlyComparator());
+        }
+
+        return null;
     }
 
     private static <K, V> K getKey(K equalKey, MutationInput<K, V> origin) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int hashCode = origin.getKeyComparator().hashCode(equalKey);
+        HashBucket<K, V> bucket = origin.getRoot().getValueOrDefault(hashCode);
+        if (bucket != null) {
+            return bucket.getKey(equalKey, origin.getKeyOnlyComparator());
+        }
+
+        return null;
     }
 
     private static <K, V> MutationResult<K, V> add(K key, V value, KeyCollisionBehavior behavior, MutationInput<K, V> origin) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(key, "key");
+
+        int hashCode = origin.getKeyComparator().hashCode(key);
+        HashBucket<K, V> bucket = origin.getRoot().getValueOrDefault(hashCode);
+        if (bucket == null) {
+            bucket = new HashBucket<K, V>();
+        }
+
+        KeyValuePair<HashBucket<K, V>, OperationResult> newBucket = bucket.add(key, value, origin.getKeyOnlyComparator(), origin.getValueComparator(), behavior);
+        if (newBucket.getValue() == OperationResult.NO_CHANGE_REQUIRED)
+        {
+            return new MutationResult<K, V>(origin);
+        }
+
+        SortedIntegerKeyNode<HashBucket<K, V>> newRoot = updateRoot(origin.getRoot(), hashCode, newBucket.getKey(), origin.getHashBucketComparator());
+        return new MutationResult<K, V>(newRoot, newBucket.getValue() == OperationResult.SIZE_CHANGED ? +1 : 0);
     }
 
-    private static <K, V> MutationResult<K, V> addAll(Iterable<Map.Entry<K, V>> items, MutationInput<K, V> origin) {
+    private static <K, V> MutationResult<K, V> addAll(Iterable<? extends Map.Entry<K, V>> items, MutationInput<K, V> origin) {
         return addAll(items, origin, KeyCollisionBehavior.THROW_IF_VALUE_DIFFERENT);
     }
 
-    private static <K, V> MutationResult<K, V> addAll(Iterable<Map.Entry<K, V>> items, MutationInput<K, V> origin, KeyCollisionBehavior behavior) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    private static <K, V> MutationResult<K, V> addAll(Iterable<? extends Map.Entry<K, V>> items, MutationInput<K, V> origin, KeyCollisionBehavior behavior) {
+        Requires.notNull(items, "items");
+
+        int countAdjustment = 0;
+        SortedIntegerKeyNode<HashBucket<K, V>> newRoot = origin.getRoot();
+        for (Map.Entry<K, V> pair : items) {
+            int hashCode = origin.getKeyComparator().hashCode(pair.getKey());
+            HashBucket<K, V> bucket = newRoot.getValueOrDefault(hashCode);
+            if (bucket == null) {
+                bucket = new HashBucket<K, V>();
+            }
+
+            KeyValuePair<HashBucket<K, V>, OperationResult> newBucket = bucket.add(pair.getKey(), pair.getValue(), origin.getKeyOnlyComparator(), origin.getValueComparator(), behavior);
+            newRoot = updateRoot(newRoot, hashCode, newBucket.getKey(), origin.getHashBucketComparator());
+            if (newBucket.getValue() == OperationResult.SIZE_CHANGED) {
+                countAdjustment++;
+            }
+        }
+
+        return new MutationResult<K, V>(newRoot, countAdjustment);
     }
 
     private static <K, V> MutationResult<K, V> remove(K key, MutationInput<K, V> origin) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int hashCode = origin.getKeyComparator().hashCode(key);
+        HashBucket<K, V> bucket = origin.getRoot().getValueOrDefault(hashCode);
+        if (bucket != null) {
+            KeyValuePair<HashBucket<K, V>, OperationResult> removeResult = bucket.remove(key, origin.getKeyOnlyComparator());
+            SortedIntegerKeyNode<HashBucket<K, V>> newRoot = updateRoot(origin.getRoot(), hashCode, removeResult.getKey(), origin.getHashBucketComparator());
+            return new MutationResult<K, V>(newRoot, removeResult.getValue() == OperationResult.SIZE_CHANGED ? -1 : 0);
+        }
+
+        return new MutationResult<K, V>(origin);
     }
 
-    private static <K, V> SortedIntegerKeyNode<HashBucket<K, V>> updateRoot(SortedIntegerKeyNode<HashBucket<K, V>> root, int hashCode, HashBucket<K, V> newBucket, EqualityComparator<HashBucket<K, V>> hashBucketComparator) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    private static <K, V> SortedIntegerKeyNode<HashBucket<K, V>> updateRoot(SortedIntegerKeyNode<HashBucket<K, V>> root, int hashCode, HashBucket<K, V> newBucket, EqualityComparator<? super HashBucket<K, V>> hashBucketComparator) {
+        if (newBucket.isEmpty()) {
+            SortedIntegerKeyNode.MutationResult<HashBucket<K, V>> result = root.remove(hashCode);
+            return result.result;
+        } else {
+            SortedIntegerKeyNode.SetItemResult<HashBucket<K, V>> result = root.setItem(hashCode, newBucket, hashBucketComparator);
+            return result.result;
+        }
     }
 
     private static <K, V> ImmutableHashMap<K, V> wrap(SortedIntegerKeyNode<HashBucket<K, V>> root, Comparators<K, V> comparators, int count) {
@@ -188,12 +277,56 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
 
     @Override
     public Iterable<K> keySet() {
-        throw new UnsupportedOperationException();
+        return new Iterable<K>() {
+            @Override
+            public Iterator<K> iterator() {
+                return new Iterator<K>() {
+                    Iterator<Map.Entry<K, V>> entriesIterator = entrySet().iterator();
+
+                    @Override
+                    public boolean hasNext() {
+                        return entriesIterator.hasNext();
+                    }
+
+                    @Override
+                    public K next() {
+                        return entriesIterator.next().getKey();
+                    }
+
+                    @Override
+                    public void remove() {
+                        entriesIterator.remove();
+                    }
+                };
+            }
+        };
     }
 
     @Override
     public Iterable<V> values() {
-        throw new UnsupportedOperationException();
+        return new Iterable<V>() {
+            @Override
+            public Iterator<V> iterator() {
+                return new Iterator<V>() {
+                    Iterator<Map.Entry<K, V>> entriesIterator = entrySet().iterator();
+
+                    @Override
+                    public boolean hasNext() {
+                        return entriesIterator.hasNext();
+                    }
+
+                    @Override
+                    public V next() {
+                        return entriesIterator.next().getValue();
+                    }
+
+                    @Override
+                    public void remove() {
+                        entriesIterator.remove();
+                    }
+                };
+            }
+        };
     }
 
     private MutationInput<K, V> getOrigin() {
@@ -206,47 +339,79 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
 
     @Override
     public ImmutableHashMap<K, V> add(K key, V value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(key, "key");
+
+        ImmutableHashMap.MutationResult<K, V> result = add(key, value, KeyCollisionBehavior.THROW_IF_VALUE_DIFFERENT, new MutationInput<K, V>(this));
+        return result.finalize(this);
     }
 
     @Override
-    public ImmutableHashMap<K, V> addAll(Iterable<Map.Entry<K, V>> entries) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public ImmutableHashMap<K, V> addAll(Iterable<? extends Map.Entry<K, V>> entries) {
+        Requires.notNull(entries, "entries");
+
+        return addAll(entries, false);
     }
 
     @Override
     public ImmutableHashMap<K, V> put(K key, V value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(key, "key");
+
+        MutationResult<K, V> result = add(key, value, KeyCollisionBehavior.SET_VALUE, new MutationInput<K, V>(this));
+        return result.finalize(this);
     }
 
     @Override
-    public ImmutableHashMap<K, V> putAll(Iterable<Map.Entry<K, V>> entries) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public ImmutableHashMap<K, V> putAll(Iterable<? extends Map.Entry<K, V>> entries) {
+        Requires.notNull(entries, "entries");
+
+        MutationResult<K, V> result = addAll(entries, getOrigin(), KeyCollisionBehavior.SET_VALUE);
+        return result.finalize(this);
     }
 
     @Override
     public ImmutableHashMap<K, V> remove(K key) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(key, "key");
+
+        MutationResult<K, V> result = remove(key, new MutationInput<K, V>(this));
+        return result.finalize(this);
     }
 
     @Override
-    public ImmutableHashMap<K, V> removeAll(Iterable<K> keys) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public ImmutableHashMap<K, V> removeAll(Iterable<? extends K> keys) {
+        Requires.notNull(keys, "keys");
+
+        int count = this.count;
+        SortedIntegerKeyNode<HashBucket<K, V>> root = this.root;
+        for (K key : keys) {
+            int hashCode = getKeyComparator().hashCode(key);
+            HashBucket<K, V> bucket = root.getValueOrDefault(hashCode);
+            if (bucket != null) {
+                KeyValuePair<HashBucket<K, V>, OperationResult> newBucket = bucket.remove(key, comparators.getKeyOnlyComparator());
+                root = updateRoot(root, hashCode, newBucket.getKey(), comparators.getHashBucketComparator());
+                if (newBucket.getValue() == OperationResult.SIZE_CHANGED) {
+                    count--;
+                }
+            }
+        }
+
+        return wrap(root, count);
     }
 
     @Override
     public boolean containsKey(K key) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(key, "key");
+        return containsKey(key, new MutationInput<K, V>(this));
     }
 
     @Override
     public boolean contains(Map.Entry<K, V> pair) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return contains(pair, getOrigin());
     }
 
     @Override
     public V get(K key) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(key, "key");
+        return getValue(key, getOrigin());
     }
 
     @Override
@@ -281,7 +446,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
         } else {
             Comparators<K, V> comparators = Comparators.get(keyComparator, valueComparator);
             ImmutableHashMap<K, V> map = new ImmutableHashMap<K, V>(comparators);
-            map = map.addAll(entrySet());
+            map = map.addAll(entrySet(), true);
             return map;
         }
     }
@@ -292,7 +457,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
 
     @Override
     public Iterable<Map.Entry<K, V>> entrySet() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new EntrySet<K, V>(this);
     }
 
     private ImmutableHashMap<K, V> wrap(SortedIntegerKeyNode<HashBucket<K, V>> root, int adjustedCountIfDifferentRoot) {
@@ -307,7 +472,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
         return this;
     }
 
-    private ImmutableHashMap<K, V> addAll(Iterable<Map.Entry<K, V>> pairs, boolean avoidToHashMap) {
+    private ImmutableHashMap<K, V> addAll(Iterable<? extends Map.Entry<K, V>> pairs, boolean avoidToHashMap) {
         Requires.notNull(pairs, "pairs");
 
         // Some optimizations may apply if we're an empty list
@@ -322,6 +487,10 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
 
         MutationResult<K, V> result = addAll(pairs, getOrigin());
         return result.finalize(this);
+    }
+
+    SortedIntegerKeyNode<HashBucket<K, V>> getRoot() {
+        return root;
     }
 
     /**
@@ -364,7 +533,84 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
         NO_CHANGE_REQUIRED
     }
 
-    public static final class Builder<K, V> {
+    private static final class EntrySet<K, V> implements Iterable<Map.Entry<K, V>> {
+        private final ImmutableHashMap<K, V> map;
+
+        EntrySet(ImmutableHashMap<K, V> map) {
+            Requires.notNull(map, "map");
+            this.map = map;
+        }
+
+        @Override
+        public Iterator<Map.Entry<K, V>> iterator() {
+            return new EntrySetItr<K, V>(map.root);
+        }
+
+        ImmutableHashMap<K, V> getMap() {
+            return map;
+        }
+    }
+
+    private static final class EntrySetItr<K, V> implements Iterator<Map.Entry<K, V>> {
+        private final Builder<K, V> builder;
+        private SortedIntegerKeyNode.Itr<HashBucket<K, V>> mapIterator;
+        private Iterator<Map.Entry<K, V>> bucketIterator;
+        private int iteratingBuilderVersion;
+
+        EntrySetItr(SortedIntegerKeyNode<HashBucket<K, V>> root) {
+            this(root, null);
+        }
+
+        EntrySetItr(SortedIntegerKeyNode<HashBucket<K, V>> root, Builder<K, V> builder) {
+            this.builder = builder;
+            this.mapIterator = root.iterator();
+            this.bucketIterator = null;
+            this.iteratingBuilderVersion = builder != null ? builder.getVersion() : -1;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (bucketIterator != null && bucketIterator.hasNext()) {
+                return true;
+            }
+
+            while (mapIterator.hasNext()) {
+                SortedIntegerKeyNode.IntegerKeyEntry<HashBucket<K, V>> bucket = mapIterator.next();
+                bucketIterator = bucket.getValue().iterator();
+                if (bucketIterator.hasNext()) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        public Map.Entry<K, V> next() {
+            throwIfChanged();
+
+            // hasNext() handles mapIterator and bucketIterator
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            assert bucketIterator != null && bucketIterator.hasNext();
+            return bucketIterator.next();
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("This iterator is read-only.");
+        }
+
+        private void throwIfChanged() {
+            if (builder != null && builder.getVersion() != iteratingBuilderVersion) {
+                throw new IllegalStateException("The collection was modified during iteration.");
+            }
+        }
+    }
+
+    public static final class Builder<K, V> implements Map<K, V>, ReadOnlyMap<K, V> {
         private SortedIntegerKeyNode<HashBucket<K, V>> root = SortedIntegerKeyNode.emptyNode();
         private Comparators<K, V> comparators;
         private int count;
@@ -400,6 +646,379 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
                 throw new UnsupportedOperationException();
             }
         }
+
+        @Override
+        public int size() {
+            return count;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return count == 0;
+        }
+
+        @Override
+        public Set<K> keySet() {
+            return new KeySet();
+        }
+
+        @Override
+        public Collection<V> values() {
+            return new ValuesCollection();
+        }
+
+        int getVersion() {
+            return version;
+        }
+
+        private MutationInput<K, V> getOrigin() {
+            return new MutationInput<K, V>(getRoot(), comparators, count);
+        }
+
+        private SortedIntegerKeyNode<HashBucket<K, V>> getRoot() {
+            return root;
+        }
+
+        private void setRoot(SortedIntegerKeyNode<HashBucket<K, V>> value) {
+            // We *always* increment the version number because some mutations may not create a new value of root,
+            // although the existing root instance may have mutated.
+            version++;
+
+            if (root != value) {
+                root = value;
+
+                // Clear any cached value for the immutable view since it is now invalidated.
+                immutable = null;
+            }
+        }
+
+        @Override
+        public V get(Object key) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public V put(K key, V value) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void putAll(Map<? extends K, ? extends V> m) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public void removeAll(Iterable<? extends K> keys) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public Set<Entry<K, V>> entrySet() {
+            return new EntrySet<K, V>(this);
+        }
+
+        public V getValueOrDefault(K key, V defaultValue) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public ImmutableHashMap<K, V> toImmutable() {
+            // Creating an instance of ImmutableHashMap<T> with our root node automatically freezes our tree, ensuring
+            // that the returned instance is immutable. Any further mutations made to this builder will clone (and
+            // unfreeze) the spine of modified nodes until the next time this method is invoked.
+            if (immutable == null) {
+                immutable = ImmutableHashMap.wrap(root, comparators, count);
+            }
+
+            return immutable;
+        }
+
+        @Override
+        public boolean containsKey(Object key) {
+            return ImmutableHashMap.containsKey((K)key, getOrigin());
+        }
+
+        @Override
+        public boolean containsValue(Object value) {
+            for (Map.Entry<K, V> entry : entrySet()) {
+                if (getValueComparator().equals((V)value, entry.getValue())) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        public V remove(Object key) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public K getKey(K equalKey) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void clear() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        private boolean apply(MutationResult<K, V> result) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        private static final class EntrySet<K, V> implements Set<Map.Entry<K, V>> {
+            private final Builder<K, V> builder;
+
+            private EntrySet(Builder<K, V> builder) {
+                Requires.notNull(builder, "builder");
+                this.builder = builder;
+            }
+
+            Builder<K, V> getBuilder() {
+                return builder;
+            }
+
+            @Override
+            public int size() {
+                return builder.size();
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return builder.isEmpty();
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public Iterator<Entry<K, V>> iterator() {
+                return new EntrySetItr<K, V>(builder.root, builder);
+            }
+
+            @Override
+            public Object[] toArray() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public <T> T[] toArray(T[] a) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean add(Entry<K, V> kvEntry) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean remove(Object o) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends Entry<K, V>> c) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean retainAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean removeAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public void clear() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        }
+
+        private final class KeySet implements Set<K> {
+
+            @Override
+            public int size() {
+                return Builder.this.size();
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return Builder.this.isEmpty();
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                return Builder.this.containsKey(o);
+            }
+
+            @Override
+            public Iterator<K> iterator() {
+                return new Iterator<K>() {
+                    Iterator<Map.Entry<K, V>> entriesIterator = Builder.this.entrySet().iterator();
+
+                    @Override
+                    public boolean hasNext() {
+                        return entriesIterator.hasNext();
+                    }
+
+                    @Override
+                    public K next() {
+                        return entriesIterator.next().getKey();
+                    }
+
+                    @Override
+                    public void remove() {
+                        entriesIterator.remove();
+                    }
+                };
+            }
+
+            @Override
+            public Object[] toArray() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public <T> T[] toArray(T[] a) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean add(K k) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean remove(Object o) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> c) {
+                Requires.notNull(c, "c");
+                for (Object item : c) {
+                    if (!contains(item)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends K> c) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean retainAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean removeAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public void clear() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        }
+
+        private final class ValuesCollection implements Collection<V> {
+
+            @Override
+            public int size() {
+                return Builder.this.size();
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return Builder.this.isEmpty();
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                return Builder.this.containsValue(o);
+            }
+
+            @Override
+            public Iterator<V> iterator() {
+                return new Iterator<V>() {
+                    Iterator<Map.Entry<K, V>> entriesIterator = entrySet().iterator();
+
+                    @Override
+                    public boolean hasNext() {
+                        return entriesIterator.hasNext();
+                    }
+
+                    @Override
+                    public V next() {
+                        return entriesIterator.next().getValue();
+                    }
+
+                    @Override
+                    public void remove() {
+                        entriesIterator.remove();
+                    }
+                };
+            }
+
+            @Override
+            public Object[] toArray() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public <T> T[] toArray(T[] a) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean add(V v) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean remove(Object o) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends V> c) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean removeAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean retainAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public void clear() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        }
     }
 
     /**
@@ -414,14 +1033,14 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
         /**
          * One of the values in this bucket.
          */
-        private final Map.Entry<K, V> firstValue;
+        private final KeyValuePair<K, V> firstValue;
         /**
          * Any other elements that hash to the same value.
          *
          * This is {@code null} if and only if the entire bucket is empty (including {@link #firstValue}). It's empty if
          * {@link #firstValue} has an element but no additional elements.
          */
-        private final ImmutableTreeList.Node<Map.Entry<K, V>> additionalElements;
+        private final ImmutableTreeList.Node<KeyValuePair<K, V>> additionalElements;
 
         /**
          * Initializes a new instance of an empty {@link HashBucket}.
@@ -436,7 +1055,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
          *
          * @param firstElement The first element in the bucket.
          */
-        private HashBucket(Map.Entry<K, V> firstElement) {
+        private HashBucket(KeyValuePair<K, V> firstElement) {
             this(firstElement, null);
         }
 
@@ -446,9 +1065,9 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
          * @param firstElement The first element in the bucket.
          * @param additionalElements The additional elements.
          */
-        private HashBucket(Map.Entry<K, V> firstElement, ImmutableTreeList.Node<Map.Entry<K, V>> additionalElements) {
+        private HashBucket(KeyValuePair<K, V> firstElement, ImmutableTreeList.Node<KeyValuePair<K, V>> additionalElements) {
             this.firstValue = firstElement;
-            this.additionalElements = additionalElements != null ? additionalElements : ImmutableTreeList.Node.<Map.Entry<K, V>>empty();
+            this.additionalElements = additionalElements != null ? additionalElements : ImmutableTreeList.Node.<KeyValuePair<K, V>>empty();
         }
 
         private static <K, V> HashBucket<K, V> empty() {
@@ -485,7 +1104,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
          *
          * @return The list of additional elements.
          */
-        ImmutableTreeList.Node<Map.Entry<K, V>> getAdditionalElements() {
+        ImmutableTreeList.Node<KeyValuePair<K, V>> getAdditionalElements() {
             return additionalElements;
         }
 
@@ -527,7 +1146,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
          * new {@link HashBucket} which includes the specified key-value pair. The {@link KeyValuePair#getValue()}
          * returns an {@link OperationResult} describing the type of change which was made to the collection.
          */
-        KeyValuePair<HashBucket<K, V>, OperationResult> add(K key, V value, EqualityComparator<Map.Entry<K, V>> keyOnlyComparator, EqualityComparator<V> valueComparator, KeyCollisionBehavior behavior) {
+        KeyValuePair<HashBucket<K, V>, OperationResult> add(K key, V value, EqualityComparator<? super Map.Entry<K, V>> keyOnlyComparator, EqualityComparator<? super V> valueComparator, KeyCollisionBehavior behavior) {
             KeyValuePair<K, V> kv = new KeyValuePair<K, V>(key, value);
             if (isEmpty()) {
                 return new KeyValuePair<HashBucket<K, V>, OperationResult>(new HashBucket<K, V>(kv), OperationResult.SIZE_CHANGED);
@@ -543,13 +1162,13 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
 
                 case THROW_IF_VALUE_DIFFERENT:
                     if (!valueComparator.equals(firstValue.getValue(), value)) {
-                        throw new IllegalArgumentException("The key already exists with a different value.");
+                        throw new IllegalArgumentException(String.format("An element with the same key but a different value already exists. Key: %s", key));
                     }
 
                     return new KeyValuePair<HashBucket<K, V>, OperationResult>(this, OperationResult.NO_CHANGE_REQUIRED);
 
                 case THROW_ALWAYS:
-                    throw new IllegalArgumentException("The key already exists with a different value.");
+                    throw new IllegalArgumentException(String.format("An element with the same key but a different value already exists. Key: %s", key));
 
                 default:
                     throw new IllegalStateException("Unreachable");
@@ -593,12 +1212,12 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
          * new {@link HashBucket} which does not contain the specified key. The {@link KeyValuePair#getValue()} returns
          * an {@link OperationResult} describing the type of change which was made to the collection.
          */
-        KeyValuePair<HashBucket<K, V>, OperationResult> remove(K key, EqualityComparator<Map.Entry<K, V>> keyOnlyComparator) {
+        KeyValuePair<HashBucket<K, V>, OperationResult> remove(K key, EqualityComparator<? super Map.Entry<K, V>> keyOnlyComparator) {
             if (isEmpty()) {
                 return new KeyValuePair<HashBucket<K, V>, OperationResult>(this, OperationResult.NO_CHANGE_REQUIRED);
             }
 
-            Map.Entry<K, V> kv = new KeyValuePair<K, V>(key, null);
+            KeyValuePair<K, V> kv = new KeyValuePair<K, V>(key, null);
             if (keyOnlyComparator.equals(firstValue, kv)) {
                 if (additionalElements.isEmpty()) {
                     return new KeyValuePair<HashBucket<K, V>, OperationResult>(HashBucket.<K, V>empty(), OperationResult.SIZE_CHANGED);
@@ -625,12 +1244,12 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
          * @param keyOnlyComparator The key comparator.
          * @return The value for the given key, or {@code null} if the key was not found.
          */
-        V getValue(K key, EqualityComparator<Map.Entry<K, V>> keyOnlyComparator) {
+        V getValue(K key, EqualityComparator<? super Map.Entry<K, V>> keyOnlyComparator) {
             if (isEmpty()) {
                 return null;
             }
 
-            Map.Entry<K, V> kv = new KeyValuePair<K, V>(key, null);
+            KeyValuePair<K, V> kv = new KeyValuePair<K, V>(key, null);
             if (keyOnlyComparator.equals(firstValue, kv)) {
                 return firstValue.getValue();
             }
@@ -655,12 +1274,12 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
          * @param keyOnlyComparator The key comparator.
          * @return The key from the map that the search found, or {@code null} if the search yielded no match.
          */
-        K getKey(K equalKey, EqualityComparator<Map.Entry<K, V>> keyOnlyComparator) {
+        K getKey(K equalKey, EqualityComparator<? super Map.Entry<K, V>> keyOnlyComparator) {
             if (isEmpty()) {
                 return null;
             }
 
-            Map.Entry<K, V> kv = new KeyValuePair<K, V>(equalKey, null);
+            KeyValuePair<K, V> kv = new KeyValuePair<K, V>(equalKey, null);
             if (keyOnlyComparator.equals(firstValue, kv)) {
                 return firstValue.getKey();
             }
@@ -671,6 +1290,24 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
             }
 
             return additionalElements.get(index).getKey();
+        }
+
+        KeyValuePair<K, V> getEntry(K key, EqualityComparator<? super Map.Entry<K, V>> keyOnlyComparator) {
+            if (isEmpty()) {
+                return null;
+            }
+
+            KeyValuePair<K, V> kv = new KeyValuePair<K, V>(key, null);
+            if (keyOnlyComparator.equals(firstValue, kv)) {
+                return firstValue;
+            }
+
+            int index = additionalElements.indexOf(kv, keyOnlyComparator);
+            if (index < 0) {
+                return null;
+            }
+
+            return additionalElements.get(index);
         }
 
         /**
@@ -684,7 +1321,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
 
         final class Itr implements Iterator<Map.Entry<K, V>> {
             private Position currentPosition;
-            private Iterator<Map.Entry<K, V>> additionalIterator;
+            private Iterator<KeyValuePair<K, V>> additionalIterator;
 
             Itr() {
                 currentPosition = Position.BEFORE_FIRST;
@@ -784,12 +1421,38 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
 
         private final EqualityComparator<? super V> valueComparator;
 
+        private final EqualityComparator<? super Map.Entry<K, V>> keyOnlyComparator;
+
+        private final EqualityComparator<? super HashBucket<K, V>> hashBucketComparator;
+
         Comparators(EqualityComparator<? super K> keyComparator, EqualityComparator<? super V> valueComparator) {
             Requires.notNull(keyComparator, "keyComparator");
             Requires.notNull(valueComparator, "valueComparator");
 
             this.keyComparator = keyComparator;
             this.valueComparator = valueComparator;
+            this.keyOnlyComparator = new EqualityComparator<Map.Entry<K, V>>() {
+                @Override
+                public boolean equals(Map.Entry<K, V> a, Map.Entry<K, V> b) {
+                    return Comparators.this.equalKeys(a, b);
+                }
+
+                @Override
+                public int hashCode(Map.Entry<K, V> o) {
+                    return Comparators.this.keyHashCode(o);
+                }
+            };
+            this.hashBucketComparator = new EqualityComparator<HashBucket<K, V>>() {
+                @Override
+                public boolean equals(HashBucket<K, V> a, HashBucket<K, V> b) {
+                    return Comparators.this.equals(a, b);
+                }
+
+                @Override
+                public int hashCode(HashBucket<K, V> o) {
+                    return Comparators.this.hashCode(o);
+                }
+            };
         }
 
         static <K, V> Comparators<K, V> defaultComparators() {
@@ -810,8 +1473,34 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
             return keyComparator;
         }
 
+        EqualityComparator<? super Map.Entry<K, V>> getKeyOnlyComparator() {
+            return keyOnlyComparator;
+        }
+
         EqualityComparator<? super V> getValueComparator() {
             return valueComparator;
+        }
+
+        EqualityComparator<? super HashBucket<K, V>> getHashBucketComparator() {
+            return hashBucketComparator;
+        }
+
+        private boolean equals(HashBucket<K, V> x, HashBucket<K, V> y) {
+            return x.getAdditionalElements() == y.getAdditionalElements()
+                && getKeyComparator().equals(x.getFirstValue().getKey(), y.getFirstValue().getKey())
+                && getValueComparator().equals(x.getFirstValue().getValue(), y.getFirstValue().getValue());
+        }
+
+        private int hashCode(HashBucket<K, V> obj) {
+            return getKeyComparator().hashCode(obj.getFirstValue().getKey());
+        }
+
+        private boolean equalKeys(Map.Entry<K, V> x, Map.Entry<K, V> y) {
+            return getKeyComparator().equals(x.getKey(), y.getKey());
+        }
+
+        private int keyHashCode(Map.Entry<K, V> obj) {
+            return getKeyComparator().hashCode(obj.getKey());
         }
 
         Comparators<K, V> withValueComparator(EqualityComparator<? super V> valueComparator) {
@@ -864,8 +1553,16 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V> {
             return comparators.getKeyComparator();
         }
 
+        EqualityComparator<? super Map.Entry<K, V>> getKeyOnlyComparator() {
+            return comparators.getKeyOnlyComparator();
+        }
+
         EqualityComparator<? super V> getValueComparator() {
             return comparators.getValueComparator();
+        }
+
+        EqualityComparator<? super HashBucket<K, V>> getHashBucketComparator() {
+            return comparators.getHashBucketComparator();
         }
 
         /**

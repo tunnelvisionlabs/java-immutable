@@ -1,8 +1,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 package com.tvl.util;
 
+import java.util.ArrayDeque;
 import java.util.Comparator;
+import java.util.Deque;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * A node in the AVL tree storing key/value pairs with integer keys.
@@ -14,7 +18,7 @@ import java.util.Map;
  *
  * @param <T> The type of value stored in the tree.
  */
-final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.IntegerKeyEntry<T>> {
+final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.IntegerKeyEntry<T>>, Iterable<Map.Entry<Integer, T>> {
 
     /**
      * The default empty node.
@@ -116,6 +120,15 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
     @Override
     public IntegerKeyEntry<T> getValue() {
         return new IntegerKeyEntry<T>(key, value);
+    }
+
+    Iterable<T> getValues() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Itr<T> iterator() {
+        return new Itr<T>(this);
     }
 
     SetItemResult<T> setItem(int key, T value, EqualityComparator<? super T> valueComparator) {
@@ -362,6 +375,55 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         }
 
         return left.search(key);
+    }
+
+    static final class Itr<T> implements Iterator<Map.Entry<Integer, T>> {
+        private SortedIntegerKeyNode<T> root;
+
+        private Deque<SortedIntegerKeyNode<T>> stack;
+
+        private SortedIntegerKeyNode<T> current;
+
+        Itr(SortedIntegerKeyNode<T> root) {
+            Requires.notNull(root, "root");
+
+            this.root = root;
+            this.stack = null;
+            if (!root.isEmpty()) {
+                this.stack = new ArrayDeque<SortedIntegerKeyNode<T>>();
+                pushLeft(root);
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return stack != null && !stack.isEmpty();
+        }
+
+        @Override
+        public IntegerKeyEntry<T> next() {
+            if (stack != null && !stack.isEmpty()) {
+                SortedIntegerKeyNode<T> node = stack.pop();
+                current = node;
+                pushLeft(node.getRight());
+                return node.getValue();
+            }
+
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("This iterator is read-only.");
+        }
+
+        private void pushLeft(SortedIntegerKeyNode<T> node) {
+            Requires.notNull(node, "node");
+            while (!node.isEmpty()) {
+                stack.push(node);
+                node = node.getLeft();
+            }
+        }
     }
 
     static class MutationResult<T> {

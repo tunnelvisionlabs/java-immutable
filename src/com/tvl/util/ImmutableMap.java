@@ -38,7 +38,7 @@ public interface ImmutableMap<K, V> extends ReadOnlyMap<K, V> {
      * @exception IllegalArgumentException if one of the given keys already exists in the map, but has a different
      * value.
      */
-    ImmutableMap<K, V> addAll(Iterable<Map.Entry<K, V>> entries);
+    ImmutableMap<K, V> addAll(Iterable<? extends Map.Entry<K, V>> entries);
 
     /**
      * Sets the specified key and value in the map, possibly overwriting an existing value for the given key.
@@ -59,7 +59,7 @@ public interface ImmutableMap<K, V> extends ReadOnlyMap<K, V> {
      * the previous values.
      * @return The new map.
      */
-    ImmutableMap<K, V> putAll(Iterable<Map.Entry<K, V>> entries);
+    ImmutableMap<K, V> putAll(Iterable<? extends Map.Entry<K, V>> entries);
 
     /**
      * Removes the specified key from the map with its associated value.
@@ -75,7 +75,7 @@ public interface ImmutableMap<K, V> extends ReadOnlyMap<K, V> {
      * @param keys The keys to remove.
      * @return A new map with those keys removed; or this instance if those keys are not in the map.
      */
-    ImmutableMap<K, V> removeAll(Iterable<K> keys);
+    ImmutableMap<K, V> removeAll(Iterable<? extends K> keys);
 
     /**
      * Determines whether this map contains the specified key-value pair.
@@ -90,7 +90,7 @@ public interface ImmutableMap<K, V> extends ReadOnlyMap<K, V> {
      *
      * This can be useful when you want to reuse a previously stored reference instead of a newly constructed one (so
      * that more sharing of references can occur) or to look up the canonical value, or a value that has more complete
-     * data than the value you currently have, although their comparer functions indicate they are equal.
+     * data than the value you currently have, although their comparator functions indicate they are equal.
      *
      * @param equalKey The key to search for.
      * @return The key from the map that the search found, or {@code equalKey} if the search yielded no match.

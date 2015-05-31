@@ -12,5 +12,5 @@ interface HashKeyCollection<K> {
      *
      * @return The comparator used to obtain hash codes for the keys and check equality.
      */
-    EqualityComparator<K> getKeyComparator();
+    EqualityComparator<? super K> getKeyComparator();
 }

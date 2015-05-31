@@ -2,7 +2,13 @@
 package com.tvl.util;
 
 import com.google.common.collect.Iterables;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Random;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
@@ -22,6 +28,66 @@ public abstract class ImmutablesTestBase {
      */
     protected final int getRandomOperationsCount() {
         return 100;
+    }
+
+    protected static <T> void manuallyIterateTest(List<T> expectedResults, Iterator<T> iterator) {
+        Object[] manualArray = new Object[expectedResults.size()];
+        int i = 0;
+
+        while (iterator.hasNext()) {
+            manualArray[i++] = iterator.next();
+        }
+
+        Assert.assertFalse(iterator.hasNext());
+
+        try {
+            iterator.next();
+            Assert.fail();
+        } catch (NoSuchElementException ignored) {
+        }
+
+        Assert.assertFalse(iterator.hasNext());
+
+        try {
+            iterator.next();
+            Assert.fail();
+        } catch (NoSuchElementException ignored) {
+        }
+
+        Assert.assertEquals(expectedResults.size(), i); //, "Enumeration did not produce enough elements.");
+        assertEqualSequences(expectedResults, Arrays.asList(manualArray));
+    }
+
+    protected Double[] generateDummyFillData() {
+        return generateDummyFillData(1000);
+    }
+
+    /**
+     * Generates an array of unique values.
+     *
+     * @param length The desired length of the array.
+     * @return An array of doubles.
+     */
+    protected Double[] generateDummyFillData(int length) {
+        Requires.range(length >= 0, "length");
+
+        long seed = System.nanoTime();
+
+        System.err.format("Random seed %s%n", seed);
+
+        Random random = new Random(seed);
+        Double[] inputs = new Double[length];
+        HashSet<Double> ensureUniqueness = new HashSet<Double>();
+        for (int i = 0; i < inputs.length; i++) {
+            double input;
+            do {
+                input = random.nextDouble();
+            }
+            while (!ensureUniqueness.add(input));
+            inputs[i] = input;
+        }
+
+        return inputs;
     }
 
     protected static StringComparator ordinalComparator() {
