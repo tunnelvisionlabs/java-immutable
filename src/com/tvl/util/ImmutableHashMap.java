@@ -452,7 +452,13 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
     }
 
     public boolean containsValue(V value) {
-        throw new UnsupportedOperationException();
+        for (Map.Entry<K, V> entry : entrySet()) {
+            if (getValueComparator().equals(value, entry.getValue())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

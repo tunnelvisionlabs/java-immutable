@@ -149,19 +149,17 @@ public abstract class ImmutableDictionaryTestBase extends ImmutablesTestBase {
         containsKeyTestHelper(this.<Integer, GenericParameterHelper>empty(), 1, new GenericParameterHelper());
     }
 
-//        @Test
-//        public void IndexGetNonExistingKeyThrowsTest()
-//        {
-//            Assert.Throws<KeyNotFoundException>(() => this.Empty<int, int>()[3]);
-//        }
-//
-//        @Test
-//        public void IndexGetTest()
-//        {
-//            var map = this.Empty<int, int>().Add(3, 5);
-//            Assert.Equal(5, map[3]);
-//        }
-//
+    @Test
+    public void indexGetNonExistingKeyReturnsNull() {
+        Assert.assertNull(this.<Integer, Integer>empty().get(3));
+    }
+
+    @Test
+    public void indexGetTest() {
+        ImmutableMap<Integer, Integer> map = this.<Integer, Integer>empty().add(3, 5);
+        Assert.assertEquals(5, (int)map.get(3));
+    }
+
 //        @Test
 //        public void DictionaryRemoveThrowsTest()
 //        {
@@ -202,17 +200,16 @@ public abstract class ImmutableDictionaryTestBase extends ImmutablesTestBase {
 //            Assert.False(Empty<int, int>().Equals(Empty<int, int>().Add(3, 1).ToReadOnlyDictionary()));
 //            Assert.False(Empty<int, int>().ToReadOnlyDictionary().Equals(Empty<int, int>().Add(3, 1).ToReadOnlyDictionary()));
 //        }
-//
-//        /// <summary>
-//        /// Verifies that the GetHashCode method returns the standard one.
-//        /// </summary>
-//        @Test
-//        public void GetHashCodeTest()
-//        {
-//            var dictionary = Empty<string, int>();
-//            Assert.Equal(EqualityComparer<object>.Default.GetHashCode(dictionary), dictionary.GetHashCode());
-//        }
-//
+
+    /**
+     * Verifies that the {@link #hashCode()} method returns a standard one.
+     */
+    @Test
+    public void hashCodeTest() {
+        ImmutableMap<String, Integer> map = empty();
+        Assert.assertEquals(EqualityComparators.defaultComparator().hashCode(map), map.hashCode());
+    }
+
 //        @Test
 //        public void ICollectionOfKVMembers()
 //        {
@@ -333,8 +330,8 @@ public abstract class ImmutableDictionaryTestBase extends ImmutablesTestBase {
         Assert.assertEquals(0, Iterables.size(empty.values()));
         Assert.assertSame(EqualityComparators.defaultComparator(), getValueComparator(empty));
         Assert.assertFalse(empty.containsKey(someKey));
-        //Assert.assertFalse(empty.contains(new KeyValuePair<K, V>(someKey, null)));
-        //Assert.assertEquals(null, empty.GetValueOrDefault(someKey));
+        Assert.assertFalse(empty.contains(new KeyValuePair<K, V>(someKey, null)));
+        //Assert.assertEquals(null, empty.getValueOrDefault(someKey));
 
         V value = empty.get(someKey);
         Assert.assertFalse(empty.containsKey(someKey));

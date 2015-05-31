@@ -1,6 +1,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 package com.tvl.util;
 
+import java.util.Collections;
+import java.util.Map;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,32 +45,30 @@ public class ImmutableDictionaryTest extends ImmutableDictionaryTestBase {
 //    CollectionAssertAreEquivalent<KeyValuePair<string, string>>(sortedMap.ToList(), map.ToList());
 //}
 
-//[Fact]
-//public void SetItemUpdateEqualKeyTest()
-//{
-//    var map = Empty<string, int>().WithComparers(StringComparer.OrdinalIgnoreCase)
-//        .SetItem("A", 1);
-//    map = map.SetItem("a", 2);
-//    Assert.Equal("a", map.Keys.Single());
-//}
+    @Test
+    public void setItemUpdateEqualKeyTest() {
+        ImmutableHashMap<String, Integer> map = ImmutableDictionaryTest.<String, Integer>emptyHashMap().withComparators(ordinalIgnoreCaseComparator())
+            .put("A", 1);
+        map = map.put("a", 2);
+        Assert.assertEquals(1, map.size());
+        Assert.assertEquals("a", map.keySet().iterator().next());
+    }
 
-///// <summary>
-///// Verifies that the specified value comparer is applied when
-///// checking for equality.
-///// </summary>
-//[Fact]
-//public void SetItemUpdateEqualKeyWithValueEqualityByComparer()
-//{
-//    var map = Empty<string, CaseInsensitiveString>().WithComparers(StringComparer.OrdinalIgnoreCase, new MyStringOrdinalComparer());
-//    string key = "key";
-//    var value1 = "Hello";
-//    var value2 = "hello";
-//    map = map.SetItem(key, new CaseInsensitiveString(value1));
-//    map = map.SetItem(key, new CaseInsensitiveString(value2));
-//    Assert.Equal(value2, map[key].Value);
+    /**
+     * Verifies that the specified value comparator is applied when checking for equality.
+     */
+    @Test
+    public void setItemUpdateEqualKeyWithValueEqualityByComparator() {
+        ImmutableHashMap<String, CaseInsensitiveString> map = ImmutableDictionaryTest.<String, CaseInsensitiveString>emptyHashMap().withComparators(ordinalIgnoreCaseComparator(), new MyStringOrdinalComparer());
+        String key = "key";
+        String value1 = "Hello";
+        String value2 = "hello";
+        map = map.put(key, new CaseInsensitiveString(value1));
+        map = map.put(key, new CaseInsensitiveString(value2));
+        Assert.assertEquals(value2, map.get(key).getValue());
 
-//    Assert.Same(map, map.SetItem(key, new CaseInsensitiveString(value2)));
-//}
+        Assert.assertSame(map, map.put(key, new CaseInsensitiveString(value2)));
+    }
 
     @Test
     @Override
@@ -77,56 +77,53 @@ public class ImmutableDictionaryTest extends ImmutableDictionaryTestBase {
         emptyTestHelperHash(empty(), 5);
     }
 
-//[Fact]
-//public void ContainsValueTest()
-//{
-//    this.ContainsValueTestHelper(ImmutableDictionary<int, GenericParameterHelper>.Empty, 1, new GenericParameterHelper());
-//}
+    @Test
+    public void containsValueTest() {
+        containsValueTestHelper(ImmutableHashMap.empty(), 1, new GenericParameterHelper());
+    }
 
-//[Fact]
-//public void EnumeratorWithHashCollisionsTest()
-//{
-//    var emptyMap = Empty<int, GenericParameterHelper>(new BadHasher<int>());
-//    this.EnumeratorTestHelper(emptyMap);
-//}
+    @Test
+    public void iteratorWithHashCollisionsTest() {
+        ImmutableMap<Integer, GenericParameterHelper> emptyMap = ImmutableDictionaryTest.emptyHashMap(new BadHasher<Integer>());
+        iteratorTestHelper(emptyMap);
+    }
 
-//[Fact]
-//public void Create()
-//{
-//    IEnumerable<KeyValuePair<string, string>> pairs = new Dictionary<string, string> { { "a", "b" } };
-//    var keyComparer = StringComparer.OrdinalIgnoreCase;
-//    var valueComparer = StringComparer.CurrentCulture;
+    @Test
+    public void create() {
+        Iterable<Map.Entry<String, String>> pairs = Collections.singletonMap("a", "b").entrySet();
+        StringComparator keyComparator = ordinalIgnoreCaseComparator();
+        StringComparator valueComparator = ordinalComparator();
 
-//    var dictionary = ImmutableDictionary.Create<string, string>();
-//    Assert.Equal(0, dictionary.Count);
-//    Assert.Same(EqualityComparer<string>.Default, dictionary.KeyComparer);
-//    Assert.Same(EqualityComparer<string>.Default, dictionary.ValueComparer);
+        ImmutableHashMap<String, String> map = ImmutableHashMap.create();
+        Assert.assertEquals(0, map.size());
+        Assert.assertSame(EqualityComparators.defaultComparator(), map.getKeyComparator());
+        Assert.assertSame(EqualityComparators.defaultComparator(), map.getValueComparator());
 
-//    dictionary = ImmutableDictionary.Create<string, string>(keyComparer);
-//    Assert.Equal(0, dictionary.Count);
-//    Assert.Same(keyComparer, dictionary.KeyComparer);
-//    Assert.Same(EqualityComparer<string>.Default, dictionary.ValueComparer);
+        map = ImmutableHashMap.create(keyComparator);
+        Assert.assertEquals(0, map.size());
+        Assert.assertSame(keyComparator, map.getKeyComparator());
+        Assert.assertSame(EqualityComparators.defaultComparator(), map.getValueComparator());
 
-//    dictionary = ImmutableDictionary.Create(keyComparer, valueComparer);
-//    Assert.Equal(0, dictionary.Count);
-//    Assert.Same(keyComparer, dictionary.KeyComparer);
-//    Assert.Same(valueComparer, dictionary.ValueComparer);
+        map = ImmutableHashMap.create(keyComparator, valueComparator);
+        Assert.assertEquals(0, map.size());
+        Assert.assertSame(keyComparator, map.getKeyComparator());
+        Assert.assertSame(valueComparator, map.getValueComparator());
 
-//    dictionary = ImmutableDictionary.CreateRange(pairs);
-//    Assert.Equal(1, dictionary.Count);
-//    Assert.Same(EqualityComparer<string>.Default, dictionary.KeyComparer);
-//    Assert.Same(EqualityComparer<string>.Default, dictionary.ValueComparer);
+        map = ImmutableHashMap.createAll(pairs);
+        Assert.assertEquals(1, map.size());
+        Assert.assertSame(EqualityComparators.defaultComparator(), map.getKeyComparator());
+        Assert.assertSame(EqualityComparators.defaultComparator(), map.getValueComparator());
 
-//    dictionary = ImmutableDictionary.CreateRange(keyComparer, pairs);
-//    Assert.Equal(1, dictionary.Count);
-//    Assert.Same(keyComparer, dictionary.KeyComparer);
-//    Assert.Same(EqualityComparer<string>.Default, dictionary.ValueComparer);
+        map = ImmutableHashMap.createAll(keyComparator, pairs);
+        Assert.assertEquals(1, map.size());
+        Assert.assertSame(keyComparator, map.getKeyComparator());
+        Assert.assertSame(EqualityComparators.defaultComparator(), map.getValueComparator());
 
-//    dictionary = ImmutableDictionary.CreateRange(keyComparer, valueComparer, pairs);
-//    Assert.Equal(1, dictionary.Count);
-//    Assert.Same(keyComparer, dictionary.KeyComparer);
-//    Assert.Same(valueComparer, dictionary.ValueComparer);
-//}
+        map = ImmutableHashMap.createAll(keyComparator, valueComparator, pairs);
+        Assert.assertEquals(1, map.size());
+        Assert.assertSame(keyComparator, map.getKeyComparator());
+        Assert.assertSame(valueComparator, map.getValueComparator());
+    }
 
 //[Fact]
 //public void ToImmutableDictionary()
