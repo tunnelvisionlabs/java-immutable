@@ -116,7 +116,7 @@ public abstract class ImmutablesTestBase {
     protected static final class OrdinalStringComparator extends StringComparator {
         private static final StringComparator INSTANCE = new OrdinalStringComparator();
 
-        private final Comparator<? super String> comparator = Comparators.defaultComparator();
+        private final Comparator<? super String> comparator = Comparators.<String>defaultComparator();
         private final EqualityComparator<? super String> equalityComparator = EqualityComparators.defaultComparator();
 
         @Override

@@ -93,7 +93,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
     }
 
     public static <K, V> ImmutableHashMap<K, V> createAll(EqualityComparator<? super K> keyComparator, EqualityComparator<? super V> valueComparator, Iterable<Map.Entry<K, V>> items) {
-        return ImmutableHashMap.create(keyComparator, valueComparator).addAll(items);
+        return ImmutableHashMap.<K, V>create(keyComparator, valueComparator).addAll(items);
     }
 
     public static <K, V> ImmutableHashMap.Builder<K, V> createBuilder() {
@@ -105,7 +105,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
     }
 
     public static <K, V> ImmutableHashMap.Builder<K, V> createBuilder(EqualityComparator<? super K> keyComparator, EqualityComparator<? super V> valueComparator) {
-        return ImmutableHashMap.create(keyComparator, valueComparator).toBuilder();
+        return ImmutableHashMap.<K, V>create(keyComparator, valueComparator).toBuilder();
     }
 
     private static <K, V> ImmutableHashMap<K, V> emptyWithComparators(Comparators<K, V> comparators) {
@@ -119,12 +119,12 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
     }
 
     private static <K, V> ImmutableHashMap<K, V> tryCastToImmutableMap(Iterable<? extends Map.Entry<K, V>> sequence) {
-        if (sequence instanceof ImmutableHashMap.EntrySet<?, ?>) {
-            return ((ImmutableHashMap.EntrySet<K, V>)sequence).getMap();
+        if (sequence instanceof ImmutableHashMap.EntrySet) {
+            return ((ImmutableHashMap.EntrySet<K, V>)(ImmutableHashMap.EntrySet)sequence).getMap();
         }
 
-        if (sequence instanceof ImmutableHashMap.Builder.EntrySet<?, ?>) {
-            return ((ImmutableHashMap.Builder.EntrySet<K, V>)sequence).getBuilder().toImmutable();
+        if (sequence instanceof ImmutableHashMap.Builder.EntrySet) {
+            return ((ImmutableHashMap.Builder.EntrySet<K, V>)(ImmutableHashMap.Builder.EntrySet)sequence).getBuilder().toImmutable();
         }
         //var builder = sequence as Builder;
         //if (builder != null)
