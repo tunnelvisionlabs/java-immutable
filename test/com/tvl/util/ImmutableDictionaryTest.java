@@ -19,31 +19,29 @@ public class ImmutableDictionaryTest extends ImmutableDictionaryTestBase {
         addExistingKeyDifferentValueTestHelper(emptyHashMap(ordinalComparator(), ordinalComparator()), "Company", "Microsoft", "MICROSOFT");
     }
 
-//[Fact]
-//public void UnorderedChangeTest()
-//{
-//    var map = Empty<string, string>(StringComparer.Ordinal)
-//        .Add("Johnny", "Appleseed")
-//        .Add("JOHNNY", "Appleseed");
-//    Assert.Equal(2, map.Count);
-//    Assert.True(map.ContainsKey("Johnny"));
-//    Assert.False(map.ContainsKey("johnny"));
-//    var newMap = map.WithComparers(StringComparer.OrdinalIgnoreCase);
-//    Assert.Equal(1, newMap.Count);
-//    Assert.True(newMap.ContainsKey("Johnny"));
-//    Assert.True(newMap.ContainsKey("johnny")); // because it's case insensitive
-//}
+    @Test
+    public void unorderedChangeTest() {
+        ImmutableHashMap<String, String> map = ImmutableDictionaryTest.<String, String>emptyHashMap(ordinalComparator())
+            .add("Johnny", "Appleseed")
+            .add("JOHNNY", "Appleseed");
+        Assert.assertEquals(2, map.size());
+        Assert.assertTrue(map.containsKey("Johnny"));
+        Assert.assertFalse(map.containsKey("johnny"));
+        ImmutableHashMap<String, String> newMap = map.withComparators(ordinalIgnoreCaseComparator());
+        Assert.assertEquals(1, newMap.size());
+        Assert.assertTrue(newMap.containsKey("Johnny"));
+        Assert.assertTrue(newMap.containsKey("johnny")); // because it's case insensitive
+    }
 
-//[Fact]
-//public void ToSortedTest()
-//{
-//    var map = Empty<string, string>(StringComparer.Ordinal)
-//        .Add("Johnny", "Appleseed")
-//        .Add("JOHNNY", "Appleseed");
-//    var sortedMap = map.ToImmutableSortedDictionary(StringComparer.Ordinal);
-//    Assert.Equal(sortedMap.Count, map.Count);
-//    CollectionAssertAreEquivalent<KeyValuePair<string, string>>(sortedMap.ToList(), map.ToList());
-//}
+    //@Test
+    //public void toSortedTest() {
+    //    ImmutableHashMap<String, String> map = ImmutableDictionaryTest.<String, String>emptyHashMap(ordinalComparator())
+    //        .add("Johnny", "Appleseed")
+    //        .add("JOHNNY", "Appleseed");
+    //    ImmutableTreeMap<String, String> sortedMap = map.toImmutableTreeMap(ordinalComparator());
+    //    Assert.assertEquals(sortedMap.size(), map.size());
+    //    assertEqualSequences(sortedMap.entrySet(), map.entrySet());
+    //}
 
     @Test
     public void setItemUpdateEqualKeyTest() {
@@ -125,65 +123,65 @@ public class ImmutableDictionaryTest extends ImmutableDictionaryTestBase {
         Assert.assertSame(valueComparator, map.getValueComparator());
     }
 
-//[Fact]
-//public void ToImmutableDictionary()
+//@Test
+//public void toImmutableMap()
 //{
-//    IEnumerable<KeyValuePair<string, string>> pairs = new Dictionary<string, string> { { "a", "B" } };
-//    var keyComparer = StringComparer.OrdinalIgnoreCase;
-//    var valueComparer = StringComparer.CurrentCulture;
-
-//    ImmutableDictionary<string, string> dictionary = pairs.ToImmutableDictionary();
-//    Assert.Equal(1, dictionary.Count);
-//    Assert.Same(EqualityComparer<string>.Default, dictionary.KeyComparer);
-//    Assert.Same(EqualityComparer<string>.Default, dictionary.ValueComparer);
-
-//    dictionary = pairs.ToImmutableDictionary(keyComparer);
-//    Assert.Equal(1, dictionary.Count);
-//    Assert.Same(keyComparer, dictionary.KeyComparer);
-//    Assert.Same(EqualityComparer<string>.Default, dictionary.ValueComparer);
-
-//    dictionary = pairs.ToImmutableDictionary(keyComparer, valueComparer);
-//    Assert.Equal(1, dictionary.Count);
-//    Assert.Same(keyComparer, dictionary.KeyComparer);
-//    Assert.Same(valueComparer, dictionary.ValueComparer);
-
+//    Iterable<Map.Entry<String, String>> pairs = Collections.singletonMap("a", "B").entrySet();
+//    StringComparator keyComparator = ordinalIgnoreCaseComparator();
+//    StringComparator valueComparator = ordinalComparator();
+//
+//    ImmutableHashMap<String, String> dictionary = pairs.toImmutableMap();
+//    Assert.assertEquals(1, dictionary.size());
+//    Assert.assertSame(EqualityComparators.defaultComparator(), dictionary.getKeyComparator());
+//    Assert.assertSame(EqualityComparators.defaultComparator(), dictionary.getValueComparator());
+//
+//    dictionary = pairs.ToImmutableDictionary(keyComparator);
+//    Assert.assertEquals(1, dictionary.size());
+//    Assert.assertSame(keyComparator, dictionary.getKeyComparator());
+//    Assert.assertSame(EqualityComparators.defaultComparator(), dictionary.getValueComparator());
+//
+//    dictionary = pairs.ToImmutableDictionary(keyComparator, valueComparator);
+//    Assert.assertEquals(1, dictionary.size());
+//    Assert.assertSame(keyComparator, dictionary.getKeyComparator());
+//    Assert.assertSame(valueComparator, dictionary.getValueComparator());
+//
 //    dictionary = pairs.ToImmutableDictionary(p => p.Key.ToUpperInvariant(), p => p.Value.ToLowerInvariant());
-//    Assert.Equal(1, dictionary.Count);
-//    Assert.Equal("A", dictionary.Keys.Single());
-//    Assert.Equal("b", dictionary.Values.Single());
-//    Assert.Same(EqualityComparer<string>.Default, dictionary.KeyComparer);
-//    Assert.Same(EqualityComparer<string>.Default, dictionary.ValueComparer);
-
-//    dictionary = pairs.ToImmutableDictionary(p => p.Key.ToUpperInvariant(), p => p.Value.ToLowerInvariant(), keyComparer);
-//    Assert.Equal(1, dictionary.Count);
-//    Assert.Equal("A", dictionary.Keys.Single());
-//    Assert.Equal("b", dictionary.Values.Single());
-//    Assert.Same(keyComparer, dictionary.KeyComparer);
-//    Assert.Same(EqualityComparer<string>.Default, dictionary.ValueComparer);
-
-//    dictionary = pairs.ToImmutableDictionary(p => p.Key.ToUpperInvariant(), p => p.Value.ToLowerInvariant(), keyComparer, valueComparer);
-//    Assert.Equal(1, dictionary.Count);
-//    Assert.Equal("A", dictionary.Keys.Single());
-//    Assert.Equal("b", dictionary.Values.Single());
-//    Assert.Same(keyComparer, dictionary.KeyComparer);
-//    Assert.Same(valueComparer, dictionary.ValueComparer);
-
+//    Assert.assertEquals(1, dictionary.size());
+//    Assert.assertEquals("A", dictionary.keySet().iterator().next());
+//    Assert.assertEquals("b", dictionary.values().iterator().next());
+//    Assert.assertSame(EqualityComparators.defaultComparator(), dictionary.getKeyComparator());
+//    Assert.assertSame(EqualityComparators.defaultComparator(), dictionary.getValueComparator());
+//
+//    dictionary = pairs.ToImmutableDictionary(p => p.Key.ToUpperInvariant(), p => p.Value.ToLowerInvariant(), keyComparator);
+//    Assert.assertEquals(1, dictionary.size());
+//    Assert.assertEquals("A", dictionary.keySet().iterator().next());
+//    Assert.assertEquals("b", dictionary.values().iterator().next());
+//    Assert.assertSame(keyComparator, dictionary.getKeyComparator());
+//    Assert.assertSame(EqualityComparators.defaultComparator(), dictionary.getValueComparator());
+//
+//    dictionary = pairs.ToImmutableDictionary(p => p.Key.ToUpperInvariant(), p => p.Value.ToLowerInvariant(), keyComparator, valueComparator);
+//    Assert.assertEquals(1, dictionary.size());
+//    Assert.assertEquals("A", dictionary.keySet().iterator().next());
+//    Assert.assertEquals("b", dictionary.values().iterator().next());
+//    Assert.assertSame(keyComparator, dictionary.getKeyComparator());
+//    Assert.assertSame(valueComparator, dictionary.getValueComparator());
+//
 //    var list = new int[] { 1, 2 };
 //    var intDictionary = list.ToImmutableDictionary(n => (double)n);
-//    Assert.Equal(1, intDictionary[1.0]);
-//    Assert.Equal(2, intDictionary[2.0]);
-//    Assert.Equal(2, intDictionary.Count);
-
-//    var stringIntDictionary = list.ToImmutableDictionary(n => n.ToString(), StringComparer.OrdinalIgnoreCase);
-//    Assert.Same(StringComparer.OrdinalIgnoreCase, stringIntDictionary.KeyComparer);
-//    Assert.Equal(1, stringIntDictionary["1"]);
-//    Assert.Equal(2, stringIntDictionary["2"]);
-//    Assert.Equal(2, intDictionary.Count);
-
+//    Assert.assertEquals(1, intDictionary[1.0]);
+//    Assert.assertEquals(2, intDictionary[2.0]);
+//    Assert.assertEquals(2, intDictionary.size());
+//
+//    var stringIntDictionary = list.ToImmutableDictionary(n => n.ToString(), ordinalIgnoreCaseStringComparator());
+//    Assert.assertSame(ordinalIgnoreCaseComparator(), stringIntDictionary.getKeyComparator());
+//    Assert.assertEquals(1, (int)stringIntDictionary.get("1"));
+//    Assert.assertEquals(2, (int)stringIntDictionary.get("2"));
+//    Assert.assertEquals(2, intDictionary.size());
+//
 //    Assert.Throws<ArgumentNullException>(() => list.ToImmutableDictionary<int, int>(null));
 //    Assert.Throws<ArgumentNullException>(() => list.ToImmutableDictionary<int, int, int>(null, v => v));
 //    Assert.Throws<ArgumentNullException>(() => list.ToImmutableDictionary<int, int, int>(k => k, null));
-
+//
 //    list.ToDictionary(k => k, v => v, null); // verifies BCL behavior is to not throw.
 //    list.ToImmutableDictionary(k => k, v => v, null, null);
 //}
@@ -275,16 +273,15 @@ public class ImmutableDictionaryTest extends ImmutableDictionaryTestBase {
         Assert.assertSame(ordinalIgnoreCaseComparator(), map.getKeyComparator());
     }
 
-//[Fact]
-//public void GetValueOrDefaultOfIImmutableDictionary()
-//{
-//    IImmutableDictionary<string, int> empty = ImmutableDictionary.Create<string, int>();
-//    IImmutableDictionary<string, int> populated = ImmutableDictionary.Create<string, int>().Add("a", 5);
-//    Assert.Equal(0, empty.GetValueOrDefault("a"));
-//    Assert.Equal(1, empty.GetValueOrDefault("a", 1));
-//    Assert.Equal(5, populated.GetValueOrDefault("a"));
-//    Assert.Equal(5, populated.GetValueOrDefault("a", 1));
-//}
+    //@Test
+    //public void getValueOrDefaultOfImmutableMap() {
+    //    ImmutableMap<String, Integer> empty = ImmutableHashMap.create();
+    //    ImmutableMap<String, Integer> populated = ImmutableHashMap.<String, Integer>create().add("a", 5);
+    //    Assert.assertEquals(0, empty.getValueOrDefault("a"));
+    //    Assert.assertEquals(1, empty.getValueOrDefault("a", 1));
+    //    Assert.assertEquals(5, populated.getValueOrDefault("a"));
+    //    Assert.assertEquals(5, populated.getValueOrDefault("a", 1));
+    //}
 
     //@Test
     //public void getValueOrDefaultOfConcreteType() {

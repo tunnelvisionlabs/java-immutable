@@ -109,7 +109,7 @@ public abstract class ImmutableDictionaryTestBase extends ImmutablesTestBase {
     }
 
     @Test
-    public void SetItemsTest() {
+    public void setItemsTest() {
         HashMap<String, Integer> template = new HashMap<String, Integer>();
         template.put("Microsoft", 100);
         template.put("Corporation", 50);
@@ -160,27 +160,27 @@ public abstract class ImmutableDictionaryTestBase extends ImmutablesTestBase {
         Assert.assertEquals(5, (int)map.get(3));
     }
 
-//        @Test
-//        public void DictionaryRemoveThrowsTest()
-//        {
-//            IDictionary<int, int> map = this.Empty<int, int>().Add(5, 3).ToReadOnlyDictionary();
-//            Assert.Throws<NotSupportedException>(() => map.Remove(5));
-//        }
-//
-//        @Test
-//        public void DictionaryAddThrowsTest()
-//        {
-//            IDictionary<int, int> map = this.Empty<int, int>().ToReadOnlyDictionary();
-//            Assert.Throws<NotSupportedException>(() => map.Add(5, 3));
-//        }
-//
-//        @Test
-//        public void DictionaryIndexSetThrowsTest()
-//        {
-//            IDictionary<int, int> map = this.Empty<int, int>().ToReadOnlyDictionary();
-//            Assert.Throws<NotSupportedException>(() => map[3] = 5);
-//        }
-//
+    //@Test
+    //public void mapRemoveThrowsTest() {
+    //    Map<Integer, Integer> map = TestExtensionMethods.toReadOnlyMap(this.<Integer, Integer>empty().add(5, 3));
+    //    thrown.expect(UnsupportedOperationException.class);
+    //    map.remove(5);
+    //}
+
+    //@Test
+    //public void mapAddThrowsTest() {
+    //    Map<Integer, Integer> map = TestExtensionMethods.toReadOnlyMap(this.<Integer, Integer>empty());
+    //    thrown.expect(UnsupportedOperationException.class);
+    //    map.put(5, 3);
+    //}
+
+    //@Test
+    //public void mapPutThrowsTest() {
+    //    Map<Integer, Integer> map = TestExtensionMethods.toReadOnlyMap(this.<Integer, Integer>empty());
+    //    thrown.expect(UnsupportedOperationException.class);
+    //    map.put(3, 5);
+    //}
+
 //        @Test
 //        public void EqualsTest()
 //        {
