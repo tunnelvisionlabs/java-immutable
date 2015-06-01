@@ -1256,7 +1256,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         }
 
         int indexOf(T item, EqualityComparator<? super T> equalityComparator) {
-            throw new UnsupportedOperationException("Not supported yet");
+            return indexOf(item, 0, size(), equalityComparator);
         }
 
         int indexOf(T item, int index, int count, EqualityComparator<? super T> equalityComparator) {

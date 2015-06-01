@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * An immutable array with O(1) indexable lookup time.
@@ -108,10 +110,50 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @param items The elements to store in the array.
      * @return An immutable array.
      */
-    public static <T> ImmutableArrayList<T> create(Iterable<T> items) {
+    public static <T> ImmutableArrayList<T> createAll(Iterable<? extends T> items) {
         Requires.notNull(items, "items");
 
-        throw new UnsupportedOperationException("Not implemented.");
+        // As an optimization, if the provided enumerable is actually a boxed ImmutableArray<T> instance, reuse the
+        // underlying array if possible. Note that this allows for automatic upcasting and downcasting of arrays where
+        // the JVM allows it.
+        if (items instanceof ImmutableArrayList<?>) {
+            ImmutableArrayList<? extends T> immutableArray = (ImmutableArrayList<? extends T>)items;
+
+            T[] existingImmutableArray = immutableArray.array;
+            return new ImmutableArrayList<T>(existingImmutableArray);
+        }
+
+        // We don't recognize the source as an array that is safe to use. So clone the sequence into an array and return
+        // an immutable wrapper.
+        Integer count = Immutables.tryGetCount(items);
+        if (count != null) {
+            if (count == 0) {
+                // Return a wrapper around the singleton empty array.
+                return create();
+            } else {
+                // We know how long the sequence is.
+                ImmutableArrayList.Builder<T> builder = new Builder<T>(count);
+                builder.resize(count);
+                int current = 0;
+                for (T item : items) {
+                    builder.set(current, item);
+                    current++;
+                }
+
+                return builder.moveToImmutable();
+            }
+        } else {
+            ImmutableArrayList.Builder<T> builder = new Builder<T>();
+            for (T item : items) {
+                builder.add(item);
+            }
+
+            if (builder.size() == builder.getCapacity()) {
+                return builder.moveToImmutable();
+            } else {
+                return builder.toImmutable();
+            }
+        }
     }
 
     /**
@@ -142,7 +184,19 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     }
 
     public static <Source, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, Function<Source, Result> selector) {
-        throw new UnsupportedOperationException("Not implemented");
+        Requires.notNull(selector, "selector");
+
+        int length = items.size();
+        if (length == 0) {
+            return create();
+        }
+
+        Result[] array = (Result[])new Object[length];
+        for (int i = 0; i < length; i++) {
+            array[i] = selector.apply(items.get(i));
+        }
+
+        return new ImmutableArrayList<Result>(array);
     }
 
     public static <Source, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, int start, int length, Function<Source, Result> selector) {
@@ -150,7 +204,20 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     }
 
     public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, BiFunction<Source, Arg, Result> selector, Arg arg) {
-        throw new UnsupportedOperationException("Not implemented");
+        Requires.notNull(selector, "selector");
+
+        int length = items.size();
+
+        if (length == 0) {
+            return create();
+        }
+
+        Result[] array = (Result[])new Object[length];
+        for (int i = 0; i < length; i++) {
+            array[i] = selector.apply(items.get(i), arg);
+        }
+
+        return new ImmutableArrayList<Result>(array);
     }
 
     public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, int start, int length, BiFunction<Source, Arg, Result> selector, Arg arg) {
@@ -440,7 +507,41 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> addAll(int index, Iterable<? extends T> items) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.range(index >= 0 && index <= size(), "index");
+        Requires.notNull(items, "items");
+
+        if (isEmpty()) {
+            return ImmutableArrayList.createAll(items);
+        }
+
+        Integer count = Immutables.tryGetCount(items);
+        if (count != null) {
+            if (count == 0) {
+                return this;
+            }
+
+            T[] tmp = Arrays.copyOf(array, array.length + count);
+            System.arraycopy(tmp, index, tmp, index + count, array.length - index);
+            int current = index;
+            for (T item : items) {
+                tmp[current++] = item;
+            }
+
+            return new ImmutableArrayList<T>(tmp);
+        }
+
+        Builder<T> builder = new Builder<T>(array.length);
+        builder.addAll(this, index);
+        for (T item : items) {
+            builder.add(item);
+        }
+
+        builder.setCapacity(builder.size() + array.length - index);
+        for (int i = index; i < array.length; i++) {
+            builder.add(get(i));
+        }
+
+        return builder.moveToImmutable();
     }
 
     /**
@@ -611,7 +712,19 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> removeAll(Iterable<? extends T> items, EqualityComparator<? super T> equalityComparator) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(items, "items");
+        Requires.notNull(equalityComparator, "equalityComparator");
+
+        SortedSet<Integer> indexesToRemove = new TreeSet<Integer>();
+        for (T item : items) {
+            int index = indexOf(item, 0, equalityComparator);
+            while (index >= 0 && !indexesToRemove.add(index) && index + 1 < size()) {
+                // This is a duplicate of one we've found. Try hard to find another instance in the list to remove.
+                index = indexOf(item, index + 1, equalityComparator);
+            }
+        }
+
+        return removeAtRange(indexesToRemove);
     }
 
     /**
@@ -632,7 +745,21 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return A new immutable array with the elements removed.
      */
     public ImmutableArrayList<T> removeAll(ImmutableArrayList<? extends T> items, EqualityComparator<? super T> equalityComparator) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(items, "items");
+        Requires.notNull(equalityComparator, "equalityComparator");
+
+        SortedSet<Integer> indexesToRemove = new TreeSet<Integer>();
+        for (T item : items)
+        {
+            int index = indexOf(item, 0, equalityComparator);
+            while (index >= 0 && !indexesToRemove.add(index) && index + 1 < size())
+            {
+                // This is a duplicate of one we've found. Try hard to find another instance in the list to remove.
+                index = indexOf(item, index + 1, equalityComparator);
+            }
+        }
+
+        return removeAtRange(indexesToRemove);
     }
 
     /**
@@ -684,7 +811,32 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return A sorted instance of this array.
      */
     public ImmutableArrayList<T> sort(int index, int count, Comparator<? super T> comparator) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.range(index >= 0, "index");
+        Requires.range(count >= 0 && index + count <= size(), "count");
+
+        if (comparator == null) {
+            comparator = (Comparator<? super T>)(Comparator<?>)Comparators.<Integer>defaultComparator();
+        }
+
+        // 0 and 1 element arrays don't need to be sorted.
+        if (count > 1) {
+            // Avoid copying the entire array when the array is already sorted.
+            boolean outOfOrder = false;
+            for (int i = index + 1; i < index + count; i++) {
+                if (comparator.compare(array[i - 1], array[i]) > 0) {
+                    outOfOrder = true;
+                    break;
+                }
+            }
+
+            if (outOfOrder) {
+                Builder<T> builder = toBuilder();
+                builder.sort(index, count, comparator);
+                return builder.moveToImmutable();
+            }
+        }
+
+        return this;
     }
 
     /**
@@ -732,6 +884,37 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     @Override
     public String toString() {
         return Arrays.toString(array);
+    }
+
+    /**
+     * Returns an array with the items at the specified indexes removed.
+     *
+     * @param indexesToRemove A sorted set of indexes to elements that should be omitted from the returned array.
+     * @return The new immutable array.
+     */
+    private ImmutableArrayList<T> removeAtRange(Collection<Integer> indexesToRemove) {
+        Requires.notNull(indexesToRemove, "indexesToRemove");
+
+        if (indexesToRemove.isEmpty()) {
+            return this;
+        }
+
+        T[] newArray = Arrays.copyOf(array, size() - indexesToRemove.size());
+        int copied = 0;
+        int removed = 0;
+        int lastIndexRemoved = -1;
+        for (int indexToRemove : indexesToRemove) {
+            int copyLength = lastIndexRemoved == -1 ? indexToRemove : (indexToRemove - lastIndexRemoved - 1);
+            assert indexToRemove > lastIndexRemoved; // We require that the input be a sorted set.
+            System.arraycopy(array, copied + removed, newArray, copied, copyLength);
+            removed++;
+            copied += copyLength;
+            lastIndexRemoved = indexToRemove;
+        }
+
+        System.arraycopy(array, copied + removed, newArray, copied, size() - (copied + removed));
+
+        return new ImmutableArrayList<T>(newArray);
     }
 
     /**

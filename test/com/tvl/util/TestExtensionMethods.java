@@ -1,29 +1,30 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 package com.tvl.util;
 
+import java.util.Map;
 import org.junit.Assert;
 
 final class TestExtensionMethods {
     private static final double GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
 
-    //static <K, V> Map<K, V> toReadOnlyMap(ImmutableMap<K, V> map) {
-    //    Requires.notNull(map, "map");
-    //    return toBuilder(map);
-    //}
-    //
-    //static <K, V> Map<K, V> toBuilder(ImmutableMap<K, V> map) {
-    //    Requires.notNull(map, "map");
-    //
-    //    if (map instanceof ImmutableHashMap<K, V>) {
-    //        return ((ImmutableHashMap<K, V>)map).toBuilder();
-    //    }
-    //
-    //    if (map instanceof ImmutableTreeMap<K, V>) {
-    //        return ((ImmutableTreeMap<K, V>)map).toBuilder();
-    //    }
-    //
-    //    throw new UnsupportedOperationException();
-    //}
+    static <K, V> Map<K, V> toReadOnlyMap(ImmutableMap<K, V> map) {
+        Requires.notNull(map, "map");
+        return toBuilder(map);
+    }
+
+    static <K, V> Map<K, V> toBuilder(ImmutableMap<K, V> map) {
+        Requires.notNull(map, "map");
+
+        if (map instanceof ImmutableHashMap<?, ?>) {
+            return ((ImmutableHashMap<K, V>)map).toBuilder();
+        }
+
+        //if (map instanceof ImmutableTreeMap<K, V>) {
+        //    return ((ImmutableTreeMap<K, V>)map).toBuilder();
+        //}
+
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Verifies that a binary tree is balanced according to AVL rules.
