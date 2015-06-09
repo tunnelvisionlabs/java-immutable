@@ -8,7 +8,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.tvl</groupId>
+    <groupId>com.tunnelvisionlabs</groupId>
     <artifactId>immutable</artifactId>
     <packaging>jar</packaging>
 
