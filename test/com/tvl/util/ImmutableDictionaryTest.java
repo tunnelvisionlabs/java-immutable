@@ -57,7 +57,7 @@ public class ImmutableDictionaryTest extends ImmutableDictionaryTestBase {
      */
     @Test
     public void setItemUpdateEqualKeyWithValueEqualityByComparator() {
-        ImmutableHashMap<String, CaseInsensitiveString> map = ImmutableDictionaryTest.<String, CaseInsensitiveString>emptyHashMap().withComparators(ordinalIgnoreCaseComparator(), new MyStringOrdinalComparer());
+        ImmutableHashMap<String, CaseInsensitiveString> map = ImmutableDictionaryTest.<String, CaseInsensitiveString>emptyHashMap().withComparators(ordinalIgnoreCaseComparator(), new MyStringOrdinalComparator());
         String key = "key";
         String value1 = "Hello";
         String value2 = "hello";
@@ -374,7 +374,7 @@ public class ImmutableDictionaryTest extends ImmutableDictionaryTestBase {
     /**
      * An ordinal comparator for case-insensitive strings.
      */
-    private static class MyStringOrdinalComparer implements EqualityComparator<CaseInsensitiveString> {
+    private static class MyStringOrdinalComparator implements EqualityComparator<CaseInsensitiveString> {
         @Override
         public boolean equals(CaseInsensitiveString x, CaseInsensitiveString y) {
             return ordinalComparator().equals(x.getValue(), y.getValue());
