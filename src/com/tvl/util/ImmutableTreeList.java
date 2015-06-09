@@ -48,7 +48,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         return createAll(Arrays.asList(items));
     }
 
-    public static <T> ImmutableTreeList<T> createAll(Iterable<T> items) {
+    public static <T> ImmutableTreeList<T> createAll(Iterable<? extends T> items) {
         return ImmutableTreeList.<T>empty().addAll(items);
     }
 
