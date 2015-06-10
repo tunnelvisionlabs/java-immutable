@@ -874,13 +874,17 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         return ((Object)array).hashCode();
     }
 
-    public static <T, TDerived extends T> ImmutableArrayList<T> castUp(ImmutableArrayList<TDerived> items) {
-        return new ImmutableArrayList<T>(items.array);
+    public static <T> ImmutableArrayList<T> castUp(ImmutableArrayList<? extends T> items) {
+        // Since this class is immutable, we can actually return the same instance
+        @SuppressWarnings("unchecked") // this is safe
+        ImmutableArrayList<T> result = (ImmutableArrayList<T>)items;
+        return result;
     }
 
     //public <TOther> ImmutableArrayList<TOther> castArray() {
     //    return new ImmutableArrayList<TOther>((TOther[])(Object)array);
     //}
+
     @Override
     public String toString() {
         return Arrays.toString(array);
