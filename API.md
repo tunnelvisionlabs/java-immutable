@@ -61,12 +61,12 @@
 
 | .NET Member | Java Member | Notes |
 | --- | --- | --- |
-| `Create<T>()` | `<T>create()` | |
-| `Create<T>(T)` | `<T>create(T)` | |
-| `Create<T>(T, T)` | `<T>create(T, T)` | |
-| `Create<T>(T, T, T)` | `<T>create(T, T, T)` | |
-| `Create<T>(T, T, T, T)` | `<T>create(T, T, T, T)` | |
-| `Create<T>(params T[])` | `<T>create(T...)` | |
+| `Create<T>()` | `<T>create()` | &check; |
+| `Create<T>(T)` | `<T>create(T)` | &check; |
+| `Create<T>(T, T)` | `<T>create(T, T)` | &check; |
+| `Create<T>(T, T, T)` | `<T>create(T, T, T)` | &check; |
+| `Create<T>(T, T, T, T)` | `<T>create(T, T, T, T)` | &check; |
+| `Create<T>(params T[])` | `<T>create(T...)` | &check; |
 | `Create<T>(T[], int start, int length)` | `<T>createAll(T[], int start, int end)` | 1, 2 |
 | `Create<T>(ImmutableArray<T>, int start, int length)` | `<T>createAll(ImmutableArrayList<T>, int start, int end)` | 1, 2 |
 | `CreateRange<T>(IEnumerable<T>)` | `<T>createAll(Iterable<? extends T>)` | |

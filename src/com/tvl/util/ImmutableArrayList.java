@@ -104,6 +104,24 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     }
 
     /**
+     * Creates an {@link ImmutableArrayList} populated with the specified elements.
+     *
+     * @param <T> The type of element stored in the array.
+     * @param items The elements to store in the array.
+     * @return An immutable array.
+     */
+    public static <T> ImmutableArrayList<T> create(T... items) {
+        // We can't trust that the array passed in will never be mutated by the caller. The caller may have passed in an
+        // array explicitly (not relying on compiler 'T...' syntax) and could then change the array after the call,
+        // thereby violating the immutable guarantee provided by this class. So we always copy the array to ensure it
+        // won't ever change.
+        //
+        // Note that createDefensiveCopy treats null as an empty list, so there is no need to handle that case before
+        // making the call.
+        return createDefensiveCopy(items);
+    }
+
+    /**
      * Creates an {@link ImmutableArrayList} populated with the contents of the specified sequence.
      *
      * @param <T> The type of element stored in the array.
@@ -151,25 +169,6 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
                 return builder.toImmutable();
             }
         }
-    }
-
-    /**
-     * Creates an {@link ImmutableArrayList} populated with the contents of the specified sequence.
-     *
-     * @param <T> The type of element stored in the array.
-     * @param items The elements to store in the array.
-     * @return An immutable array.
-     */
-    public static <T> ImmutableArrayList<T> create(T... items) {
-        if (items == null) {
-            return create();
-        }
-
-        // We can't trust that the array passed in will never be mutated by the caller.
-        // The caller may have passed in an array explicitly (not relying on compiler 'T...' syntax)
-        // and could then change the array after the call, thereby violating the immutable
-        // guarantee provided by this class. So we always copy the array to ensure it won't ever change.
-        return createDefensiveCopy(items);
     }
 
     public static <T> ImmutableArrayList<T> createAll(T[] items, int start, int length) {
