@@ -930,9 +930,55 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         return result;
     }
 
-    //public <TOther> ImmutableArrayList<TOther> castArray() {
-    //    return new ImmutableArrayList<TOther>((TOther[])(Object)array);
-    //}
+    /**
+     * Casts the current immutable array to an instance of an immutable array with another element type.
+     *
+     * <p>This method supports safe down- and cross-casts in the object hierarchy by validating the elements of the
+     * current array at runtime. To efficiently perform covariant up-casts, use {@link #castUp(ImmutableArrayList)}
+     * instead.</p>
+     *
+     * @param clazz The element type to cast the current array to.
+     * @param <TOther> The type of element stored in the array.
+     * @return The current array as an instance of an immutable array of {@code TOther} objects.
+     * @throws ClassCastException if any object in the current instance cannot be cast to an instance of {@code TOther}.
+     */
+    public <TOther> ImmutableArrayList<TOther> castArray(Class<TOther> clazz) {
+        Requires.notNull(clazz, "clazz");
+        for (T item : this) {
+            clazz.cast(item);
+        }
+
+        // It is now safe to cast the array.
+        @SuppressWarnings("unchecked") // this is safe
+        ImmutableArrayList<TOther> result = (ImmutableArrayList<TOther>)this;
+        return result;
+    }
+
+    /**
+     * Attempts to cast the current immutable array to an instance of an immutable array with another element type.
+     *
+     * <p>This method supports safe down- and cross-casts in the object hierarchy by validating the elements of the
+     * current array at runtime. To efficiently perform covariant up-casts, use {@link #castUp(ImmutableArrayList)}
+     * instead.</p>
+     *
+     * @param clazz The element type to cast the current array to.
+     * @param <TOther> The type of element stored in the array.
+     * @return The current array as an instance of an immutable array of {@code TOther} objects if all objects in the
+     * array can be cast to {@code TOther}; otherwise, {@code null}.
+     */
+    public <TOther> ImmutableArrayList<TOther> as(Class<TOther> clazz) {
+        Requires.notNull(clazz, "clazz");
+        for (T item : this) {
+            if (item != null && !clazz.isInstance(item)) {
+                return null;
+            }
+        }
+
+        // It is now safe to cast the array.
+        @SuppressWarnings("unchecked") // this is safe
+        ImmutableArrayList<TOther> result = (ImmutableArrayList<TOther>)this;
+        return result;
+    }
 
     @Override
     public String toString() {
