@@ -37,12 +37,12 @@
 | --- | --- |
 | `System.Collections.Immutable.ImmutableArray` | `com.tvl.util.ImmutableArrayList<T>` |
 | `System.Collections.Immutable.ImmutableDictionary` | `com.tvl.util.ImmutableHashMap<K, V>` |
-| `System.Collections.Immutable.ImmutableHashSet` | `com.tvl.util.Immutable<T>` |
-| `System.Collections.Immutable.ImmutableList` | `com.tvl.util.Immutable<T>` |
-| `System.Collections.Immutable.ImmutableQueue` | `com.tvl.util.Immutable<T>` |
+| `System.Collections.Immutable.ImmutableHashSet` | `com.tvl.util.ImmutableHashSet<T>` |
+| `System.Collections.Immutable.ImmutableList` | `com.tvl.util.ImmutableTreeList<T>` |
+| `System.Collections.Immutable.ImmutableQueue` | `com.tvl.util.ImmutableLinkedQueue<T>` |
 | `System.Collections.Immutable.ImmutableSortedDictionary` | `com.tvl.util.ImmutableTreeMap<K, V>` |
-| `System.Collections.Immutable.ImmutableSortedSet` | `com.tvl.util.Immutable<T>` |
-| `System.Collections.Immutable.ImmutableStack` | `com.tvl.util.Immutable<T>` |
+| `System.Collections.Immutable.ImmutableSortedSet` | `com.tvl.util.ImmutableTreeSet<T>` |
+| `System.Collections.Immutable.ImmutableStack` | `com.tvl.util.ImmutableLinkedStack<T>` |
 
 ## Immutable Collection Utilities
 
@@ -50,3 +50,143 @@
 | --- | --- |
 | `System.Collections.Immutable.ImmutableInterlocked` | *unknown* |
 | `System.Linq.ImmutableArrayExtensions` | *unknown* |
+
+# Detailed API Mapping
+
+## `ImmutableArray<T>` &rarr; `ImmutableArrayList<T>`
+
+### Factory
+
+#### `ImmutableArray` &rarr; `ImmutableArrayList<T>`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `Create<T>()` | `<T>create()` | |
+| `Create<T>(T)` | `<T>create(T)` | |
+| `Create<T>(T, T)` | `<T>create(T, T)` | |
+| `Create<T>(T, T, T)` | `<T>create(T, T, T)` | |
+| `Create<T>(T, T, T, T)` | `<T>create(T, T, T, T)` | |
+| `Create<T>(params T[])` | `<T>create(T...)` | |
+| `Create<T>(T[], int start, int length)` | `<T>createAll(T[], int start, int end)` | 1, 2 |
+| `Create<T>(ImmutableArray<T>, int start, int length)` | `<T>createAll(ImmutableArrayList<T>, int start, int end)` | 1, 2 |
+| `CreateRange<T>(IEnumerable<T>)` | `<T>createAll(Iterable<? extends T>)` | |
+| `CreateRange<TSource, TResult>(ImmutableArray<TSource>, Func<TSource, TResult>)` | `<TSource, TResult>createAll(ImmutableArrayList<TSource>, Function<TSource, TResult>)` | |
+| `CreateRange<TSource, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TResult>)` | `<TSource, TResult>createAll(ImmutableArrayList<TSource>, int start, int end, Function<TSource, TResult>)` | 1 |
+| `CreateRange<TSource, TArg, TResult>(ImmutableArray<TSource>, Func<TSource, TArg, TResult>, TArg)` | `<TSource, TArg, TResult>createAll(ImmutableArrayList<TSource>, BiFunction<TSource, TArg, TResult>, TArg)` | |
+| `CreateRange<TSource, TArg, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TArg, TResult>, TArg)` | `<TSource, TArg, TResult>createAll(ImmutableArrayList<TSource>, int start, int end, BiFunction<TSource, TArg, TResult>, TArg)` | 1 |
+| `CreateBuilder<T>()` | `<T>createBuilder()` | |
+| `CreateBuilder<T>(int)` | `<T>createBuilder(int)` | |
+| `BinarySearch<T>(ImmutableArray<T>, T)` | `<T>binarySearch(ImmutableArrayList<T>, T)` | |
+| `BinarySearch<T>(ImmutableArray<T>, T, IComparer<T>)` | `<T>binarySearch(ImmutableArrayList<T>, T, Comparator<? super T>)` | |
+| `BinarySearch<T>(ImmutableArray<T>, int start, int length, T)` | `<T>binarySearch(ImmutableArrayList<T>, int start, int end, T)` | 1 |
+| `BinarySearch<T>(ImmutableArray<T>, int start, int length, T, IComparer<T>)` | `<T>binarySearch(ImmutableArrayList<T>, int start, int end, T, Comparator<? super T>)` | 1 |
+
+¹ Java convention is to use start/end instead of start/length for ranges.<br>
+² These methods were renamed to `createAll` to avoid conflicts with `create(T...)`.
+
+#### `ImmutableArray` &rarr; `Immutables`
+
+| .NET Member | Java Member |
+| --- | --- |
+| `ToImmutableArray<TSource>(this IEnumerable<TSource>)` | `<TSource>toImmutableArrayList(Iterable<? extends TSource>)` |
+
+### Collection
+
+#### `ImmutableArray<T>` &rarr; `ImmutableArrayList<T>`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `Empty` | `<T>empty()` | |
+| `operator==(ImmutableArray<T>, ImmutableArray<T>)` | n/a | |
+| `operator!=(ImmutableArray<T>, ImmutableArray<T>)` | n/a | |
+| `operator==(ImmutableArray<T>?, ImmutableArray<T>?)` | n/a | |
+| `operator!=(ImmutableArray<T>?, ImmutableArray<T>?)` | n/a | |
+| `this[int]` | `get(int)` | |
+| `IsEmpty` | `isEmpty()` | |
+| `Length` | `size()` | |
+| `IsDefault` | n/a | |
+| `IsDefaultOrEmpty` | n/a | |
+| `IndexOf(T)` | `indexOf(T)` | |
+| `IndexOf(T, int start)` | `indexOf(T, int start)` | |
+| `IndexOf(T, int start, int length)` | `indexOf(T, int start, int end)` | |
+| `IndexOf(T, int start, int length, IEqualityComparer<T>)` | `indexOf(T, int start, int end, EqualityComparator<? super T>)` | |
+| `LastIndexOf(T)` | `lastIndexOf(T)` | |
+| `LastIndexOf(T, int start)` | `lastIndexOf(T, int start)` | |
+| `LastIndexOf(T, int start, int length)` | `lastIndexOf(T, int start, int end)` | |
+| `LastIndexOf(T, int start, int length, IEqualityComparer<T>)` | `lastIndexOf(T, int start, int end, EqualityComparator<? super T>)` | |
+| `Contains(T)` | `contains(T)` | |
+| `Insert(int, T)` | `add(int, T)` | |
+| `InsertRange(int, IEnumerable<T>)` | `addAll(int, Iterable<? extends T>)` | |
+| `InsertRange(int, ImmutableArray<T>)` | `addAll(int, ImmutableArrayList<? extends T>)` | |
+| `Add(T)` | `add(T)` | |
+| `AddRange(IEnumerable<T>)` | `addAll(Iterable<? extends T>)` | |
+| `AddRange(ImmutableArray<T>)` | `addAll(ImmutableArrayList<? extends T>)` | |
+| `SetItem(int, T)` | `set(int, T)` | |
+| `Replace(T, T)` | `replace(T, T)` | |
+| `Replace(T, T, IEqualityComparer<T>)` | `replace(T, T, EqualityComparator<? super T>)` | |
+| `Remove(T)` | `remove(T)` | |
+| `Remove(T, IEqualityComparer<T>)` | `remove(T, EqualityComparator<? super T>)` | |
+| `RemoveAt(int)` | `remove(int)` | |
+| `RemoveRange(int start, int length)` | `removeAll(int start, int end)` | |
+| `RemoveRange(IEnumerable<T>)` | `removeAll(Iterable<? extends T>)` | |
+| `RemoveRange(IEnumerable<T>, IEqualityComparer<T>)` | `removeAll(Iterable<? extends T>, EqualityComparator<? super T>)` | |
+| `RemoveRange(ImmutableArray<T>)` | `removeAll(ImmutableArrayList<? extends T>)` | |
+| `RemoveRange(ImmutableArray<T>, IEqualityComparer<T>)` | `removeAll(ImmutableArrayList<? extends T>, EqualityComparator<? super T>)` | |
+| `RemoveAll(Predicate<T>)` | `removeIf(Predicate<? super T>)` | |
+| `Clear()` | `clear()` | |
+| `Sort()` | `sort()` | |
+| `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | |
+| `Sort(int start, int length, IComparer<T>)` | `sort(int start, int end, Comparator<? super T>)` | |
+| `ToBuilder()` | `toBuilder()` | |
+| `GetEnumerator()` | `iterator()` | |
+| `GetHashCode()` | `hashCode()` | |
+| `Equals(object)` | `equals(Object)` | |
+| `Equals(ImmutableArray<T>)` | `equals(ImmutableArrayList<T>)` | |
+| `CastUp<TDerived>(ImmutableArray<TDerived>)` | `<T>castUp(ImmutableArrayList<? extends T>)` | |
+| `CastArray<TOther>(ImmutableArray<TOther>)` | ? | |
+| `As<TOther>()` | ? | |
+| `OfType<TResult>()` | `<TResult>ofType(Class<TResult> clazz)` | |
+
+### Builder
+
+#### `ImmutableArray<T>.Builder` &rarr; `ImmutableArrayList.Builder<T>`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `Capacity` | `getCapacity()`, `setCapacity(int)` | |
+| `Count` | `size()` | |
+| `this[int]` | `get(int)`, `set(int, T)` | |
+| `ToImmutable()` | `toImmutable()` | |
+| `MoveToImmutable()` | `moveToImmutable()` | |
+| `Clear()` | `clear()` | |
+| `Insert(int, T)` | `add(int, T)` | |
+| `Add(T)` | `add(T)` | |
+| `AddRange(IEnumerable<T>)` | `addAll(Iterable<? extends T>)` | |
+| `AddRange(params T[])` | `addAll(T...)` | |
+| `AddRange<TDerived>(TDerived[])` | Not required | |
+| `AddRange(T[], int)` | `addAll(T[], int)` | |
+| `AddRange(ImmutableArray<T>)` | `addAll(ImmutableArrayList<? extends T>)` | |
+| `AddRange(ImmutableArray<T>, int)` | `addAll(ImmutableArrayList<? extends T>, int)` | |
+| `AddRange<TDerived>(ImmutableArray<TDerived>)` | Not required | |
+| `AddRange(ImmutableArray<T>.Builder)` | `addAll(ImmutableArrayList.Builder<? extends T>)` | |
+| `AddRange<TDerived>(ImmutableArray<TDerived>.Builder)` | Not required | |
+| `Remove(T)` | `remove(Object)` | |
+| `RemoveAt(int)` | `remove(int)` | |
+| `Contains(T)` | `contains(Object)` | |
+| `ToArray()` | ? | |
+| `CopyTo(T[], int)` | ? | |
+| `IndexOf(T)` | `indexOf(Object)` | |
+| `IndexOf(T, int)` | `indexOf(?, int)` | |
+| `IndexOf(T, int start, int length)` | `indexOf(?, int start, int end)` | 1 |
+| `IndexOf(T, int start, int length, IEqualityComparator<? super T>)` | `indexOf(?, int start, int end, ?)` | 1 |
+| `LastIndexOf(T)` | `lastIndexOf(Object)` | |
+| `LastIndexOf(T, int)` | `lastIndexOf(?, int)` | |
+| `LastIndexOf(T, int start, int length)` | `lastIndexOf(?, int start, int end)` | 1 |
+| `LastIndexOf(T, int start, int length, IEqualityComparator<? super T>)` | `lastIndexOf(?, int start, int end, ?)` | 1 |
+| `Reverse` | `reverse()` | |
+| `Sort()` | `sort()` | |
+| `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | |
+| `Sort(int start, int length, IComparer<T>)` | `sort(int start, int end, Comparator<? super T>)` | 1 |
+| `GetEnumerator()` | `iterator()` | |
+
+¹ Java convention is to use start/end instead of start/length for ranges.
