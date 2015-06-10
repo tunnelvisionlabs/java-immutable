@@ -4,8 +4,11 @@ package com.tvl.util;
 import com.google.common.collect.Iterables;
 import com.tvl.util.function.BiFunction;
 import com.tvl.util.function.Function;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -260,184 +263,155 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
 //    Assert.Equal(s_empty, slice);
 //}
 
-//[Fact]
-//public void CreateFromArray()
-//{
-//    var source = new[] { 1, 2, 3 };
-//    var immutable = ImmutableArray.Create(source);
-//    Assert.Equal(source, immutable);
-//}
+    @Test
+    public void createFromArray() {
+        Integer[] source = {1, 2, 3};
+        ImmutableArrayList<Integer> immutable = ImmutableArrayList.create(source);
+        assertEqualSequences(Arrays.asList(source), immutable);
+    }
 
-//[Fact]
-//public void CreateFromNullArray()
-//{
-//    int[] nullArray = null;
-//    ImmutableArray<int> immutable = ImmutableArray.Create(nullArray);
-//    Assert.False(immutable.IsDefault);
-//    Assert.Equal(0, immutable.Length);
-//}
+    @Test
+    public void createFromNullArray() {
+        Integer[] nullArray = null;
+        ImmutableArrayList<Integer> immutable = ImmutableArrayList.create(nullArray);
+        Assert.assertNotNull(immutable);
+        Assert.assertEquals(0, immutable.size());
+    }
 
-//[Fact]
-//public void Covariance()
-//{
-//    ImmutableArray<string> derivedImmutable = ImmutableArray.Create("a", "b", "c");
-//    ImmutableArray<object> baseImmutable = derivedImmutable.As<object>();
-//    Assert.False(baseImmutable.IsDefault);
-//    // Must cast to object or the IEnumerable<object> overload of Equals would be used
-//    Assert.Equal((object)derivedImmutable, baseImmutable, EqualityComparer<object>.Default);
+    @Test
+    public void covariance() {
+        ImmutableArrayList<String> derivedImmutable = ImmutableArrayList.create("a", "b", "c");
+        ImmutableArrayList<Object> baseImmutable = derivedImmutable.as(Object.class);
+        Assert.assertNotNull(baseImmutable);
+        Assert.assertSame(derivedImmutable, baseImmutable);
 
-//    // Make sure we can reverse that, as a means to verify the underlying array is the same instance.
-//    ImmutableArray<string> derivedImmutable2 = baseImmutable.As<string>();
-//    Assert.False(derivedImmutable2.IsDefault);
-//    Assert.Equal(derivedImmutable, derivedImmutable2);
+        // Make sure we can reverse that, as a means to verify the underlying array is the same instance.
+        ImmutableArrayList<String> derivedImmutable2 = baseImmutable.as(String.class);
+        Assert.assertNotNull(derivedImmutable2);
+        Assert.assertSame(derivedImmutable, derivedImmutable2);
 
-//    // Try a cast that would fail.
-//    Assert.True(baseImmutable.As<Encoder>().IsDefault);
-//}
+        // Try a cast that would fail.
+        Assert.assertNull(baseImmutable.as(Integer.class));
+    }
 
-//[Fact]
-//public void DowncastOfDefaultStructs()
-//{
-//    ImmutableArray<string> derivedImmutable = default(ImmutableArray<string>);
-//    ImmutableArray<object> baseImmutable = derivedImmutable.As<object>();
-//    Assert.True(baseImmutable.IsDefault);
-//    Assert.True(derivedImmutable.IsDefault);
+    //[Fact]
+    //public void DowncastOfDefaultStructs()
+    //{
+    //    ImmutableArray<string> derivedImmutable = default(ImmutableArray<string>);
+    //    ImmutableArray<object> baseImmutable = derivedImmutable.As<object>();
+    //    Assert.True(baseImmutable.IsDefault);
+    //    Assert.True(derivedImmutable.IsDefault);
 
-//    // Make sure we can reverse that, as a means to verify the underlying array is the same instance.
-//    ImmutableArray<string> derivedImmutable2 = baseImmutable.As<string>();
-//    Assert.True(derivedImmutable2.IsDefault);
-//    Assert.True(derivedImmutable == derivedImmutable2);
-//}
+    //    // Make sure we can reverse that, as a means to verify the underlying array is the same instance.
+    //    ImmutableArray<string> derivedImmutable2 = baseImmutable.As<string>();
+    //    Assert.True(derivedImmutable2.IsDefault);
+    //    Assert.True(derivedImmutable == derivedImmutable2);
+    //}
 
-///// <summary>
-///// Verifies that using an ordinary Create factory method is smart enough to reuse
-///// an underlying array when possible.
-///// </summary>
-//[Fact]
-//public void CovarianceImplicit()
-//{
-//    ImmutableArray<string> derivedImmutable = ImmutableArray.Create("a", "b", "c");
-//    ImmutableArray<object> baseImmutable = ImmutableArray.CreateRange<object>(derivedImmutable);
-//    // Must cast to object or the IEnumerable<object> overload of Equals would be used
-//    Assert.Equal((object)derivedImmutable, baseImmutable, EqualityComparer<object>.Default);
+    /**
+     * Verifies that using an ordinary {@code createAll} factory method is smart enough to reuse an immutable array
+     * instance when possible.
+     */
+    @Test
+    public void covarianceImplicit() {
+        ImmutableArrayList<String> derivedImmutable = ImmutableArrayList.create("a", "b", "c");
+        ImmutableArrayList<Object> baseImmutable = ImmutableArrayList.<Object>createAll(derivedImmutable);
+        Assert.assertSame(derivedImmutable, baseImmutable);
 
-//    // Make sure we can reverse that, as a means to verify the underlying array is the same instance.
-//    ImmutableArray<string> derivedImmutable2 = baseImmutable.As<string>();
-//    Assert.Equal(derivedImmutable, derivedImmutable2);
-//}
+        // Make sure we can reverse that, as a means to verify the underlying array is the same instance.
+        ImmutableArrayList<String> derivedImmutable2 = baseImmutable.as(String.class);
+        Assert.assertSame(derivedImmutable, derivedImmutable2);
+    }
 
-//[Fact]
-//public void CastUpReference()
-//{
-//    ImmutableArray<string> derivedImmutable = ImmutableArray.Create("a", "b", "c");
-//    ImmutableArray<object> baseImmutable = ImmutableArray<object>.CastUp(derivedImmutable);
-//    // Must cast to object or the IEnumerable<object> overload of Equals would be used
-//    Assert.Equal((object)derivedImmutable, baseImmutable, EqualityComparer<object>.Default);
+    @Test
+    public void castUpReference() {
+        ImmutableArrayList<String> derivedImmutable = ImmutableArrayList.create("a", "b", "c");
+        ImmutableArrayList<Object> baseImmutable = ImmutableArrayList.<Object>castUp(derivedImmutable);
+        Assert.assertSame(derivedImmutable, baseImmutable);
 
-//    // Make sure we can reverse that, as a means to verify the underlying array is the same instance.
-//    Assert.Equal(derivedImmutable, baseImmutable.As<string>());
-//    Assert.Equal(derivedImmutable, baseImmutable.CastArray<string>());
-//}
+        // Make sure we can reverse that, as a means to verify the underlying array is the same instance.
+        Assert.assertSame(derivedImmutable, baseImmutable.as(String.class));
+        Assert.assertSame(derivedImmutable, baseImmutable.castArray(String.class));
+    }
 
-//[Fact]
-//public void CastUpReferenceDefaultValue()
-//{
-//    ImmutableArray<string> derivedImmutable = default(ImmutableArray<string>);
-//    ImmutableArray<object> baseImmutable = ImmutableArray<object>.CastUp(derivedImmutable);
-//    Assert.True(baseImmutable.IsDefault);
-//    Assert.True(derivedImmutable.IsDefault);
+    @Test
+    public void castUpReferenceDefaultValue() {
+        ImmutableArrayList<String> derivedImmutable = null;
+        ImmutableArrayList<Object> baseImmutable = ImmutableArrayList.<Object>castUp(derivedImmutable);
+        Assert.assertNull(baseImmutable);
+        Assert.assertNull(derivedImmutable);
+    }
 
-//    // Make sure we can reverse that, as a means to verify the underlying array is the same instance.
-//    ImmutableArray<string> derivedImmutable2 = baseImmutable.As<string>();
-//    Assert.True(derivedImmutable2.IsDefault);
-//    Assert.True(derivedImmutable == derivedImmutable2);
-//}
+    @Test
+    public void castUpRefToInterface() {
+        ImmutableArrayList<String> stringArray = ImmutableArrayList.create("a", "b");
+        ImmutableArrayList<CharSequence> enumArray = ImmutableArrayList.<CharSequence>castUp(stringArray);
+        Assert.assertEquals(2, enumArray.size());
+        Assert.assertSame(stringArray, enumArray.castArray(String.class));
+        Assert.assertSame(stringArray, enumArray.as(String.class));
+    }
 
-//[Fact]
-//public void CastUpRefToInterface()
-//{
-//    var stringArray = ImmutableArray.Create("a", "b");
-//    var enumArray = ImmutableArray<IEnumerable>.CastUp(stringArray);
-//    Assert.Equal(2, enumArray.Length);
-//    Assert.Equal(stringArray, enumArray.CastArray<string>());
-//    Assert.Equal(stringArray, enumArray.As<string>());
-//}
+    @Test
+    public void castUpInterfaceToInterface() {
+        ImmutableArrayList<List<?>> genericEnumArray = ImmutableArrayList.<List<?>>create(new ArrayList<Integer>(), new ArrayList<Integer>());
+        ImmutableArrayList<Iterable<?>> legacyEnumArray = ImmutableArrayList.<Iterable<?>>castUp(genericEnumArray);
+        Assert.assertEquals(2, legacyEnumArray.size());
+        Assert.assertSame(genericEnumArray, legacyEnumArray.as(List.class));
+        Assert.assertSame(genericEnumArray, legacyEnumArray.castArray(List.class));
+    }
 
-//[Fact]
-//public void CastUpInterfaceToInterface()
-//{
-//    var genericEnumArray = ImmutableArray.Create<IEnumerable<int>>(new List<int>(), new List<int>());
-//    var legacyEnumArray = ImmutableArray<IEnumerable>.CastUp(genericEnumArray);
-//    Assert.Equal(2, legacyEnumArray.Length);
-//    Assert.Equal(genericEnumArray, legacyEnumArray.As<IEnumerable<int>>());
-//    Assert.Equal(genericEnumArray, legacyEnumArray.CastArray<IEnumerable<int>>());
-//}
+    @Test
+    public void castUpArrayToObject() {
+        ImmutableArrayList<int[]> arrayArray = ImmutableArrayList.create(new int[]{1, 2}, new int[]{3, 4});
+        ImmutableArrayList<Object> sysArray = ImmutableArrayList.<Object>castUp(arrayArray);
+        Assert.assertEquals(2, sysArray.size());
+        Assert.assertSame(arrayArray, sysArray.as(int[].class));
+        Assert.assertSame(arrayArray, sysArray.castArray(int[].class));
+    }
 
-//[Fact]
-//public void CastUpArrayToSystemArray()
-//{
-//    var arrayArray = ImmutableArray.Create(new int[] { 1, 2 }, new int[] { 3, 4 });
-//    var sysArray = ImmutableArray<Array>.CastUp(arrayArray);
-//    Assert.Equal(2, sysArray.Length);
-//    Assert.Equal(arrayArray, sysArray.As<int[]>());
-//    Assert.Equal(arrayArray, sysArray.CastArray<int[]>());
-//}
+    //@Test
+    //public void castUpDelegateToSystemDelegate()
+    //{
+    //    var delArray = ImmutableArray.Create<Action>(() => { }, () => { });
+    //    var sysDelArray = ImmutableArray<Delegate>.CastUp(delArray);
+    //    Assert.Equal(2, sysDelArray.Length);
+    //    Assert.Equal(delArray, sysDelArray.As<Action>());
+    //    Assert.Equal(delArray, sysDelArray.CastArray<Action>());
+    //}
 
-//[Fact]
-//public void CastUpArrayToObject()
-//{
-//    var arrayArray = ImmutableArray.Create(new int[] { 1, 2 }, new int[] { 3, 4 });
-//    var objArray = ImmutableArray<object>.CastUp(arrayArray);
-//    Assert.Equal(2, objArray.Length);
-//    Assert.Equal(arrayArray, objArray.As<int[]>());
-//    Assert.Equal(arrayArray, objArray.CastArray<int[]>());
-//}
+    @Test
+    public void castArrayUnrelatedInterface() {
+        ImmutableArrayList<String> strArray = ImmutableArrayList.create("cat", "dog");
+        ImmutableArrayList<Comparable<String>> compArray = ImmutableArrayList.<Comparable<String>>castUp(strArray);
+        ImmutableArrayList<CharSequence> enumArray = compArray.castArray(CharSequence.class);
+        Assert.assertEquals(2, enumArray.size());
+        Assert.assertSame(strArray, enumArray.as(String.class));
+        Assert.assertSame(strArray, enumArray.castArray(String.class));
+    }
 
-//[Fact]
-//public void CastUpDelegateToSystemDelegate()
-//{
-//    var delArray = ImmutableArray.Create<Action>(() => { }, () => { });
-//    var sysDelArray = ImmutableArray<Delegate>.CastUp(delArray);
-//    Assert.Equal(2, sysDelArray.Length);
-//    Assert.Equal(delArray, sysDelArray.As<Action>());
-//    Assert.Equal(delArray, sysDelArray.CastArray<Action>());
-//}
+    @Test
+    public void castArrayBadInterface() {
+        ImmutableArrayList<Serializable> serializableArray = ImmutableArrayList.<Serializable>create(1, 2);
+        thrown.expect(ClassCastException.class);
+        serializableArray.castArray(CharSequence.class);
+    }
 
-//[Fact]
-//public void CastArrayUnrelatedInterface()
-//{
-//    var strArray = ImmutableArray.Create<string>("cat", "dog");
-//    var compArray = ImmutableArray<IComparable>.CastUp(strArray);
-//    var enumArray = compArray.CastArray<IEnumerable>();
-//    Assert.Equal(2, enumArray.Length);
-//    Assert.Equal(strArray, enumArray.As<string>());
-//    Assert.Equal(strArray, enumArray.CastArray<string>());
-//}
+    @Test
+    public void castArrayBadRef() {
+        ImmutableArrayList<Object> objectArray = ImmutableArrayList.<Object>create("cat", "dog");
+        thrown.expect(ClassCastException.class);
+        objectArray.castArray(Integer.class);
+    }
 
-//[Fact]
-//public void CastArrayBadInterface()
-//{
-//    var formattableArray = ImmutableArray.Create<IFormattable>(1, 2);
-//    Assert.Throws(typeof(InvalidCastException), () => formattableArray.CastArray<IComparable>());
-//}
+    @Test
+    public void toImmutableArrayList() {
+        Iterable<Integer> source = Arrays.asList(1, 2, 3);
+        ImmutableArrayList<Integer> immutable = Immutables.toImmutableArrayList(source);
+        assertEqualSequences(source, immutable);
 
-//[Fact]
-//public void CastArrayBadRef()
-//{
-//    var objArray = ImmutableArray.Create<object>("cat", "dog");
-//    Assert.Throws(typeof(InvalidCastException), () => objArray.CastArray<string>());
-//}
-
-//[Fact]
-//public void ToImmutableArray()
-//{
-//    IEnumerable<int> source = new[] { 1, 2, 3 };
-//    ImmutableArray<int> immutable = source.ToImmutableArray();
-//    Assert.Equal(source, immutable);
-
-//    ImmutableArray<int> immutable2 = immutable.ToImmutableArray();
-//    Assert.Equal(immutable, immutable2); // this will compare array reference equality.
-//}
+        ImmutableArrayList<Integer> immutable2 = Immutables.toImmutableArrayList(immutable);
+        Assert.assertSame(immutable, immutable2);
+    }
 
 //[Fact]
 //public void Count()

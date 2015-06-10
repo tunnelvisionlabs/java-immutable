@@ -29,6 +29,12 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         this.array = items;
     }
 
+    /**
+     * Gets an empty {@link ImmutableArrayList} instance.
+     *
+     * @param <T> The type of elements stored in the array.
+     * @return An empty immutable array.
+     */
     public static <T> ImmutableArrayList<T> empty() {
         @SuppressWarnings("unchecked") // safe
         ImmutableArrayList<T> emptyArray = (ImmutableArrayList<T>)EMPTY_ARRAY;
@@ -104,6 +110,24 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     }
 
     /**
+     * Creates an {@link ImmutableArrayList} populated with the specified elements.
+     *
+     * @param <T> The type of element stored in the array.
+     * @param items The elements to store in the array.
+     * @return An immutable array.
+     */
+    public static <T> ImmutableArrayList<T> create(T... items) {
+        // We can't trust that the array passed in will never be mutated by the caller. The caller may have passed in an
+        // array explicitly (not relying on compiler 'T...' syntax) and could then change the array after the call,
+        // thereby violating the immutable guarantee provided by this class. So we always copy the array to ensure it
+        // won't ever change.
+        //
+        // Note that createDefensiveCopy treats null as an empty list, so there is no need to handle that case before
+        // making the call.
+        return createDefensiveCopy(items);
+    }
+
+    /**
      * Creates an {@link ImmutableArrayList} populated with the contents of the specified sequence.
      *
      * @param <T> The type of element stored in the array.
@@ -113,14 +137,11 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     public static <T> ImmutableArrayList<T> createAll(Iterable<? extends T> items) {
         Requires.notNull(items, "items");
 
-        // As an optimization, if the provided enumerable is actually a boxed ImmutableArray<T> instance, reuse the
-        // underlying array if possible. Note that this allows for automatic upcasting and downcasting of arrays where
-        // the JVM allows it.
-        if (items instanceof ImmutableArrayList<?>) {
-            ImmutableArrayList<? extends T> immutableArray = (ImmutableArrayList<? extends T>)items;
-
-            T[] existingImmutableArray = immutableArray.array;
-            return new ImmutableArrayList<T>(existingImmutableArray);
+        // As an optimization, if the provided iterable is actually an ImmutableArrayList<? extends T> instance, simply
+        // reuse the instance.
+        ImmutableArrayList<? extends T> immutableArray = Immutables.asImmutableArrayList(items);
+        if (immutableArray != null) {
+            return castUp(immutableArray);
         }
 
         // We don't recognize the source as an array that is safe to use. So clone the sequence into an array and return
@@ -154,25 +175,6 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
                 return builder.toImmutable();
             }
         }
-    }
-
-    /**
-     * Creates an {@link ImmutableArrayList} populated with the contents of the specified sequence.
-     *
-     * @param <T> The type of element stored in the array.
-     * @param items The elements to store in the array.
-     * @return An immutable array.
-     */
-    public static <T> ImmutableArrayList<T> create(T... items) {
-        if (items == null) {
-            return create();
-        }
-
-        // We can't trust that the array passed in will never be mutated by the caller.
-        // The caller may have passed in an array explicitly (not relying on compiler 'T...' syntax)
-        // and could then change the array after the call, thereby violating the immutable
-        // guarantee provided by this class. So we always copy the array to ensure it won't ever change.
-        return createDefensiveCopy(items);
     }
 
     public static <T> ImmutableArrayList<T> createAll(T[] items, int start, int length) {
@@ -224,10 +226,23 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         throw new UnsupportedOperationException("Not implemented");
     }
 
+    /**
+     * Creates a new instance of the {@link Builder} class.
+     *
+     * @param <T> The type of elements stored in the array.
+     * @return A new builder.
+     */
     public static <T> ImmutableArrayList.Builder<T> createBuilder() {
         return ImmutableArrayList.<T>create().toBuilder();
     }
 
+    /**
+     * Creates a new instance of the {@link Builder} class with the specified initial capacity.
+     *
+     * @param <T> The type of elements stored in the array.
+     * @param initialCapacity The size of the initial array backing the builder.
+     * @return A new builder.
+     */
     public static <T> ImmutableArrayList.Builder<T> createBuilder(int initialCapacity) {
         return new Builder<T>(initialCapacity);
     }
@@ -854,11 +869,17 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         return builder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Itr iterator() {
         return new Itr();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof ImmutableArrayList<?>)) {
@@ -869,18 +890,96 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         return this.array == other.array;
     }
 
+    /**
+     * Determines whether the current immutable array is equal to another immutable array.
+     *
+     * @param other The immutable array to compare to the current instance.
+     * @return {@code true} if {@code other} is not null and has the same underlying array as the current instance;
+     * otherwise, {@code false}.
+     */
+    public boolean equals(ImmutableArrayList<?> other) {
+        if (other == null) {
+            return false;
+        }
+
+        return this.array == other.array;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return ((Object)array).hashCode();
     }
 
-    public static <T, TDerived extends T> ImmutableArrayList<T> castUp(ImmutableArrayList<TDerived> items) {
-        return new ImmutableArrayList<T>(items.array);
+    /**
+     * Returns a covariant {@link ImmutableArrayList} instance based on an input instance.
+     *
+     * <p>Since {@link ImmutableArrayList} is an immutable data structure, the covariant cast can be safely and
+     * efficiently performed without creating new object instances.</p>
+     *
+     * @param items The array.
+     * @param <T> The type of items stored in the array.
+     * @return The input {@code items}.
+     */
+    public static <T> ImmutableArrayList<T> castUp(ImmutableArrayList<? extends T> items) {
+        // Since this class is immutable, we can actually return the same instance
+        @SuppressWarnings("unchecked") // this is safe
+        ImmutableArrayList<T> result = (ImmutableArrayList<T>)items;
+        return result;
     }
 
-    //public <TOther> ImmutableArrayList<TOther> castArray() {
-    //    return new ImmutableArrayList<TOther>((TOther[])(Object)array);
-    //}
+    /**
+     * Casts the current immutable array to an instance of an immutable array with another element type.
+     *
+     * <p>This method supports safe down- and cross-casts in the object hierarchy by validating the elements of the
+     * current array at runtime. To efficiently perform covariant up-casts, use {@link #castUp(ImmutableArrayList)}
+     * instead.</p>
+     *
+     * @param clazz The element type to cast the current array to.
+     * @param <TOther> The type of element stored in the array.
+     * @return The current array as an instance of an immutable array of {@code TOther} objects.
+     * @throws ClassCastException if any object in the current instance cannot be cast to an instance of {@code TOther}.
+     */
+    public <TOther> ImmutableArrayList<TOther> castArray(Class<TOther> clazz) {
+        Requires.notNull(clazz, "clazz");
+        for (T item : this) {
+            clazz.cast(item);
+        }
+
+        // It is now safe to cast the array.
+        @SuppressWarnings("unchecked") // this is safe
+        ImmutableArrayList<TOther> result = (ImmutableArrayList<TOther>)this;
+        return result;
+    }
+
+    /**
+     * Attempts to cast the current immutable array to an instance of an immutable array with another element type.
+     *
+     * <p>This method supports safe down- and cross-casts in the object hierarchy by validating the elements of the
+     * current array at runtime. To efficiently perform covariant up-casts, use {@link #castUp(ImmutableArrayList)}
+     * instead.</p>
+     *
+     * @param clazz The element type to cast the current array to.
+     * @param <TOther> The type of element stored in the array.
+     * @return The current array as an instance of an immutable array of {@code TOther} objects if all objects in the
+     * array can be cast to {@code TOther}; otherwise, {@code null}.
+     */
+    public <TOther> ImmutableArrayList<TOther> as(Class<TOther> clazz) {
+        Requires.notNull(clazz, "clazz");
+        for (T item : this) {
+            if (item != null && !clazz.isInstance(item)) {
+                return null;
+            }
+        }
+
+        // It is now safe to cast the array.
+        @SuppressWarnings("unchecked") // this is safe
+        ImmutableArrayList<TOther> result = (ImmutableArrayList<TOther>)this;
+        return result;
+    }
+
     @Override
     public String toString() {
         return Arrays.toString(array);

@@ -61,12 +61,12 @@
 
 | .NET Member | Java Member | Notes |
 | --- | --- | --- |
-| `Create<T>()` | `<T>create()` | |
-| `Create<T>(T)` | `<T>create(T)` | |
-| `Create<T>(T, T)` | `<T>create(T, T)` | |
-| `Create<T>(T, T, T)` | `<T>create(T, T, T)` | |
-| `Create<T>(T, T, T, T)` | `<T>create(T, T, T, T)` | |
-| `Create<T>(params T[])` | `<T>create(T...)` | |
+| `Create<T>()` | `<T>create()` | &check; |
+| `Create<T>(T)` | `<T>create(T)` | &check; |
+| `Create<T>(T, T)` | `<T>create(T, T)` | &check; |
+| `Create<T>(T, T, T)` | `<T>create(T, T, T)` | &check; |
+| `Create<T>(T, T, T, T)` | `<T>create(T, T, T, T)` | &check; |
+| `Create<T>(params T[])` | `<T>create(T...)` | &check; |
 | `Create<T>(T[], int start, int length)` | `<T>createAll(T[], int start, int end)` | 1, 2 |
 | `Create<T>(ImmutableArray<T>, int start, int length)` | `<T>createAll(ImmutableArrayList<T>, int start, int end)` | 1, 2 |
 | `CreateRange<T>(IEnumerable<T>)` | `<T>createAll(Iterable<? extends T>)` | |
@@ -74,8 +74,8 @@
 | `CreateRange<TSource, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TResult>)` | `<TSource, TResult>createAll(ImmutableArrayList<TSource>, int start, int end, Function<TSource, TResult>)` | 1 |
 | `CreateRange<TSource, TArg, TResult>(ImmutableArray<TSource>, Func<TSource, TArg, TResult>, TArg)` | `<TSource, TArg, TResult>createAll(ImmutableArrayList<TSource>, BiFunction<TSource, TArg, TResult>, TArg)` | |
 | `CreateRange<TSource, TArg, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TArg, TResult>, TArg)` | `<TSource, TArg, TResult>createAll(ImmutableArrayList<TSource>, int start, int end, BiFunction<TSource, TArg, TResult>, TArg)` | 1 |
-| `CreateBuilder<T>()` | `<T>createBuilder()` | |
-| `CreateBuilder<T>(int)` | `<T>createBuilder(int)` | |
+| `CreateBuilder<T>()` | `<T>createBuilder()` | &check; |
+| `CreateBuilder<T>(int)` | `<T>createBuilder(int)` | &check; |
 | `BinarySearch<T>(ImmutableArray<T>, T)` | `<T>binarySearch(ImmutableArrayList<T>, T)` | |
 | `BinarySearch<T>(ImmutableArray<T>, T, IComparer<T>)` | `<T>binarySearch(ImmutableArrayList<T>, T, Comparator<? super T>)` | |
 | `BinarySearch<T>(ImmutableArray<T>, int start, int length, T)` | `<T>binarySearch(ImmutableArrayList<T>, int start, int end, T)` | 1 |
@@ -86,9 +86,9 @@
 
 #### `ImmutableArray` &rarr; `Immutables`
 
-| .NET Member | Java Member |
-| --- | --- |
-| `ToImmutableArray<TSource>(this IEnumerable<TSource>)` | `<TSource>toImmutableArrayList(Iterable<? extends TSource>)` |
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `ToImmutableArray<TSource>(this IEnumerable<TSource>)` | `<T>toImmutableArrayList(Iterable<? extends T>)` | &check; |
 
 ### Collection
 
@@ -96,14 +96,14 @@
 
 | .NET Member | Java Member | Notes |
 | --- | --- | --- |
-| `Empty` | `<T>empty()` | |
+| `Empty` | `<T>empty()` | &check; |
 | `operator==(ImmutableArray<T>, ImmutableArray<T>)` | n/a | |
 | `operator!=(ImmutableArray<T>, ImmutableArray<T>)` | n/a | |
 | `operator==(ImmutableArray<T>?, ImmutableArray<T>?)` | n/a | |
 | `operator!=(ImmutableArray<T>?, ImmutableArray<T>?)` | n/a | |
-| `this[int]` | `get(int)` | |
-| `IsEmpty` | `isEmpty()` | |
-| `Length` | `size()` | |
+| `this[int]` | `get(int)` | &check; |
+| `IsEmpty` | `isEmpty()` | &check; |
+| `Length` | `size()` | &check; |
 | `IsDefault` | n/a | |
 | `IsDefaultOrEmpty` | n/a | |
 | `IndexOf(T)` | `indexOf(T)` | |
@@ -133,18 +133,18 @@
 | `RemoveRange(ImmutableArray<T>)` | `removeAll(ImmutableArrayList<? extends T>)` | |
 | `RemoveRange(ImmutableArray<T>, IEqualityComparer<T>)` | `removeAll(ImmutableArrayList<? extends T>, EqualityComparator<? super T>)` | |
 | `RemoveAll(Predicate<T>)` | `removeIf(Predicate<? super T>)` | |
-| `Clear()` | `clear()` | |
-| `Sort()` | `sort()` | |
-| `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | |
+| `Clear()` | `clear()` | &check; |
+| `Sort()` | `sort()` | &check; |
+| `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | &check; |
 | `Sort(int start, int length, IComparer<T>)` | `sort(int start, int end, Comparator<? super T>)` | |
-| `ToBuilder()` | `toBuilder()` | |
+| `ToBuilder()` | `toBuilder()` | &check; |
 | `GetEnumerator()` | `iterator()` | |
-| `GetHashCode()` | `hashCode()` | |
-| `Equals(object)` | `equals(Object)` | |
-| `Equals(ImmutableArray<T>)` | `equals(ImmutableArrayList<T>)` | |
-| `CastUp<TDerived>(ImmutableArray<TDerived>)` | `<T>castUp(ImmutableArrayList<? extends T>)` | |
-| `CastArray<TOther>(ImmutableArray<TOther>)` | ? | |
-| `As<TOther>()` | ? | |
+| `GetHashCode()` | `hashCode()` | &check; |
+| `Equals(object)` | `equals(Object)` | &check; |
+| `Equals(ImmutableArray<T>)` | `equals(ImmutableArrayList<?>)` | &check; |
+| `CastUp<TDerived>(ImmutableArray<TDerived>)` | `<T>castUp(ImmutableArrayList<? extends T>)` | &check; |
+| `CastArray<TOther>(ImmutableArray<TOther>)` | `<TOther>castArray(Class<TOther>)` | &check; |
+| `As<TOther>()` | `<TOther>as(Class<TOther>)` | &check; |
 | `OfType<TResult>()` | `<TResult>ofType(Class<TResult> clazz)` | |
 
 ### Builder

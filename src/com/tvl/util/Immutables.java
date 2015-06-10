@@ -15,6 +15,25 @@ public final class Immutables {
     }
 
     /**
+     * Iterates a sequence exactly once and produces an {@link ImmutableArrayList} of its contents.
+     *
+     * @param <T> The type of element in the sequence.
+     * @param source The sequence to iterate.
+     * @return An {@link ImmutableArrayList}.
+     */
+    public static <T> ImmutableArrayList<T> toImmutableArrayList(Iterable<? extends T> source) {
+        return ImmutableArrayList.createAll(source);
+    }
+
+    static <T> ImmutableArrayList<T> asImmutableArrayList(Iterable<T> source) {
+        if (source instanceof ImmutableArrayList<?>) {
+            return (ImmutableArrayList<T>)source;
+        }
+
+        return null;
+    }
+
+    /**
      * Tries to divine the number of elements in a sequence without actually iterating each element.
      *
      * @param iterable The iterable source.
