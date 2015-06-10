@@ -14,6 +14,14 @@ public final class Immutables {
     private Immutables() {
     }
 
+    static <T> ImmutableArrayList<T> asImmutableArrayList(Iterable<T> source) {
+        if (source instanceof ImmutableArrayList<?>) {
+            return (ImmutableArrayList<T>)source;
+        }
+
+        return null;
+    }
+
     /**
      * Tries to divine the number of elements in a sequence without actually iterating each element.
      *

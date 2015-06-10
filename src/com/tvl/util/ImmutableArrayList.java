@@ -113,14 +113,11 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     public static <T> ImmutableArrayList<T> createAll(Iterable<? extends T> items) {
         Requires.notNull(items, "items");
 
-        // As an optimization, if the provided enumerable is actually a boxed ImmutableArray<T> instance, reuse the
-        // underlying array if possible. Note that this allows for automatic upcasting and downcasting of arrays where
-        // the JVM allows it.
-        if (items instanceof ImmutableArrayList<?>) {
-            ImmutableArrayList<? extends T> immutableArray = (ImmutableArrayList<? extends T>)items;
-
-            T[] existingImmutableArray = immutableArray.array;
-            return new ImmutableArrayList<T>(existingImmutableArray);
+        // As an optimization, if the provided iterable is actually an ImmutableArrayList<? extends T> instance, simply
+        // reuse the instance.
+        ImmutableArrayList<? extends T> immutableArray = Immutables.asImmutableArrayList(items);
+        if (immutableArray != null) {
+            return castUp(immutableArray);
         }
 
         // We don't recognize the source as an array that is safe to use. So clone the sequence into an array and return
