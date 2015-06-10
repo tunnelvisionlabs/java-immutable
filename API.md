@@ -37,12 +37,12 @@
 | --- | --- |
 | `System.Collections.Immutable.ImmutableArray` | `com.tvl.util.ImmutableArrayList<T>` |
 | `System.Collections.Immutable.ImmutableDictionary` | `com.tvl.util.ImmutableHashMap<K, V>` |
-| `System.Collections.Immutable.ImmutableHashSet` | `com.tvl.util.Immutable<T>` |
-| `System.Collections.Immutable.ImmutableList` | `com.tvl.util.Immutable<T>` |
-| `System.Collections.Immutable.ImmutableQueue` | `com.tvl.util.Immutable<T>` |
+| `System.Collections.Immutable.ImmutableHashSet` | `com.tvl.util.ImmutableHashSet<T>` |
+| `System.Collections.Immutable.ImmutableList` | `com.tvl.util.ImmutableTreeList<T>` |
+| `System.Collections.Immutable.ImmutableQueue` | `com.tvl.util.ImmutableLinkedQueue<T>` |
 | `System.Collections.Immutable.ImmutableSortedDictionary` | `com.tvl.util.ImmutableTreeMap<K, V>` |
-| `System.Collections.Immutable.ImmutableSortedSet` | `com.tvl.util.Immutable<T>` |
-| `System.Collections.Immutable.ImmutableStack` | `com.tvl.util.Immutable<T>` |
+| `System.Collections.Immutable.ImmutableSortedSet` | `com.tvl.util.ImmutableTreeSet<T>` |
+| `System.Collections.Immutable.ImmutableStack` | `com.tvl.util.ImmutableLinkedStack<T>` |
 
 ## Immutable Collection Utilities
 
