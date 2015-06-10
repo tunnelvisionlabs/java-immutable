@@ -428,16 +428,15 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
 //    Assert.Throws(typeof(InvalidCastException), () => objArray.CastArray<string>());
 //}
 
-//[Fact]
-//public void ToImmutableArray()
-//{
-//    IEnumerable<int> source = new[] { 1, 2, 3 };
-//    ImmutableArray<int> immutable = source.ToImmutableArray();
-//    Assert.Equal(source, immutable);
+    @Test
+    public void toImmutableArrayList() {
+        Iterable<Integer> source = Arrays.asList(1, 2, 3);
+        ImmutableArrayList<Integer> immutable = Immutables.toImmutableArrayList(source);
+        assertEqualSequences(source, immutable);
 
-//    ImmutableArray<int> immutable2 = immutable.ToImmutableArray();
-//    Assert.Equal(immutable, immutable2); // this will compare array reference equality.
-//}
+        ImmutableArrayList<Integer> immutable2 = Immutables.toImmutableArrayList(immutable);
+        Assert.assertSame(immutable, immutable2);
+    }
 
 //[Fact]
 //public void Count()

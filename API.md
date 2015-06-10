@@ -86,9 +86,9 @@
 
 #### `ImmutableArray` &rarr; `Immutables`
 
-| .NET Member | Java Member |
-| --- | --- |
-| `ToImmutableArray<TSource>(this IEnumerable<TSource>)` | `<TSource>toImmutableArrayList(Iterable<? extends TSource>)` |
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `ToImmutableArray<TSource>(this IEnumerable<TSource>)` | `<T>toImmutableArrayList(Iterable<? extends T>)` | &check; |
 
 ### Collection
 
