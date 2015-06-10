@@ -74,8 +74,8 @@
 | `CreateRange<TSource, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TResult>)` | `<TSource, TResult>createAll(ImmutableArrayList<TSource>, int start, int end, Function<TSource, TResult>)` | 1 |
 | `CreateRange<TSource, TArg, TResult>(ImmutableArray<TSource>, Func<TSource, TArg, TResult>, TArg)` | `<TSource, TArg, TResult>createAll(ImmutableArrayList<TSource>, BiFunction<TSource, TArg, TResult>, TArg)` | |
 | `CreateRange<TSource, TArg, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TArg, TResult>, TArg)` | `<TSource, TArg, TResult>createAll(ImmutableArrayList<TSource>, int start, int end, BiFunction<TSource, TArg, TResult>, TArg)` | 1 |
-| `CreateBuilder<T>()` | `<T>createBuilder()` | |
-| `CreateBuilder<T>(int)` | `<T>createBuilder(int)` | |
+| `CreateBuilder<T>()` | `<T>createBuilder()` | &check; |
+| `CreateBuilder<T>(int)` | `<T>createBuilder(int)` | &check; |
 | `BinarySearch<T>(ImmutableArray<T>, T)` | `<T>binarySearch(ImmutableArrayList<T>, T)` | |
 | `BinarySearch<T>(ImmutableArray<T>, T, IComparer<T>)` | `<T>binarySearch(ImmutableArrayList<T>, T, Comparator<? super T>)` | |
 | `BinarySearch<T>(ImmutableArray<T>, int start, int length, T)` | `<T>binarySearch(ImmutableArrayList<T>, int start, int end, T)` | 1 |

@@ -220,10 +220,23 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         throw new UnsupportedOperationException("Not implemented");
     }
 
+    /**
+     * Creates a new instance of the {@link Builder} class.
+     *
+     * @param <T> The type of elements stored in the array.
+     * @return A new builder.
+     */
     public static <T> ImmutableArrayList.Builder<T> createBuilder() {
         return ImmutableArrayList.<T>create().toBuilder();
     }
 
+    /**
+     * Creates a new instance of the {@link Builder} class with the specified initial capacity.
+     *
+     * @param <T> The type of elements stored in the array.
+     * @param initialCapacity The size of the initial array backing the builder.
+     * @return A new builder.
+     */
     public static <T> ImmutableArrayList.Builder<T> createBuilder(int initialCapacity) {
         return new Builder<T>(initialCapacity);
     }
