@@ -101,9 +101,9 @@
 | `operator!=(ImmutableArray<T>, ImmutableArray<T>)` | n/a | |
 | `operator==(ImmutableArray<T>?, ImmutableArray<T>?)` | n/a | |
 | `operator!=(ImmutableArray<T>?, ImmutableArray<T>?)` | n/a | |
-| `this[int]` | `get(int)` | |
-| `IsEmpty` | `isEmpty()` | |
-| `Length` | `size()` | |
+| `this[int]` | `get(int)` | &check; |
+| `IsEmpty` | `isEmpty()` | &check; |
+| `Length` | `size()` | &check; |
 | `IsDefault` | n/a | |
 | `IsDefaultOrEmpty` | n/a | |
 | `IndexOf(T)` | `indexOf(T)` | |
@@ -133,16 +133,16 @@
 | `RemoveRange(ImmutableArray<T>)` | `removeAll(ImmutableArrayList<? extends T>)` | |
 | `RemoveRange(ImmutableArray<T>, IEqualityComparer<T>)` | `removeAll(ImmutableArrayList<? extends T>, EqualityComparator<? super T>)` | |
 | `RemoveAll(Predicate<T>)` | `removeIf(Predicate<? super T>)` | |
-| `Clear()` | `clear()` | |
-| `Sort()` | `sort()` | |
-| `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | |
+| `Clear()` | `clear()` | &check; |
+| `Sort()` | `sort()` | &check; |
+| `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | &check; |
 | `Sort(int start, int length, IComparer<T>)` | `sort(int start, int end, Comparator<? super T>)` | |
-| `ToBuilder()` | `toBuilder()` | |
+| `ToBuilder()` | `toBuilder()` | &check; |
 | `GetEnumerator()` | `iterator()` | |
-| `GetHashCode()` | `hashCode()` | |
-| `Equals(object)` | `equals(Object)` | |
-| `Equals(ImmutableArray<T>)` | `equals(ImmutableArrayList<T>)` | |
-| `CastUp<TDerived>(ImmutableArray<TDerived>)` | `<T>castUp(ImmutableArrayList<? extends T>)` | |
+| `GetHashCode()` | `hashCode()` | &check; |
+| `Equals(object)` | `equals(Object)` | &check; |
+| `Equals(ImmutableArray<T>)` | `equals(ImmutableArrayList<?>)` | &check; |
+| `CastUp<TDerived>(ImmutableArray<TDerived>)` | `<T>castUp(ImmutableArrayList<? extends T>)` | &check; |
 | `CastArray<TOther>(ImmutableArray<TOther>)` | ? | |
 | `As<TOther>()` | ? | |
 | `OfType<TResult>()` | `<TResult>ofType(Class<TResult> clazz)` | |

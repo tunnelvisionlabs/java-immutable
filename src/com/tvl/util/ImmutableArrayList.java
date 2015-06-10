@@ -869,11 +869,17 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         return builder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Itr iterator() {
         return new Itr();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof ImmutableArrayList<?>)) {
@@ -884,11 +890,39 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         return this.array == other.array;
     }
 
+    /**
+     * Determines whether the current immutable array is equal to another immutable array.
+     *
+     * @param other The immutable array to compare to the current instance.
+     * @return {@code true} if {@code other} is not null and has the same underlying array as the current instance;
+     * otherwise, {@code false}.
+     */
+    public boolean equals(ImmutableArrayList<?> other) {
+        if (other == null) {
+            return false;
+        }
+
+        return this.array == other.array;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return ((Object)array).hashCode();
     }
 
+    /**
+     * Returns a covariant {@link ImmutableArrayList} instance based on an input instance.
+     *
+     * <p>Since {@link ImmutableArrayList} is an immutable data structure, the covariant cast can be safely and
+     * efficiently performed without creating new object instances.</p>
+     *
+     * @param items The array.
+     * @param <T> The type of items stored in the array.
+     * @return The input {@code items}.
+     */
     public static <T> ImmutableArrayList<T> castUp(ImmutableArrayList<? extends T> items) {
         // Since this class is immutable, we can actually return the same instance
         @SuppressWarnings("unchecked") // this is safe
