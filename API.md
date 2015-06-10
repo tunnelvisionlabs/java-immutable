@@ -96,7 +96,7 @@
 
 | .NET Member | Java Member | Notes |
 | --- | --- | --- |
-| `Empty` | `<T>empty()` | |
+| `Empty` | `<T>empty()` | &check; |
 | `operator==(ImmutableArray<T>, ImmutableArray<T>)` | n/a | |
 | `operator!=(ImmutableArray<T>, ImmutableArray<T>)` | n/a | |
 | `operator==(ImmutableArray<T>?, ImmutableArray<T>?)` | n/a | |

@@ -29,6 +29,12 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         this.array = items;
     }
 
+    /**
+     * Gets an empty {@link ImmutableArrayList} instance.
+     *
+     * @param <T> The type of elements stored in the array.
+     * @return An empty immutable array.
+     */
     public static <T> ImmutableArrayList<T> empty() {
         @SuppressWarnings("unchecked") // safe
         ImmutableArrayList<T> emptyArray = (ImmutableArrayList<T>)EMPTY_ARRAY;
