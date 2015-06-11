@@ -69,7 +69,7 @@
 | `Create<T>(params T[])` | `<T>create(T...)` | &check; |
 | `Create<T>(T[], int start, int length)` | `<T>createAll(T[], int start, int end)` | 1, 2 |
 | `Create<T>(ImmutableArray<T>, int start, int length)` | `<T>createAll(ImmutableArrayList<T>, int start, int end)` | 1, 2 |
-| `CreateRange<T>(IEnumerable<T>)` | `<T>createAll(Iterable<? extends T>)` | |
+| `CreateRange<T>(IEnumerable<T>)` | `<T>createAll(Iterable<? extends T>)` | &check; |
 | `CreateRange<TSource, TResult>(ImmutableArray<TSource>, Func<TSource, TResult>)` | `<Source, Result>createAll(ImmutableArrayList<Source>, Function<Source, Result>)` | &check; |
 | `CreateRange<TSource, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TResult>)` | `<Source, Result>createAll(ImmutableArrayList<Source>, int start, int end, Function<Source, Result>)` | 1 |
 | `CreateRange<TSource, TArg, TResult>(ImmutableArray<TSource>, Func<TSource, TArg, TResult>, TArg)` | `<Source, Arg, Result>createAll(ImmutableArrayList<Source>, BiFunction<Source, Arg, Result>, TArg)` | |
@@ -114,19 +114,19 @@
 | `LastIndexOf(T, int start)` | `lastIndexOf(T, int start)` | |
 | `LastIndexOf(T, int start, int length)` | `lastIndexOf(T, int start, int end)` | |
 | `LastIndexOf(T, int start, int length, IEqualityComparer<T>)` | `lastIndexOf(T, int start, int end, EqualityComparator<? super T>)` | |
-| `Contains(T)` | `contains(T)` | |
-| `Insert(int, T)` | `add(int, T)` | |
-| `InsertRange(int, IEnumerable<T>)` | `addAll(int, Iterable<? extends T>)` | |
-| `InsertRange(int, ImmutableArray<T>)` | `addAll(int, ImmutableArrayList<? extends T>)` | |
-| `Add(T)` | `add(T)` | |
-| `AddRange(IEnumerable<T>)` | `addAll(Iterable<? extends T>)` | |
-| `AddRange(ImmutableArray<T>)` | `addAll(ImmutableArrayList<? extends T>)` | |
-| `SetItem(int, T)` | `set(int, T)` | |
-| `Replace(T, T)` | `replace(T, T)` | |
-| `Replace(T, T, IEqualityComparer<T>)` | `replace(T, T, EqualityComparator<? super T>)` | |
-| `Remove(T)` | `remove(T)` | |
-| `Remove(T, IEqualityComparer<T>)` | `remove(T, EqualityComparator<? super T>)` | |
-| `RemoveAt(int)` | `remove(int)` | |
+| `Contains(T)` | `contains(T)` | &check; |
+| `Insert(int, T)` | `add(int, T)` | &check; |
+| `InsertRange(int, IEnumerable<T>)` | `addAll(int, Iterable<? extends T>)` | &check; |
+| `InsertRange(int, ImmutableArray<T>)` | `addAll(int, ImmutableArrayList<? extends T>)` | &check; |
+| `Add(T)` | `add(T)` | &check; |
+| `AddRange(IEnumerable<T>)` | `addAll(Iterable<? extends T>)` | &check; |
+| `AddRange(ImmutableArray<T>)` | `addAll(ImmutableArrayList<? extends T>)` | &check; |
+| `SetItem(int, T)` | `set(int, T)` | &check; |
+| `Replace(T, T)` | `replace(T, T)` | &check; |
+| `Replace(T, T, IEqualityComparer<T>)` | `replace(T, T, EqualityComparator<? super T>)` | &check; |
+| `Remove(T)` | `remove(T)` | &check; |
+| `Remove(T, IEqualityComparer<T>)` | `remove(T, EqualityComparator<? super T>)` | &check; |
+| `RemoveAt(int)` | `remove(int)` | &check; |
 | `RemoveRange(int start, int length)` | `removeAll(int start, int end)` | |
 | `RemoveRange(IEnumerable<T>)` | `removeAll(Iterable<? extends T>)` | |
 | `RemoveRange(IEnumerable<T>, IEqualityComparer<T>)` | `removeAll(Iterable<? extends T>, EqualityComparator<? super T>)` | |
@@ -138,7 +138,7 @@
 | `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | &check; |
 | `Sort(int start, int length, IComparer<T>)` | `sort(int start, int end, Comparator<? super T>)` | |
 | `ToBuilder()` | `toBuilder()` | &check; |
-| `GetEnumerator()` | `iterator()` | |
+| `GetEnumerator()` | `iterator()` | &check; |
 | `GetHashCode()` | `hashCode()` | &check; |
 | `Equals(object)` | `equals(Object)` | &check; |
 | `Equals(ImmutableArray<T>)` | `equals(ImmutableArrayList<?>)` | &check; |

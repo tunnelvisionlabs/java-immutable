@@ -588,7 +588,15 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return The new immutable collection.
      */
     public ImmutableArrayList<T> addAll(int index, ImmutableArrayList<? extends T> items) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(items, "items");
+        Requires.range(index >= 0 && index <= size(), "index");
+        if (isEmpty()) {
+            return castUp(items);
+        } else if (items.isEmpty()) {
+            return this;
+        }
+
+        return addAll(index, (Iterable<? extends T>)items);
     }
 
     /**
@@ -599,7 +607,11 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> add(T item) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (isEmpty()) {
+            return create(item);
+        }
+
+        return add(size(), item);
     }
 
     /**
@@ -610,7 +622,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> addAll(Iterable<? extends T> items) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return addAll(size(), items);
     }
 
     /**
@@ -620,7 +632,14 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return A new immutable array with the elements added.
      */
     public ImmutableArrayList<T> addAll(ImmutableArrayList<? extends T> items) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(items, "items");
+        if (isEmpty()) {
+            return castUp(items);
+        } else if (items.isEmpty()) {
+            return this;
+        }
+
+        return addAll((Iterable<? extends T>)items);
     }
 
     /**

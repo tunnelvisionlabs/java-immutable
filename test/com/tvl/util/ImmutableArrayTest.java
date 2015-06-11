@@ -414,24 +414,11 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
         Assert.assertSame(immutable, immutable2);
     }
 
-//[Fact]
-//public void Count()
-//{
-//    Assert.Throws<NullReferenceException>(() => s_emptyDefault.Length);
-//    Assert.Throws<InvalidOperationException>(() => ((ICollection)s_emptyDefault).Count);
-//    Assert.Throws<InvalidOperationException>(() => ((ICollection<int>)s_emptyDefault).Count);
-//    Assert.Throws<InvalidOperationException>(() => ((IReadOnlyCollection<int>)s_emptyDefault).Count);
-
-//    Assert.Equal(0, s_empty.Length);
-//    Assert.Equal(0, ((ICollection)s_empty).Count);
-//    Assert.Equal(0, ((ICollection<int>)s_empty).Count);
-//    Assert.Equal(0, ((IReadOnlyCollection<int>)s_empty).Count);
-
-//    Assert.Equal(1, s_oneElement.Length);
-//    Assert.Equal(1, ((ICollection)s_oneElement).Count);
-//    Assert.Equal(1, ((ICollection<int>)s_oneElement).Count);
-//    Assert.Equal(1, ((IReadOnlyCollection<int>)s_oneElement).Count);
-//}
+    @Test
+    public void size() {
+        Assert.assertEquals(0, EMPTY.size());
+        Assert.assertEquals(1, ONE_ELEMENT.size());
+    }
 
     @Test
     public void isEmpty() {
@@ -489,7 +476,7 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
     }
 
     //@Test
-    //public void containsEqualityComparer() {
+    //public void containsEqualityComparator() {
     //    ImmutableArrayList<String> array = ImmutableArrayList.create("a", "B");
     //    Assert.assertFalse(array.contains("A", ordinalComparator()));
     //    Assert.assertTrue(array.contains("A", ordinalIgnoreCaseComparator()));
@@ -614,30 +601,27 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
         Assert.assertNotEquals(0, ONE_ELEMENT.hashCode());
     }
 
-//[Fact]
-//public void Add()
-//{
-//    var source = new[] { 1, 2 };
-//    var array1 = ImmutableArray.Create(source);
-//    var array2 = array1.Add(3);
-//    Assert.Equal(source, array1);
-//    Assert.Equal(new[] { 1, 2, 3 }, array2);
-//    Assert.Equal(new[] { 1 }, s_empty.Add(1));
-//}
+    @Test
+    public void add() {
+        Integer[] source = {1, 2};
+        ImmutableArrayList<Integer> array1 = ImmutableArrayList.create(source);
+        ImmutableArrayList<Integer> array2 = array1.add(3);
+        assertEqualSequences(Arrays.asList(source), array1);
+        assertEqualSequences(Arrays.asList(1, 2, 3), array2);
+        assertEqualSequences(Collections.singletonList(1), EMPTY.add(1));
+    }
 
-//[Fact]
-//public void AddRange()
-//{
-//    var nothingToEmpty = s_empty.AddRange(Enumerable.Empty<int>());
-//    Assert.False(nothingToEmpty.IsDefault);
-//    Assert.True(nothingToEmpty.IsEmpty);
+    @Test
+    public void addAll() {
+        ImmutableArrayList<Integer> nothingToEmpty = EMPTY.addAll(Collections.<Integer>emptyList());
+        Assert.assertTrue(nothingToEmpty.isEmpty());
 
-//    Assert.Equal(new[] { 1, 2 }, s_empty.AddRange(Enumerable.Range(1, 2)));
-//    Assert.Equal(new[] { 1, 2 }, s_empty.AddRange(new[] { 1, 2 }));
+        assertEqualSequences(Arrays.asList(1, 2), EMPTY.addAll(new Range(1, 2)));
+        assertEqualSequences(Arrays.asList(1, 2), EMPTY.addAll(Arrays.asList(1, 2)));
 
-//    Assert.Equal(new[] { 1, 2, 3, 4 }, s_manyElements.AddRange(new[] { 4 }));
-//    Assert.Equal(new[] { 1, 2, 3, 4, 5 }, s_manyElements.AddRange(new[] { 4, 5 }));
-//}
+        assertEqualSequences(Arrays.asList(1, 2, 3, 4), MANY_ELEMENTS.addAll(Collections.singletonList(4)));
+        assertEqualSequences(Arrays.asList(1, 2, 3, 4, 5), MANY_ELEMENTS.addAll(Arrays.asList(4, 5)));
+    }
 
 //[Fact]
 //public void AddRangeDefaultEnumerable()
@@ -664,34 +648,41 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
 //    Assert.Throws<InvalidOperationException>(() => s_oneElement.AddRange(emptyDefaultBoxed));
 //}
 
-//[Fact]
-//public void AddRangeNoOpIdentity()
-//{
-//    Assert.Equal(s_empty, s_empty.AddRange(s_empty));
-//    Assert.Equal(s_oneElement, s_empty.AddRange(s_oneElement)); // struct overload
-//    Assert.Equal(s_oneElement, s_empty.AddRange((IEnumerable<int>)s_oneElement)); // enumerable overload
-//    Assert.Equal(s_oneElement, s_oneElement.AddRange(s_empty));
-//}
+    @Test
+    public void addAllNoOpIdentity() {
+        Assert.assertSame(EMPTY, EMPTY.addAll(EMPTY));
+        Assert.assertSame(ONE_ELEMENT, EMPTY.addAll(ONE_ELEMENT)); // struct overload
+        Assert.assertSame(ONE_ELEMENT, EMPTY.addAll((Iterable<Integer>)ONE_ELEMENT)); // enumerable overload
+        Assert.assertSame(ONE_ELEMENT, ONE_ELEMENT.addAll(EMPTY));
+    }
 
-//[Fact]
-//public void Insert()
-//{
-//    var array1 = ImmutableArray.Create<char>();
-//    Assert.Throws<ArgumentOutOfRangeException>(() => array1.Insert(-1, 'a'));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => array1.Insert(1, 'a'));
+    @Test
+    public void insert() {
+        ImmutableArrayList<Character> array1 = ImmutableArrayList.create();
+        try {
+            array1.add(-1, 'a');
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
 
-//    var insertFirst = array1.Insert(0, 'c');
-//    Assert.Equal(new[] { 'c' }, insertFirst);
+        try {
+            array1.add(1, 'a');
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
 
-//    var insertLeft = insertFirst.Insert(0, 'a');
-//    Assert.Equal(new[] { 'a', 'c' }, insertLeft);
+        ImmutableArrayList<Character> insertFirst = array1.add(0, 'c');
+        assertEqualSequences(Collections.singletonList('c'), insertFirst);
 
-//    var insertRight = insertFirst.Insert(1, 'e');
-//    Assert.Equal(new[] { 'c', 'e' }, insertRight);
+        ImmutableArrayList<Character> insertLeft = insertFirst.add(0, 'a');
+        assertEqualSequences(Arrays.asList('a', 'c'), insertLeft);
 
-//    var insertBetween = insertLeft.Insert(1, 'b');
-//    Assert.Equal(new[] { 'a', 'b', 'c' }, insertBetween);
-//}
+        ImmutableArrayList<Character> insertRight = insertFirst.add(1, 'e');
+        assertEqualSequences(Arrays.asList('c', 'e'), insertRight);
+
+        ImmutableArrayList<Character> insertBetween = insertLeft.add(1, 'b');
+        assertEqualSequences(Arrays.asList('a', 'b', 'c'), insertBetween);
+    }
 
 //[Fact]
 //public void InsertDefault()
@@ -701,29 +692,35 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
 //    Assert.Throws<NullReferenceException>(() => s_emptyDefault.Insert(0, 10));
 //}
 
-//[Fact]
-//public void InsertRangeNoOpIdentity()
-//{
-//    Assert.Equal(s_empty, s_empty.InsertRange(0, s_empty));
-//    Assert.Equal(s_oneElement, s_empty.InsertRange(0, s_oneElement)); // struct overload
-//    Assert.Equal(s_oneElement, s_empty.InsertRange(0, (IEnumerable<int>)s_oneElement)); // enumerable overload
-//    Assert.Equal(s_oneElement, s_oneElement.InsertRange(0, s_empty));
-//}
+    @Test
+    public void insertAllNoOpIdentity() {
+        Assert.assertSame(EMPTY, EMPTY.addAll(0, EMPTY));
+        Assert.assertSame(ONE_ELEMENT, EMPTY.addAll(0, ONE_ELEMENT)); // struct overload
+        Assert.assertSame(ONE_ELEMENT, EMPTY.addAll(0, (Iterable<Integer>)ONE_ELEMENT)); // enumerable overload
+        Assert.assertSame(ONE_ELEMENT, ONE_ELEMENT.addAll(0, EMPTY));
+    }
 
-//[Fact]
-//public void InsertRangeEmpty()
-//{
-//    Assert.Throws<NullReferenceException>(() => s_emptyDefault.Insert(-1, 10));
-//    Assert.Throws<NullReferenceException>(() => s_emptyDefault.Insert(1, 10));
-//    Assert.Equal(new int[0], s_empty.InsertRange(0, Enumerable.Empty<int>()));
-//    Assert.Equal(s_empty, s_empty.InsertRange(0, Enumerable.Empty<int>()));
-//    Assert.Equal(new[] { 1 }, s_empty.InsertRange(0, new[] { 1 }));
-//    Assert.Equal(new[] { 2, 3, 4 }, s_empty.InsertRange(0, new[] { 2, 3, 4 }));
-//    Assert.Equal(new[] { 2, 3, 4 }, s_empty.InsertRange(0, Enumerable.Range(2, 3)));
-//    Assert.Equal(s_manyElements, s_manyElements.InsertRange(0, Enumerable.Empty<int>()));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => s_empty.InsertRange(1, s_oneElement));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => s_empty.InsertRange(-1, s_oneElement));
-//}
+    @Test
+    public void insertAllEmpty() {
+        assertEqualSequences(Collections.emptyList(), EMPTY.addAll(0, Collections.<Integer>emptyList()));
+        assertEqualSequences(EMPTY, EMPTY.addAll(0, Collections.<Integer>emptyList()));
+        assertEqualSequences(Collections.singletonList(1), EMPTY.addAll(0, Collections.singletonList(1)));
+        assertEqualSequences(Arrays.asList(2, 3, 4), EMPTY.addAll(0, Arrays.asList(2, 3, 4)));
+        assertEqualSequences(Arrays.asList(2, 3, 4), EMPTY.addAll(0, new Range(2, 3)));
+        assertEqualSequences(MANY_ELEMENTS, MANY_ELEMENTS.addAll(0, Collections.<Integer>emptyList()));
+
+        try {
+            EMPTY.addAll(1, ONE_ELEMENT);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            EMPTY.addAll(-1, ONE_ELEMENT);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+    }
 
 //[Fact]
 //public void InsertRangeDefault()
@@ -940,17 +937,16 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
 //    Assert.Equal(new[] { 1, 3 }, listWithDuplicates.RemoveRange(new[] { 2, 2, 2 }));
 //}
 
-//[Fact]
-//public void Replace()
-//{
-//    Assert.Equal(new[] { 5 }, s_oneElement.Replace(1, 5));
+    @Test
+    public void replace() {
+        assertEqualSequences(Collections.singletonList(5), ONE_ELEMENT.replace(1, 5));
 
-//    Assert.Equal(new[] { 6, 2, 3 }, s_manyElements.Replace(1, 6));
-//    Assert.Equal(new[] { 1, 6, 3 }, s_manyElements.Replace(2, 6));
-//    Assert.Equal(new[] { 1, 2, 6 }, s_manyElements.Replace(3, 6));
+        assertEqualSequences(Arrays.asList(6, 2, 3), MANY_ELEMENTS.replace(1, 6));
+        assertEqualSequences(Arrays.asList(1, 6, 3), MANY_ELEMENTS.replace(2, 6));
+        assertEqualSequences(Arrays.asList(1, 2, 6), MANY_ELEMENTS.replace(3, 6));
 
-//    Assert.Equal(new[] { 1, 2, 3, 4 }, ImmutableArray.Create(1, 3, 3, 4).Replace(3, 2));
-//}
+        assertEqualSequences(Arrays.asList(1, 2, 3, 4), ImmutableArrayList.create(1, 3, 3, 4).replace(3, 2));
+    }
 
     @Test
     public void replaceMissingThrowsTest() {
@@ -961,19 +957,31 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
         }
     }
 
-//[Fact]
-//public void SetItem()
-//{
-//    Assert.Throws<ArgumentOutOfRangeException>(() => s_empty.SetItem(0, 10));
-//    Assert.Throws<NullReferenceException>(() => s_emptyDefault.SetItem(0, 10));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => s_oneElement.SetItem(1, 10));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => s_empty.SetItem(-1, 10));
+    @Test
+    public void setItem() {
+        try {
+            EMPTY.set(0, 10);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
 
-//    Assert.Equal(new[] { 12345 }, s_oneElement.SetItem(0, 12345));
-//    Assert.Equal(new[] { 12345, 2, 3 }, s_manyElements.SetItem(0, 12345));
-//    Assert.Equal(new[] { 1, 12345, 3 }, s_manyElements.SetItem(1, 12345));
-//    Assert.Equal(new[] { 1, 2, 12345 }, s_manyElements.SetItem(2, 12345));
-//}
+        try {
+            ONE_ELEMENT.set(1, 10);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            EMPTY.set(-1, 10);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        assertEqualSequences(Collections.singletonList(12345), ONE_ELEMENT.set(0, 12345));
+        assertEqualSequences(Arrays.asList(12345, 2, 3), MANY_ELEMENTS.set(0, 12345));
+        assertEqualSequences(Arrays.asList(1, 12345, 3), MANY_ELEMENTS.set(1, 12345));
+        assertEqualSequences(Arrays.asList(1, 2, 12345), MANY_ELEMENTS.set(2, 12345));
+    }
 
 //[Fact]
 //public void CopyToArray()
@@ -1040,22 +1048,22 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
 //    Assert.False(s_oneElement.IsDefaultOrEmpty);
 //}
 
-//[Fact]
-//public void IndexGetter()
-//{
-//    Assert.Equal(1, s_oneElement[0]);
-//    Assert.Equal(1, ((IList)s_oneElement)[0]);
-//    Assert.Equal(1, ((IList<int>)s_oneElement)[0]);
-//    Assert.Equal(1, ((IReadOnlyList<int>)s_oneElement)[0]);
+    @Test
+    public void indexGetter() {
+        Assert.assertEquals(1, (int)ONE_ELEMENT.get(0));
 
-//    Assert.Throws<IndexOutOfRangeException>(() => s_oneElement[1]);
-//    Assert.Throws<IndexOutOfRangeException>(() => s_oneElement[-1]);
+        try {
+            ONE_ELEMENT.get(1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
 
-//    Assert.Throws<NullReferenceException>(() => s_emptyDefault[0]);
-//    Assert.Throws<InvalidOperationException>(() => ((IList)s_emptyDefault)[0]);
-//    Assert.Throws<InvalidOperationException>(() => ((IList<int>)s_emptyDefault)[0]);
-//    Assert.Throws<InvalidOperationException>(() => ((IReadOnlyList<int>)s_emptyDefault)[0]);
-//}
+        try {
+            ONE_ELEMENT.get(-1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+    }
 
 //[Fact]
 //public void ExplicitMethods()
