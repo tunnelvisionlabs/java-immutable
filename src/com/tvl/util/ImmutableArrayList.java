@@ -1000,6 +1000,59 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         return result;
     }
 
+    /**
+     * Filters the elements of this array to those assignable to the specified type.
+     *
+     * @param clazz The desired type of element.
+     * @param <Result> The desired type of element.
+     * @return An iterable that contains the elements from the current array which are instances of type {@code Result}.
+     */
+    public <Result> Iterable<Result> ofType(final Class<Result> clazz) {
+        Requires.notNull(clazz, "clazz");
+        return new Iterable<Result>() {
+            @Override
+            public Iterator<Result> iterator() {
+                return new Iterator<Result>() {
+                    private Iterator<T> outerIterator = ImmutableArrayList.this.iterator();
+                    private Result nextElement;
+
+                    @Override
+                    public boolean hasNext() {
+                        if (nextElement != null) {
+                            return true;
+                        }
+
+                        while (outerIterator.hasNext()) {
+                            T current = outerIterator.next();
+                            if (clazz.isInstance(current)) {
+                                nextElement = clazz.cast(current);
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    }
+
+                    @Override
+                    public Result next() {
+                        if (!hasNext()) {
+                            throw new NoSuchElementException();
+                        }
+
+                        Result result = nextElement;
+                        nextElement = null;
+                        return result;
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException("This iterator is read-only.");
+                    }
+                };
+            }
+        };
+    }
+
     @Override
     public String toString() {
         return Arrays.toString(array);

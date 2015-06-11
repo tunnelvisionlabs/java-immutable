@@ -1235,14 +1235,12 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
 //    Assert.Equal(Array.BinarySearch(new int[] { 5 }, 5), ImmutableArray.BinarySearch(ImmutableArray.Create(5), 5));
 //}
 
-//[Fact]
-//public void OfType()
-//{
-//    Assert.Equal(0, s_emptyDefault.OfType<int>().Count());
-//    Assert.Equal(0, s_empty.OfType<int>().Count());
-//    Assert.Equal(1, s_oneElement.OfType<int>().Count());
-//    Assert.Equal(1, s_twoElementRefTypeWithNull.OfType<string>().Count());
-//}
+    @Test
+    public void ofType() {
+        Assert.assertEquals(0, Iterables.size(EMPTY.ofType(Integer.class)));
+        Assert.assertEquals(1, Iterables.size(ONE_ELEMENT.ofType(Integer.class)));
+        Assert.assertEquals(1, Iterables.size(TWO_ELEMENT_REF_TYPE_WITH_NULL.ofType(String.class)));
+    }
 
 //[Fact]
 //public void Add_ThreadSafety()
