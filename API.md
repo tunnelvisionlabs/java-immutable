@@ -128,10 +128,10 @@
 | `Remove(T, IEqualityComparer<T>)` | `remove(T, EqualityComparator<? super T>)` | &check; |
 | `RemoveAt(int)` | `remove(int)` | &check; |
 | `RemoveRange(int start, int length)` | `removeAll(int start, int end)` | |
-| `RemoveRange(IEnumerable<T>)` | `removeAll(Iterable<? extends T>)` | |
-| `RemoveRange(IEnumerable<T>, IEqualityComparer<T>)` | `removeAll(Iterable<? extends T>, EqualityComparator<? super T>)` | |
-| `RemoveRange(ImmutableArray<T>)` | `removeAll(ImmutableArrayList<? extends T>)` | |
-| `RemoveRange(ImmutableArray<T>, IEqualityComparer<T>)` | `removeAll(ImmutableArrayList<? extends T>, EqualityComparator<? super T>)` | |
+| `RemoveRange(IEnumerable<T>)` | `removeAll(Iterable<? extends T>)` | &check; |
+| `RemoveRange(IEnumerable<T>, IEqualityComparer<T>)` | `removeAll(Iterable<? extends T>, EqualityComparator<? super T>)` | &check; |
+| `RemoveRange(ImmutableArray<T>)` | `removeAll(ImmutableArrayList<? extends T>)` | &check; |
+| `RemoveRange(ImmutableArray<T>, IEqualityComparer<T>)` | `removeAll(ImmutableArrayList<? extends T>, EqualityComparator<? super T>)` | &check; |
 | `RemoveAll(Predicate<T>)` | `removeIf(Predicate<? super T>)` | &check; |
 | `Clear()` | `clear()` | &check; |
 | `Sort()` | `sort()` | &check; |

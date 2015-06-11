@@ -909,33 +909,36 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
         }).isEmpty());
     }
 
-//[Fact]
-//public void RemoveRangeEnumerableTest()
-//{
-//    var list = ImmutableArray.Create(1, 2, 3);
-//    Assert.Throws<ArgumentNullException>(() => list.RemoveRange(null));
-//    Assert.Throws<NullReferenceException>(() => s_emptyDefault.RemoveRange(new int[0]).IsDefault);
-//    Assert.False(s_empty.RemoveRange(new int[0]).IsDefault);
+    @Test
+    public void removeAllIterableTest() {
+        ImmutableArrayList<Integer> list = ImmutableArrayList.create(1, 2, 3);
+        try {
+            list.removeAll(null);
+            Assert.fail();
+        } catch (NullPointerException ignored) {
+        }
 
-//    ImmutableArray<int> removed2 = list.RemoveRange(new[] { 2 });
-//    Assert.Equal(2, removed2.Length);
-//    Assert.Equal(new[] { 1, 3 }, removed2);
+        Assert.assertNotNull(EMPTY.removeAll(Collections.<Integer>emptyList()));
 
-//    ImmutableArray<int> removed13 = list.RemoveRange(new[] { 1, 3, 5 });
-//    Assert.Equal(1, removed13.Length);
-//    Assert.Equal(new[] { 2 }, removed13);
+        ImmutableArrayList<Integer> removed2 = list.removeAll(Collections.singletonList(2));
+        Assert.assertEquals(2, removed2.size());
+        assertEqualSequences(Arrays.asList(1, 3), removed2);
 
-//    Assert.Equal(new[] { 1, 3, 6, 8, 9 }, ImmutableArray.CreateRange(Enumerable.Range(1, 10)).RemoveRange(new[] { 2, 4, 5, 7, 10 }));
-//    Assert.Equal(new[] { 3, 6, 8, 9 }, ImmutableArray.CreateRange(Enumerable.Range(1, 10)).RemoveRange(new[] { 1, 2, 4, 5, 7, 10 }));
+        ImmutableArrayList<Integer> removed13 = list.removeAll(Arrays.asList(1, 3, 5));
+        Assert.assertEquals(1, removed13.size());
+        assertEqualSequences(Collections.singletonList(2), removed13);
 
-//    Assert.Equal(list, list.RemoveRange(new[] { 5 }));
-//    Assert.Equal(ImmutableArray.Create<int>(), ImmutableArray.Create<int>().RemoveRange(new[] { 1 }));
+        assertEqualSequences(Arrays.asList(1, 3, 6, 8, 9), ImmutableArrayList.createAll(new Range(1, 10)).removeAll(Arrays.asList(2, 4, 5, 7, 10)));
+        assertEqualSequences(Arrays.asList(3, 6, 8, 9), ImmutableArrayList.createAll(new Range(1, 10)).removeAll(Arrays.asList(1, 2, 4, 5, 7, 10)));
 
-//    var listWithDuplicates = ImmutableArray.Create(1, 2, 2, 3);
-//    Assert.Equal(new[] { 1, 2, 3 }, listWithDuplicates.RemoveRange(new[] { 2 }));
-//    Assert.Equal(new[] { 1, 3 }, listWithDuplicates.RemoveRange(new[] { 2, 2 }));
-//    Assert.Equal(new[] { 1, 3 }, listWithDuplicates.RemoveRange(new[] { 2, 2, 2 }));
-//}
+        assertEqualSequences(list, list.removeAll(Collections.singletonList(5)));
+        Assert.assertSame(ImmutableArrayList.<Integer>create(), ImmutableArrayList.<Integer>create().removeAll(Collections.singletonList(1)));
+
+        ImmutableArrayList<Integer> listWithDuplicates = ImmutableArrayList.create(1, 2, 2, 3);
+        assertEqualSequences(Arrays.asList(1, 2, 3), listWithDuplicates.removeAll(Collections.singletonList(2)));
+        assertEqualSequences(Arrays.asList(1, 3), listWithDuplicates.removeAll(Arrays.asList(2, 2)));
+        assertEqualSequences(Arrays.asList(1, 3), listWithDuplicates.removeAll(Arrays.asList(2, 2, 2)));
+    }
 
     @Test
     public void replace() {
