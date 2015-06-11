@@ -4,6 +4,7 @@ package com.tvl.util;
 import com.google.common.collect.Iterables;
 import com.tvl.util.function.BiFunction;
 import com.tvl.util.function.Function;
+import com.tvl.util.function.Predicate;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -864,25 +865,52 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
         Assert.assertSame(ONE_ELEMENT, ONE_ELEMENT.removeAll(EMPTY));
     }
 
-//[Fact]
-//public void RemoveAll()
-//{
-//    Assert.Throws<ArgumentNullException>(() => s_oneElement.RemoveAll(null));
+    @Test
+    public void removeIf() {
+        try {
+            ONE_ELEMENT.removeIf(null);
+            Assert.fail();
+        } catch (NullPointerException ignored) {
+        }
 
-//    var array = ImmutableArray.CreateRange(Enumerable.Range(1, 10));
-//    var removedEvens = array.RemoveAll(n => n % 2 == 0);
-//    var removedOdds = array.RemoveAll(n => n % 2 == 1);
-//    var removedAll = array.RemoveAll(n => true);
-//    var removedNone = array.RemoveAll(n => false);
+        ImmutableArrayList<Integer> array = ImmutableArrayList.createAll(new Range(1, 10));
+        ImmutableArrayList<Integer> removedEvens = array.removeIf(new Predicate<Integer>() {
+            @Override
+            public boolean test(Integer integer) {
+                return integer % 2 == 0;
+            }
+        });
+        ImmutableArrayList<Integer> removedOdds = array.removeIf(new Predicate<Integer>() {
+            @Override
+            public boolean test(Integer integer) {
+                return integer % 2 == 1;
+            }
+        });
+        ImmutableArrayList<Integer> removedAll = array.removeIf(new Predicate<Integer>() {
+            @Override
+            public boolean test(Integer integer) {
+                return true;
+            }
+        });
+        ImmutableArrayList<Integer> removedNone = array.removeIf(new Predicate<Integer>() {
+            @Override
+            public boolean test(Integer integer) {
+                return false;
+            }
+        });
 
-//    Assert.Equal(new[] { 1, 3, 5, 7, 9 }, removedEvens);
-//    Assert.Equal(new[] { 2, 4, 6, 8, 10 }, removedOdds);
-//    Assert.True(removedAll.IsEmpty);
-//    Assert.Equal(Enumerable.Range(1, 10), removedNone);
+        assertEqualSequences(Arrays.asList(1, 3, 5, 7, 9), removedEvens);
+        assertEqualSequences(Arrays.asList(2, 4, 6, 8, 10), removedOdds);
+        Assert.assertTrue(removedAll.isEmpty());
+        assertEqualSequences(new Range(1, 10), removedNone);
 
-//    Assert.False(s_empty.RemoveAll(n => false).IsDefault);
-//    Assert.Throws<NullReferenceException>(() => s_emptyDefault.RemoveAll(n => false));
-//}
+        Assert.assertTrue(EMPTY.removeIf(new Predicate<Integer>() {
+            @Override
+            public boolean test(Integer integer) {
+                return false;
+            }
+        }).isEmpty());
+    }
 
 //[Fact]
 //public void RemoveRangeEnumerableTest()

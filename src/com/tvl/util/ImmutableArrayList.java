@@ -4,6 +4,7 @@ package com.tvl.util;
 import com.tvl.util.function.BiFunction;
 import com.tvl.util.function.Function;
 import com.tvl.util.function.Predicate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -805,7 +806,23 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> removeIf(Predicate<? super T> predicate) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(predicate, "predicate");
+        if (isEmpty()) {
+            return this;
+        }
+
+        ArrayList<Integer> removeIndexes = null;
+        for (int i = 0; i < array.length; i++) {
+            if (predicate.test(array[i])) {
+                if (removeIndexes == null) {
+                    removeIndexes = new ArrayList<Integer>();
+                }
+
+                removeIndexes.add(i);
+            }
+        }
+
+        return removeIndexes != null ? removeAtRange(removeIndexes) : this;
     }
 
     /**

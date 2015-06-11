@@ -132,7 +132,7 @@
 | `RemoveRange(IEnumerable<T>, IEqualityComparer<T>)` | `removeAll(Iterable<? extends T>, EqualityComparator<? super T>)` | |
 | `RemoveRange(ImmutableArray<T>)` | `removeAll(ImmutableArrayList<? extends T>)` | |
 | `RemoveRange(ImmutableArray<T>, IEqualityComparer<T>)` | `removeAll(ImmutableArrayList<? extends T>, EqualityComparator<? super T>)` | |
-| `RemoveAll(Predicate<T>)` | `removeIf(Predicate<? super T>)` | |
+| `RemoveAll(Predicate<T>)` | `removeIf(Predicate<? super T>)` | &check; |
 | `Clear()` | `clear()` | &check; |
 | `Sort()` | `sort()` | &check; |
 | `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | &check; |
