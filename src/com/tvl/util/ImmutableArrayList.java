@@ -185,6 +185,15 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         throw new UnsupportedOperationException("Not implemented.");
     }
 
+    /**
+     * Creates an immutable array by applying a transformation function to the elements of an existing array.
+     *
+     * @param items The existing immutable array.
+     * @param selector The transformation function to apply to each element of {@code items} to obtain the target array.
+     * @param <Source> The type of elements stored in the source array.
+     * @param <Result> The type of elements stored in the target array.
+     * @return A new immutable array containing the transformed elements.
+     */
     public static <Source, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, Function<Source, Result> selector) {
         Requires.notNull(selector, "selector");
 
@@ -205,6 +214,17 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         throw new UnsupportedOperationException("Not implemented");
     }
 
+    /**
+     * Creates an immutable array by applying a transformation function to the elements of an existing array.
+     *
+     * @param items The existing immutable array.
+     * @param selector The transformation function to apply to each element of {@code items} to obtain the target array.
+     * @param arg An additional argument to pass to the transformation function.
+     * @param <Source> The type of elements stored in the source array.
+     * @param <Arg> The type of the additional argument to the transformation function.
+     * @param <Result> The type of elements stored in the target array.
+     * @return A new immutable array containing the transformed elements.
+     */
     public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, BiFunction<Source, Arg, Result> selector, Arg arg) {
         Requires.notNull(selector, "selector");
 
