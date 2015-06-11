@@ -958,11 +958,11 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * instead.</p>
      *
      * @param clazz The element type to cast the current array to.
-     * @param <TOther> The type of element stored in the array.
-     * @return The current array as an instance of an immutable array of {@code TOther} objects.
-     * @throws ClassCastException if any object in the current instance cannot be cast to an instance of {@code TOther}.
+     * @param <Other> The type of element stored in the array.
+     * @return The current array as an instance of an immutable array of {@code Other} objects.
+     * @throws ClassCastException if any object in the current instance cannot be cast to an instance of {@code Other}.
      */
-    public <TOther> ImmutableArrayList<TOther> castArray(Class<TOther> clazz) {
+    public <Other> ImmutableArrayList<Other> castArray(Class<Other> clazz) {
         Requires.notNull(clazz, "clazz");
         for (T item : this) {
             clazz.cast(item);
@@ -970,7 +970,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
         // It is now safe to cast the array.
         @SuppressWarnings("unchecked") // this is safe
-        ImmutableArrayList<TOther> result = (ImmutableArrayList<TOther>)this;
+        ImmutableArrayList<Other> result = (ImmutableArrayList<Other>)this;
         return result;
     }
 
@@ -982,11 +982,11 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * instead.</p>
      *
      * @param clazz The element type to cast the current array to.
-     * @param <TOther> The type of element stored in the array.
-     * @return The current array as an instance of an immutable array of {@code TOther} objects if all objects in the
-     * array can be cast to {@code TOther}; otherwise, {@code null}.
+     * @param <Other> The type of element stored in the array.
+     * @return The current array as an instance of an immutable array of {@code Other} objects if all objects in the
+     * array can be cast to {@code Other}; otherwise, {@code null}.
      */
-    public <TOther> ImmutableArrayList<TOther> as(Class<TOther> clazz) {
+    public <Other> ImmutableArrayList<Other> as(Class<Other> clazz) {
         Requires.notNull(clazz, "clazz");
         for (T item : this) {
             if (item != null && !clazz.isInstance(item)) {
@@ -996,7 +996,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
         // It is now safe to cast the array.
         @SuppressWarnings("unchecked") // this is safe
-        ImmutableArrayList<TOther> result = (ImmutableArrayList<TOther>)this;
+        ImmutableArrayList<Other> result = (ImmutableArrayList<Other>)this;
         return result;
     }
 

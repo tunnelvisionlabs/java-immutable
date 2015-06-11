@@ -143,8 +143,8 @@
 | `Equals(object)` | `equals(Object)` | &check; |
 | `Equals(ImmutableArray<T>)` | `equals(ImmutableArrayList<?>)` | &check; |
 | `CastUp<TDerived>(ImmutableArray<TDerived>)` | `<T>castUp(ImmutableArrayList<? extends T>)` | &check; |
-| `CastArray<TOther>(ImmutableArray<TOther>)` | `<TOther>castArray(Class<TOther>)` | &check; |
-| `As<TOther>()` | `<TOther>as(Class<TOther>)` | &check; |
+| `CastArray<TOther>(ImmutableArray<TOther>)` | `<Other>castArray(Class<Other>)` | &check; |
+| `As<TOther>()` | `<Other>as(Class<Other>)` | &check; |
 | `OfType<TResult>()` | `<Result>ofType(Class<Result> clazz)` | &check; |
 
 ### Builder
