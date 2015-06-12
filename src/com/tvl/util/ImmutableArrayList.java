@@ -1663,14 +1663,45 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return Arrays.asList(elements).subList(0, count).listIterator(index);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean containsAll(Collection<?> c) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.notNull(c, "c");
+            for (Object o : c) {
+                if (!contains(o)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean addAll(int index, Collection<? extends T> c) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.notNull(c, "c");
+            Requires.range(index >= 0 && index <= size(), "index");
+
+            if (c.isEmpty()) {
+                return false;
+            }
+
+            ArrayList<T> intermediate = new ArrayList<T>(c);
+            ensureCapacity(size() + intermediate.size());
+            count += intermediate.size();
+            if (index < size()) {
+                System.arraycopy(elements, index, elements, index + intermediate.size(), size() - index);
+            }
+
+            for (int i = 0; i < intermediate.size(); i++) {
+                elements[index + i] = intermediate.get(i);
+            }
+
+            return true;
         }
 
         @Override
