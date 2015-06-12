@@ -195,7 +195,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @param <Result> The type of elements stored in the target array.
      * @return A new immutable array containing the transformed elements.
      */
-    public static <Source, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, Function<Source, Result> selector) {
+    public static <Source, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, Function<? super Source, Result> selector) {
         Requires.notNull(selector, "selector");
 
         int length = items.size();
@@ -211,7 +211,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         return new ImmutableArrayList<Result>(array);
     }
 
-    public static <Source, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, int start, int length, Function<Source, Result> selector) {
+    public static <Source, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, int start, int length, Function<? super Source, Result> selector) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
@@ -226,7 +226,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @param <Result> The type of elements stored in the target array.
      * @return A new immutable array containing the transformed elements.
      */
-    public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, BiFunction<Source, Arg, Result> selector, Arg arg) {
+    public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, BiFunction<? super Source, Arg, Result> selector, Arg arg) {
         Requires.notNull(selector, "selector");
 
         int length = items.size();
@@ -243,7 +243,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         return new ImmutableArrayList<Result>(array);
     }
 
-    public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, int start, int length, BiFunction<Source, Arg, Result> selector, Arg arg) {
+    public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, int start, int length, BiFunction<? super Source, Arg, Result> selector, Arg arg) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
