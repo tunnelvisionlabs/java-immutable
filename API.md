@@ -153,26 +153,26 @@
 
 | .NET Member | Java Member | Notes |
 | --- | --- | --- |
-| `Capacity` | `getCapacity()`, `setCapacity(int)` | |
-| `Count` | `size()` | |
-| `this[int]` | `get(int)`, `set(int, T)` | |
-| `ToImmutable()` | `toImmutable()` | |
-| `MoveToImmutable()` | `moveToImmutable()` | |
-| `Clear()` | `clear()` | |
-| `Insert(int, T)` | `add(int, T)` | |
-| `Add(T)` | `add(T)` | |
-| `AddRange(IEnumerable<T>)` | `addAll(Iterable<? extends T>)` | |
-| `AddRange(params T[])` | `addAll(T...)` | |
+| `Capacity` | `getCapacity()`, `setCapacity(int)` | &check; |
+| `Count` | `size()` | &check; |
+| `this[int]` | `get(int)`, `set(int, T)` | &check; |
+| `ToImmutable()` | `toImmutable()` | &check; |
+| `MoveToImmutable()` | `moveToImmutable()` | &check; |
+| `Clear()` | `clear()` | &check; |
+| `Insert(int, T)` | `add(int, T)` | &check; |
+| `Add(T)` | `add(T)` | &check; |
+| `AddRange(IEnumerable<T>)` | `addAll(Iterable<? extends T>)` | &check; |
+| `AddRange(params T[])` | `addAll(T...)` | &check; |
 | `AddRange<TDerived>(TDerived[])` | Not required | |
 | `AddRange(T[], int)` | `addAll(T[], int)` | |
-| `AddRange(ImmutableArray<T>)` | `addAll(ImmutableArrayList<? extends T>)` | |
+| `AddRange(ImmutableArray<T>)` | `addAll(ImmutableArrayList<? extends T>)` | &check; |
 | `AddRange(ImmutableArray<T>, int)` | `addAll(ImmutableArrayList<? extends T>, int)` | |
 | `AddRange<TDerived>(ImmutableArray<TDerived>)` | Not required | |
-| `AddRange(ImmutableArray<T>.Builder)` | `addAll(ImmutableArrayList.Builder<? extends T>)` | |
+| `AddRange(ImmutableArray<T>.Builder)` | `addAll(ImmutableArrayList.Builder<? extends T>)` | &check; |
 | `AddRange<TDerived>(ImmutableArray<TDerived>.Builder)` | Not required | |
-| `Remove(T)` | `remove(Object)` | |
-| `RemoveAt(int)` | `remove(int)` | |
-| `Contains(T)` | `contains(Object)` | |
+| `Remove(T)` | `remove(Object)` | &check; |
+| `RemoveAt(int)` | `remove(int)` | &check; |
+| `Contains(T)` | `contains(Object)` | &check; |
 | `ToArray()` | ? | |
 | `CopyTo(T[], int)` | ? | |
 | `IndexOf(T)` | `indexOf(Object)` | |
@@ -183,9 +183,9 @@
 | `LastIndexOf(T, int)` | `lastIndexOf(?, int)` | |
 | `LastIndexOf(T, int start, int length)` | `lastIndexOf(?, int start, int end)` | 1 |
 | `LastIndexOf(T, int start, int length, IEqualityComparator<? super T>)` | `lastIndexOf(?, int start, int end, ?)` | 1 |
-| `Reverse` | `reverse()` | |
-| `Sort()` | `sort()` | |
-| `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | |
+| `Reverse` | `reverse()` | &check; |
+| `Sort()` | `sort()` | &check; |
+| `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | &check; |
 | `Sort(int start, int length, IComparer<T>)` | `sort(int start, int end, Comparator<? super T>)` | 1 |
 | `GetEnumerator()` | `iterator()` | |
 

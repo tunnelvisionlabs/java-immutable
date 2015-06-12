@@ -1388,6 +1388,12 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return true;
         }
 
+        /**
+         * Adds the specified items to the end of the array.
+         *
+         * @param items The items to add.
+         * @return {@code true} if the collection changed as a result of the operation; otherwise, {@code false}.
+         */
         public boolean addAll(Iterable<? extends T> items) {
             Requires.notNull(items, "items");
 
@@ -1405,6 +1411,11 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return result;
         }
 
+        /**
+         * Adds the specified items to the end of the array.
+         *
+         * @param items The items to add.
+         */
         public void addAll(T... items) {
             Requires.notNull(items, "items");
 
@@ -1423,6 +1434,11 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             System.arraycopy(items, 0, elements, offset, length);
         }
 
+        /**
+         * Adds the specified items to the end of the array.
+         *
+         * @param items The items to add.
+         */
         public void addAll(ImmutableArrayList<? extends T> items) {
             Requires.notNull(items, "items");
             addAll(items, items.size());
@@ -1433,11 +1449,22 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             addAll(items.array, length);
         }
 
+        /**
+         * Adds the specified items to the end of the array.
+         *
+         * @param items The items to add.
+         */
         public void addAll(Builder<? extends T> items) {
             Requires.notNull(items, "items");
             addAll(items.elements, items.size());
         }
 
+        /**
+         * Removes the specified element from the array.
+         *
+         * @param o The element to remove.
+         * @return {@code true} if the array changed as a result of the operation; otherwise, {@code false}.
+         */
         @Override
         public boolean remove(Object o) {
             int index = indexOf(o);
@@ -1449,6 +1476,13 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return false;
         }
 
+        /**
+         * Removes the element at the specified {@code index}.
+         *
+         * @param index The index of the element to remove from the array.
+         * @return The value stored at the specified index prior to its removal.
+         * @exception IndexOutOfBoundsException if {@code index < 0} or {@code index >= }{@link #size()}.
+         */
         @Override
         public T remove(int index) {
             Requires.range(index >= 0 && index < size(), "index");
@@ -1462,9 +1496,12 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return value;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean contains(Object o) {
-            return Arrays.asList(elements).subList(0, count).contains(o);
+            return indexOf(o) >= 0;
         }
 
         @Override
@@ -1560,6 +1597,9 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             }
         }
 
+        /**
+         * Reverses the order of elements in the collection.
+         */
         public void reverse() {
             int i = 0;
             int j = count - 1;
@@ -1572,35 +1612,52 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             }
         }
 
+        /**
+         * Sorts the collection according to the natural {@link Comparable} order of the elements.
+         *
+         * @see Arrays#sort(Object[])
+         */
         public void sort() {
             sort(0, count, null);
         }
 
+        /**
+         * Sorts the collection using the specified {@link Comparator} to compare elements.
+         *
+         * @param comparator The {@link Comparator} to use for comparing elements, or {@code null} to sort the elements
+         * according to their natural {@link Comparable} order.
+         *
+         * @see Arrays#sort(Object[], Comparator)
+         */
         public void sort(Comparator<? super T> comparator) {
             sort(0, count, comparator);
         }
 
         public void sort(int index, int count, Comparator<? super T> comparator) {
-            if (!(index >= 0)) {
-                throw new IndexOutOfBoundsException("index");
-            }
-            if (!(count >= 0 && index + count <= size())) {
-                throw new IndexOutOfBoundsException("count");
-            }
-
+            Requires.range(index >= 0, "index");
+            Requires.range(count >= 0 && index + count <= size(), "count");
             Arrays.sort(elements, index, index + count, comparator);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Iterator<T> iterator() {
-            return Arrays.asList(elements).iterator();
+            return Arrays.asList(elements).subList(0, count).iterator();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public ListIterator<T> listIterator() {
             return Arrays.asList(elements).subList(0, count).listIterator();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public ListIterator<T> listIterator(int index) {
             return Arrays.asList(elements).subList(0, count).listIterator(index);
