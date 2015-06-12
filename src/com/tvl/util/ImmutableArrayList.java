@@ -268,20 +268,57 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         return new Builder<T>(initialCapacity);
     }
 
+    /**
+     * Searches an entire one-dimensional sorted {@link ImmutableArrayList} for a specific element, using the default
+     * comparator for elements of type {@code T}.
+     *
+     * @param <T> The type of element stored in the array.
+     * @param array The sorted, one-dimensional array to search.
+     * @param value The object to search for.
+     * @return The index of the specified {@code value} in the specified array, if {@code value} is found. If
+     * {@code value} is not found and {@code value} is less than one or more elements in {@code array}, a negative
+     * number which is the bitwise complement of the index of the first element that is larger than {@code value}. If
+     * {@code value} is not found and {@code value} is greater than all of the elements in {@code array}, a negative
+     * number which is the bitwise complement of (the index of the last element plus 1).
+     */
     public static <T> int binarySearch(ImmutableArrayList<T> array, T value) {
-        throw new UnsupportedOperationException("Not implemented");
+        Requires.notNull(array, "array");
+        return binarySearch(array, value, 0, array.size(), null);
     }
 
+    /**
+     * Searches an entire one-dimensional sorted {@link ImmutableArrayList} for a specific element using the specified
+     * comparator.
+     *
+     * @param <T> The type of element stored in the array.
+     * @param array The sorted, one-dimensional array to search.
+     * @param value The object to search for.
+     * @param comparator The comparator to use for comparing elements, or {@code null} to use the default comparator for
+     * elements of type {@code T}.
+     * @return The index of the specified {@code value} in the specified array, if {@code value} is found. If
+     * {@code value} is not found and {@code value} is less than one or more elements in {@code array}, a negative
+     * number which is the bitwise complement of the index of the first element that is larger than {@code value}. If
+     * {@code value} is not found and {@code value} is greater than all of the elements in {@code array}, a negative
+     * number which is the bitwise complement of (the index of the last element plus 1).
+     */
     public static <T> int binarySearch(ImmutableArrayList<T> array, T value, Comparator<? super T> comparator) {
-        throw new UnsupportedOperationException("Not implemented");
+        Requires.notNull(array, "array");
+        return binarySearch(array, value, 0, array.size(), comparator);
     }
 
     public static <T> int binarySearch(ImmutableArrayList<T> array, T value, int index, int length) {
-        throw new UnsupportedOperationException("Not implemented");
+        return binarySearch(array, value, index, length, null);
     }
 
     public static <T> int binarySearch(ImmutableArrayList<T> array, T value, int index, int length, Comparator<? super T> comparator) {
-        throw new UnsupportedOperationException("Not implemented");
+        Requires.notNull(array, "array");
+        if (comparator == null) {
+            comparator = (Comparator<? super T>)Comparators.<Integer>defaultComparator();
+        }
+
+        int fromIndex = index;
+        int toIndex = fromIndex + length;
+        return Arrays.binarySearch(array.array, fromIndex, toIndex, value, comparator);
     }
 
     private static <T> ImmutableArrayList<T> createDefensiveCopy(T[] items) {

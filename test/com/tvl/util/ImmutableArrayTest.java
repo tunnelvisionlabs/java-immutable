@@ -1265,14 +1265,12 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
 //    Assert.Equal(array.CompareTo(equalArray, Comparer<int>.Default), immArray.CompareTo(equalArray, Comparer<int>.Default));
 //}
 
-//[Fact]
-//public void BinarySearch()
-//{
-//    Assert.Throws<ArgumentNullException>(() => Assert.Equal(Array.BinarySearch(new int[0], 5), ImmutableArray.BinarySearch(default(ImmutableArray<int>), 5)));
-//    Assert.Equal(Array.BinarySearch(new int[0], 5), ImmutableArray.BinarySearch(ImmutableArray.Create<int>(), 5));
-//    Assert.Equal(Array.BinarySearch(new int[] { 3 }, 5), ImmutableArray.BinarySearch(ImmutableArray.Create(3), 5));
-//    Assert.Equal(Array.BinarySearch(new int[] { 5 }, 5), ImmutableArray.BinarySearch(ImmutableArray.Create(5), 5));
-//}
+    @Test
+    public void binarySearch() {
+        Assert.assertEquals(Arrays.binarySearch(new int[0], 5), ImmutableArrayList.binarySearch(ImmutableArrayList.<Integer>create(), 5));
+        Assert.assertEquals(Arrays.binarySearch(new int[] { 3 }, 5), ImmutableArrayList.binarySearch(ImmutableArrayList.create(3), 5));
+        Assert.assertEquals(Arrays.binarySearch(new int[] { 5 }, 5), ImmutableArrayList.binarySearch(ImmutableArrayList.create(5), 5));
+    }
 
     @Test
     public void ofType() {
