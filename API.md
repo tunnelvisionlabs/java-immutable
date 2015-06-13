@@ -196,6 +196,41 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 | `Sort(int start, int length, IComparer<T>)` | `sort(int fromIndex, int toIndex, Comparator<? super T>)` | 1 |
 | `GetEnumerator()` | `iterator()` | |
 
+## `ImmutableList<T>` &rarr; `ImmutableTreeList<T>`
+
+### Factory
+
+#### `ImmutableList` &rarr; `ImmutableTreeList<T>`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+
+#### `ImmutableList` &rarr; `Immutables`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+
+### Collection
+
+#### `ImmutableList<T>` &rarr; `ImmutableTreeList<T>`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+
+#### `ImmutableList<T>` &rarr; No mapping
+
+These members of `ImmutableList<T>` have no equivalent mapping in the Java programming language.
+
+| .NET Member | Notes |
+| --- | --- |
+
+### Builder
+
+#### `ImmutableList<T>.Builder` &rarr; `ImmutableTreeList.Builder<T>`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+
 ## Footnotes
 
 &check; The API is implemented and documented as described.
