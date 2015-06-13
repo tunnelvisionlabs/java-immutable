@@ -92,7 +92,7 @@ public class ImmutableListTest extends ImmutableListTestBase {
                     inputLength = random.nextInt(expected.size() - position);
                     System.err.format("Removing %s elements starting at position %s from the list.%n", inputLength, position);
                     expected.subList(position, position + inputLength).clear();
-                    actual = actual.remove(position, inputLength);
+                    actual = actual.removeAll(position, inputLength);
                     verifyBalanced(actual);
                 }
 
@@ -777,39 +777,39 @@ public class ImmutableListTest extends ImmutableListTestBase {
     }
 
     @Test
-    public void removeRangeArrayTest() {
+    public void removeAllArrayTest() {
         ImmutableTreeList<Integer> list = ImmutableTreeList.create(1, 2, 3);
         try {
-            list.remove(-1, 0);
+            list.removeAll(-1, 0);
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            list.remove(0, -1);
+            list.removeAll(0, -1);
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            list.remove(4, 0);
+            list.removeAll(4, 0);
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            list.remove(0, 4);
+            list.removeAll(0, 4);
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            list.remove(2, 2);
+            list.removeAll(2, 2);
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
-        list.remove(3, 0);
+        list.removeAll(3, 0);
         Assert.assertEquals(3, list.size());
     }
 

@@ -765,7 +765,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> remove(int index) {
-        return remove(index, 1);
+        return removeAll(index, 1);
     }
 
     /**
@@ -776,7 +776,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return The new immutable array.
      */
     @Override
-    public ImmutableArrayList<T> remove(int index, int count) {
+    public ImmutableArrayList<T> removeAll(int index, int count) {
         Requires.range(index >= 0 && index < size(), "index");
         Requires.range(count >= 0 && index + count <= size(), "count");
 

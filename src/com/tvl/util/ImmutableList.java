@@ -127,7 +127,7 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * @param count The number of elements to remove.
      * @return A new list with the elements removed.
      */
-    ImmutableList<T> remove(int index, int count);
+    ImmutableList<T> removeAll(int index, int count);
 
     /**
      * Replaces an element in the list at a given position with the specified element.

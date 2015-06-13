@@ -145,7 +145,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
     }
 
     @Override
-    public ImmutableTreeList<T> remove(int index, int count) {
+    public ImmutableTreeList<T> removeAll(int index, int count) {
         Requires.range(index >= 0 && (index < size() || (index == size() && count == 0)), "index");
         Requires.range(count >= 0 && index + count <= size(), "count");
 
