@@ -84,9 +84,6 @@ have already been implemented (with documentation).
 | `BinarySearch<T>(ImmutableArray<T>, int start, int length, T)` | `<T>binarySearch(ImmutableArrayList<T>, int fromIndex, int toIndex, T)` | &check; 1 |
 | `BinarySearch<T>(ImmutableArray<T>, int start, int length, T, IComparer<T>)` | `<T>binarySearch(ImmutableArrayList<T>, int fromIndex, int toIndex, T, Comparator<? super T>)` | &check; 1 |
 
-¹ Java convention is to use fromIndex/toIndex instead of start/length for ranges.<br>
-² These methods were renamed to `createAll` to avoid conflicts with `create(T...)`.
-
 #### `ImmutableArray` &rarr; `Immutables`
 
 | .NET Member | Java Member | Notes |
@@ -199,4 +196,9 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 | `Sort(int start, int length, IComparer<T>)` | `sort(int fromIndex, int toIndex, Comparator<? super T>)` | 1 |
 | `GetEnumerator()` | `iterator()` | |
 
-¹ Java convention is to use fromIndex/toIndex instead of start/length for ranges.
+## Footnotes
+
+&check; The API is implemented and documented as described.
+
+1. Java convention is to use fromIndex/toIndex instead of start/length for ranges.<br>
+2. These methods were renamed to `createAll` to avoid conflicts with `create(T...)`.
