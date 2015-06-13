@@ -123,11 +123,11 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
     /**
      * Remove the specified values from this list.
      *
-     * @param index The starting index to begin removal.
-     * @param count The number of elements to remove.
+     * @param fromIndex The index of the first element (inclusive) to be removed.
+     * @param toIndex The index of the last element (exclusive) to be removed.
      * @return A new list with the elements removed.
      */
-    ImmutableList<T> removeAll(int index, int count);
+    ImmutableList<T> removeAll(int fromIndex, int toIndex);
 
     /**
      * Replaces an element in the list at a given position with the specified element.

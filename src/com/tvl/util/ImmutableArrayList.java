@@ -765,23 +765,25 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> remove(int index) {
-        return removeAll(index, 1);
+        return removeAll(index, index + 1);
     }
 
     /**
      * Returns an array with the elements at the specified position removed.
      *
-     * @param index The zero-based index into the array for the element to omit from the returned array.
-     * @param count The number of elements to remove.
+     * @param fromIndex The index of the first element (inclusive) to be removed.
+     * @param toIndex The index of the last element (exclusive) to be removed.
      * @return The new immutable array.
      */
     @Override
-    public ImmutableArrayList<T> removeAll(int index, int count) {
-        Requires.range(index >= 0 && index < size(), "index");
-        Requires.range(count >= 0 && index + count <= size(), "count");
+    public ImmutableArrayList<T> removeAll(int fromIndex, int toIndex) {
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
+        int count = toIndex - fromIndex;
         T[] tmp = Arrays.copyOf(array, array.length - count);
-        System.arraycopy(array, index + count, tmp, index, size() - index - count);
+        System.arraycopy(array, toIndex, tmp, fromIndex, size() - toIndex);
         return new ImmutableArrayList<T>(tmp);
     }
 

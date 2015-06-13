@@ -53,6 +53,9 @@
 
 # Detailed API Mapping
 
+Throughout the API mapping details, the presence of a check mark (&check;) in the **Notes** column indicates APIs which
+have already been implemented (with documentation).
+
 ## `ImmutableArray<T>` &rarr; `ImmutableArrayList<T>`
 
 ### Factory
@@ -121,7 +124,7 @@
 | `Remove(T)` | `remove(T)` | &check; |
 | `Remove(T, IEqualityComparer<T>)` | `remove(T, EqualityComparator<? super T>)` | &check; |
 | `RemoveAt(int)` | `remove(int)` | &check; |
-| `RemoveRange(int start, int length)` | `removeAll(int fromIndex, int toIndex)` | |
+| `RemoveRange(int start, int length)` | `removeAll(int fromIndex, int toIndex)` | &check; |
 | `RemoveRange(IEnumerable<T>)` | `removeAll(Iterable<? extends T>)` | &check; |
 | `RemoveRange(IEnumerable<T>, IEqualityComparer<T>)` | `removeAll(Iterable<? extends T>, EqualityComparator<? super T>)` | &check; |
 | `RemoveRange(ImmutableArray<T>)` | `removeAll(ImmutableArrayList<? extends T>)` | &check; |

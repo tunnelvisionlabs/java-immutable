@@ -145,14 +145,15 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
     }
 
     @Override
-    public ImmutableTreeList<T> removeAll(int index, int count) {
-        Requires.range(index >= 0 && (index < size() || (index == size() && count == 0)), "index");
-        Requires.range(count >= 0 && index + count <= size(), "count");
+    public ImmutableTreeList<T> removeAll(int fromIndex, int toIndex) {
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
         Node<T> result = root;
-        int remaining = count;
+        int remaining = toIndex - fromIndex;
         while (remaining-- > 0) {
-            result = result.remove(index);
+            result = result.remove(fromIndex);
         }
 
         return wrap(result);
