@@ -491,7 +491,7 @@ public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestB
     private void binarySearchPartialSortedListHelper(ImmutableTreeList<Integer> inputData, int sortedIndex, int sortedLength) {
         Requires.range(sortedIndex >= 0, "sortedIndex");
         Requires.range(sortedLength > 0, "sortedLength");
-        inputData = inputData.sort(sortedIndex, sortedLength, Comparators.<Integer>defaultComparator());
+        inputData = inputData.sort(sortedIndex, sortedIndex + sortedLength, Comparators.<Integer>defaultComparator());
         int min = inputData.get(sortedIndex);
         int max = inputData.get(sortedIndex + sortedLength - 1);
 

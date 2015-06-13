@@ -532,58 +532,58 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * Searches the array for the specified item.
      *
      * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
+     * @param fromIndex The index at which to begin the search.
      * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
      */
-    public int indexOf(T item, int startIndex) {
-        return indexOf(item, startIndex, size() - startIndex, EqualityComparators.defaultComparator());
+    public int indexOf(T item, int fromIndex) {
+        return indexOf(item, fromIndex, size(), EqualityComparators.defaultComparator());
     }
 
     /**
      * Searches the array for the specified item.
      *
      * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
+     * @param fromIndex The index at which to begin the search.
      * @param equalityComparator The equality comparator to use in the search.
      * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
      */
-    public int indexOf(T item, int startIndex, EqualityComparator<? super T> equalityComparator) {
-        return indexOf(item, startIndex, size() - startIndex, equalityComparator);
+    public int indexOf(T item, int fromIndex, EqualityComparator<? super T> equalityComparator) {
+        return indexOf(item, fromIndex, size(), equalityComparator);
     }
 
     /**
-     * Searches the array for the specified item.
+     * Searches for the specified object and returns the zero-based index of the first occurrence within the range of
+     * elements in the {@link ImmutableList} that extends from {@code startIndex} through (but not including)
+     * {@code toIndex}.
      *
-     * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
-     * @param count The number of elements to search.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
+     * @param item The object to locate in the {@link ImmutableList}, which can be {@code null}.
+     * @param fromIndex The index of the first element (inclusive) to be searched.
+     * @param toIndex The index of the last element (exclusive) to be searched.
+     * @return The zero-based index of the first occurrence of {@code item} within the range of elements that extends
+     * from {@code startIndex} through (but not including) {@code toIndex}, if found;
+     * otherwise, -1.
      */
-    public int indexOf(T item, int startIndex, int count) {
-        return indexOf(item, startIndex, count, EqualityComparators.defaultComparator());
+    public int indexOf(T item, int fromIndex, int toIndex) {
+        return indexOf(item, fromIndex, toIndex, EqualityComparators.defaultComparator());
     }
 
     /**
-     * Searches the array for the specified item.
-     *
-     * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
-     * @param count The number of elements to search.
-     * @param equalityComparator The equality comparator to use in the search.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
+     * {@inheritDoc}
      */
     @Override
-    public int indexOf(T item, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
+    public int indexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
         Requires.notNull(equalityComparator, "equalityComparator");
 
-        if (count == 0 && startIndex == 0) {
+        int count = toIndex - fromIndex;
+        if (count == 0 && fromIndex == 0) {
             return -1;
         }
 
-        Requires.range(startIndex >= 0 && startIndex < size(), "startIndex");
-        Requires.range(count >= 0 && startIndex + count <= size(), "count");
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
-        for (int i = startIndex; i < startIndex + count; i++) {
+        for (int i = fromIndex; i < toIndex; i++) {
             if (equalityComparator.equals(array[i], item)) {
                 return i;
             }
@@ -1101,7 +1101,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
             if (outOfOrder) {
                 Builder<T> builder = toBuilder();
-                builder.sort(fromIndex, count, comparator);
+                builder.sort(fromIndex, toIndex, comparator);
                 return builder.moveToImmutable();
             }
         }
@@ -1795,10 +1795,23 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             sort(0, count, comparator);
         }
 
-        public void sort(int index, int count, Comparator<? super T> comparator) {
-            Requires.range(index >= 0, "index");
-            Requires.range(count >= 0 && index + count <= size(), "count");
-            Arrays.sort(elements, index, index + count, comparator);
+        /**
+         * Sorts the specified range of elements in the collection using the specified {@link Comparator} to compare
+         * elements.
+         *
+         * @param fromIndex The index of the first element (inclusive) to be sorted.
+         * @param toIndex The index of the last element (exclusive) to be sorted.
+         * @param comparator The {@link Comparator} to use for comparing elements, or {@code null} to sort the elements
+         * according to their natural {@link Comparable} order.
+         *
+         * @see Arrays#sort(Object[], int, int, Comparator)
+         */
+        public void sort(int fromIndex, int toIndex, Comparator<? super T> comparator) {
+            Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+            Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+            Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
+
+            Arrays.sort(elements, fromIndex, toIndex, comparator);
         }
 
         /**

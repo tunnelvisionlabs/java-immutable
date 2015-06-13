@@ -534,20 +534,20 @@ public class ImmutableListTest extends ImmutableListTestBase {
                 @Override
                 public Integer apply(ImmutableTreeList<Integer> b, Integer v, Integer i) {
                     //return b.indexOf(v, i);
-                    return b.indexOf(v, i, b.size() - i, EqualityComparators.defaultComparator());
+                    return b.indexOf(v, i, b.size(), EqualityComparators.defaultComparator());
                 }
             },
             new IndexOfTests.QuadFunction<ImmutableTreeList<Integer>, Integer, Integer, Integer, Integer>() {
                 @Override
                 public Integer apply(ImmutableTreeList<Integer> b, Integer v, Integer i, Integer c) {
                     //return b.indexOf(v, i, c);
-                    return b.indexOf(v, i, c, EqualityComparators.defaultComparator());
+                    return b.indexOf(v, i, i + c, EqualityComparators.defaultComparator());
                 }
             },
             new IndexOfTests.PentFunction<ImmutableTreeList<Integer>, Integer, Integer, Integer, EqualityComparator<? super Integer>, Integer>() {
                 @Override
                 public Integer apply(ImmutableTreeList<Integer> b, Integer v, Integer i, Integer c, EqualityComparator<? super Integer> eq) {
-                    return b.indexOf(v, i, c, eq);
+                    return b.indexOf(v, i, i + c, eq);
                 }
             }
         );
@@ -569,20 +569,20 @@ public class ImmutableListTest extends ImmutableListTestBase {
                 @Override
                 public Integer apply(ImmutableList<Integer> b, Integer v, Integer i) {
                     //return b.indexOf(v, i);
-                    return b.indexOf(v, i, b.size() - i, EqualityComparators.defaultComparator());
+                    return b.indexOf(v, i, b.size(), EqualityComparators.defaultComparator());
                 }
             },
             new IndexOfTests.QuadFunction<ImmutableList<Integer>, Integer, Integer, Integer, Integer>() {
                 @Override
                 public Integer apply(ImmutableList<Integer> b, Integer v, Integer i, Integer c) {
                     //return b.indexOf(v, i, c);
-                    return b.indexOf(v, i, c, EqualityComparators.defaultComparator());
+                    return b.indexOf(v, i, i + c, EqualityComparators.defaultComparator());
                 }
             },
             new IndexOfTests.PentFunction<ImmutableList<Integer>, Integer, Integer, Integer, EqualityComparator<? super Integer>, Integer>() {
                 @Override
                 public Integer apply(ImmutableList<Integer> b, Integer v, Integer i, Integer c, EqualityComparator<? super Integer> eq) {
-                    return b.indexOf(v, i, c, eq);
+                    return b.indexOf(v, i, i + c, eq);
                 }
             }
         );
@@ -1008,7 +1008,7 @@ public class ImmutableListTest extends ImmutableListTestBase {
 
     @Override
     protected <T> ArrayList<T> sortTestHelper(ImmutableTreeList<T> list, int index, int count, Comparator<? super T> comparator) {
-        return new ArrayList<T>(list.sort(index, count, comparator).toBuilder());
+        return new ArrayList<T>(list.sort(index, index + count, comparator).toBuilder());
     }
 
     @Override

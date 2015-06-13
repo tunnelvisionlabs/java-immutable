@@ -23,18 +23,18 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
 
     /**
      * Searches for the specified object and returns the zero-based index of the first occurrence within the range of
-     * elements in the {@link ImmutableList} that starts at the specified index and contains the specified number of
-     * elements.
+     * elements in the {@link ImmutableList} that extends from {@code startIndex} through (but not including)
+     * {@code toIndex}.
      *
      * @param item The object to locate in the {@link ImmutableList}, which can be {@code null}.
-     * @param index The zero-based starting index of the search. 0 (zero) is valid in an empty list.
-     * @param count The number of elements in the section to search.
+     * @param fromIndex The index of the first element (inclusive) to be searched.
+     * @param toIndex The index of the last element (exclusive) to be searched.
      * @param equalityComparator The equality comparator to use in the search.
-     * @return The zero-based index of the first occurrence of {@code item} within the range of elements in the
-     * {@link ImmutableList} that starts at {@code index} and contains {@code count} number of elements, if found;
+     * @return The zero-based index of the first occurrence of {@code item} within the range of elements that extends
+     * from {@code startIndex} through (but not including) {@code toIndex}, if found;
      * otherwise, -1.
      */
-    int indexOf(T item, int index, int count, EqualityComparator<? super T> equalityComparator);
+    int indexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator);
 
     /**
      * Searches for the specified object and returns the zero-based index of the last occurrence within the range of

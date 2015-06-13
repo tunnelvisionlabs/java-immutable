@@ -392,13 +392,27 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         return wrap(root.sort(comparator));
     }
 
-    public ImmutableTreeList<T> sort(int index, int count, Comparator<? super T> comparator) {
-        Requires.notNull(comparator, "comparator");
-        Requires.range(index >= 0, "index");
-        Requires.range(count >= 0, "count");
-        Requires.range(index + count <= size(), "count");
+    /**
+     * Sorts the specified range of elements in the collection using the specified {@link Comparator} to compare
+     * elements.
+     *
+     * @param fromIndex The index of the first element (inclusive) to be sorted.
+     * @param toIndex The index of the last element (exclusive) to be sorted.
+     * @param comparator The {@link Comparator} to use for comparing elements, or {@code null} to sort the elements
+     * according to their natural {@link Comparable} order.
+     *
+     * @see Arrays#sort(Object[], int, int, Comparator)
+     */
+    public ImmutableTreeList<T> sort(int fromIndex, int toIndex, Comparator<? super T> comparator) {
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
-        return wrap(root.sort(index, count, comparator));
+        if (comparator == null) {
+            comparator = Comparators.anyComparator();
+        }
+
+        return wrap(root.sort(fromIndex, toIndex - fromIndex, comparator));
     }
 
     @Override
@@ -550,8 +564,8 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
      * {@inheritDoc}
      */
     @Override
-    public int indexOf(T item, int index, int count, EqualityComparator<? super T> equalityComparator) {
-        return root.indexOf(item, index, count, equalityComparator);
+    public int indexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
+        return root.indexOf(item, fromIndex, toIndex - fromIndex, equalityComparator);
     }
 
     /**

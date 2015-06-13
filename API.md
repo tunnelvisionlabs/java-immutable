@@ -100,10 +100,10 @@ have already been implemented (with documentation).
 | `this[int]` | `get(int)` | &check; |
 | `IsEmpty` | `isEmpty()` | &check; |
 | `Length` | `size()` | &check; |
-| `IndexOf(T)` | `indexOf(T)` | |
-| `IndexOf(T, int start)` | `indexOf(T, int fromIndex)` | |
-| `IndexOf(T, int start, int length)` | `indexOf(T, int fromIndex, int toIndex)` | |
-| `IndexOf(T, int start, int length, IEqualityComparer<T>)` | `indexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | |
+| `IndexOf(T)` | `indexOf(T)` | &check; |
+| `IndexOf(T, int start)` | `indexOf(T, int fromIndex)` | &check; |
+| `IndexOf(T, int start, int length)` | `indexOf(T, int fromIndex, int toIndex)` | &check; |
+| `IndexOf(T, int start, int length, IEqualityComparer<T>)` | `indexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | &check; |
 | `LastIndexOf(T)` | `lastIndexOf(T)` | |
 | `LastIndexOf(T, int start)` | `lastIndexOf(T, int start)` | |
 | `LastIndexOf(T, int start, int length)` | `lastIndexOf(T, int start, int end)` | |
@@ -193,8 +193,8 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 | `Reverse` | `reverse()` | &check; |
 | `Sort()` | `sort()` | &check; |
 | `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | &check; |
-| `Sort(int start, int length, IComparer<T>)` | `sort(int fromIndex, int toIndex, Comparator<? super T>)` | 1 |
-| `GetEnumerator()` | `iterator()` | |
+| `Sort(int start, int length, IComparer<T>)` | `sort(int fromIndex, int toIndex, Comparator<? super T>)` | &check; 1 |
+| `GetEnumerator()` | `iterator()` | &check; |
 
 ## `ImmutableList<T>` &rarr; `ImmutableTreeList<T>`
 
@@ -237,7 +237,7 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 | `Clear()` | `clear()` | &check; |
 | `BinarySearch<T>(T)` | `binarySearch(T)` | &check; |
 | `BinarySearch<T>(T, IComparer<T>)` | `binarySearch(T, Comparator<? super T>)` | &check; |
-| `BinarySearch<T>(int start, int length, T, IComparer<T>)` | `binarySearch(int fromIndex, int toIndex, T, Comparator<? super T>)` | 1 |
+| `BinarySearch<T>(int start, int length, T, IComparer<T>)` | `binarySearch(int fromIndex, int toIndex, T, Comparator<? super T>)` | &check; 1 |
 | `IsEmpty` | `isEmpty()` | &check; |
 | `Count` | `size()` | &check; |
 | `this[int]` | `get(int)` | &check; |
@@ -260,7 +260,7 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 | `Reverse(int start, int length)` | `reverse(int fromIndex, int toIndex)` | &check; 1 |
 | `Sort()` | `sort()` | &check; |
 | `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | &check; |
-| `Sort(int start, int length, IComparer<T>)` | `sort(int fromIndex, int toIndex, Comparator<? super T>)` | 1 |
+| `Sort(int start, int length, IComparer<T>)` | `sort(int fromIndex, int toIndex, Comparator<? super T>)` | &check; 1 |
 | `CopyTo(T[])` | ? | |
 | `CopyTo(T[], int)` | ? | |
 | `CopyTo(int, T[], int, int)` | ? | |
@@ -276,7 +276,7 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 | `FindLastIndex(Predicate<T>)` | `findLastIndex(Predicate<? super T>)` | &check; |
 | `FindLastIndex(int, Predicate<T>)` | `findLastIndex(int, Predicate<? super T>)` | |
 | `FindLastIndex(int start, int length, Predicate<T>)` | `findLastIndex(int fromIndex, int toIndex, Predicate<? super T>)` | 1 |
-| `IndexOf(T, int start, int length, IEqualityComparer<T>)` | `indexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | 1 |
+| `IndexOf(T, int start, int length, IEqualityComparer<T>)` | `indexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | &check; 1 |
 | `LastIndexOf(T, int start, int length, IEqualityComparer<T>)` | `lastIndexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | 1 |
 | `TrueForAll(Predicate<T>)` | `trueForAll(Predicate<? super T>)` | &check; |
 | `Contains(T)` | `contains(T)` | &check; |
