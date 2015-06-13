@@ -204,11 +204,11 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 
 | .NET Member | Java Member | Notes |
 | --- | --- | --- |
-| `Create<T>()` | `<T>create()` | |
-| `Create<T>(T)` | `<T>create(T)` | |
-| `Create<T>(params T[])` | `<T>create(T...)` | |
-| `CreateRange<T>(IEnumerable<T>)` | `<T>createAll(Iterable<? extends T>)` | |
-| `CreateBuilder<T>()` | `<T>createBuilder()` | |
+| `Create<T>()` | `<T>create()` | &check; |
+| `Create<T>(T)` | `<T>create(T)` | &check; |
+| `Create<T>(params T[])` | `<T>create(T...)` | &check; |
+| `CreateRange<T>(IEnumerable<T>)` | `<T>createAll(Iterable<? extends T>)` | &check; |
+| `CreateBuilder<T>()` | `<T>createBuilder()` | &check; |
 
 #### `ImmutableList` &rarr; `Immutables`
 
@@ -233,55 +233,55 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 
 | .NET Member | Java Member | Notes |
 | --- | --- | --- |
-| `Empty` | `<T>empty()` | |
-| `Clear()` | `clear()` | |
-| `BinarySearch<T>(T)` | `binarySearch(T)` | |
-| `BinarySearch<T>(T, IComparer<T>)` | `binarySearch(T, Comparator<? super T>)` | |
+| `Empty` | `<T>empty()` | &check; |
+| `Clear()` | `clear()` | &check; |
+| `BinarySearch<T>(T)` | `binarySearch(T)` | &check; |
+| `BinarySearch<T>(T, IComparer<T>)` | `binarySearch(T, Comparator<? super T>)` | &check; |
 | `BinarySearch<T>(int start, int length, T, IComparer<T>)` | `binarySearch(int fromIndex, int toIndex, T, Comparator<? super T>)` | 1 |
-| `IsEmpty` | `isEmpty()` | |
-| `Count` | `size()` | |
-| `this[int]` | `get(int)` | |
-| `ToBuilder()` | `toBuilder()` | |
-| `Add(T)` | `add(T)` | |
-| `AddRange(IEnumerable<T>)` | `addAll(Iterable<? extends T>)` | |
-| `Insert(int, T)` | `add(int, T)` | |
-| `InsertRange(int, IEnumerable<T>)` | `addAll(int, Iterable<? extends T>)` | |
-| `Remove(T)` | `remove(T)` | |
-| `Remove(T, IEqualityComparer<T>)` | `remove(T, EqualityComparator<? super T>)` | |
-| `RemoveRange(int start, int length)` | `removeAll(int fromIndex, int toIndex)` | 1 |
-| `RemoveRange(IEnumerable<T>)` | `removeAll(Iterable<? extends T>)` | |
-| `RemoveRange(IEnumerable<T>, IEqualityComparer<T>)` | `removeAll(Iterable<? extends T>, EqualityComparator<? super T>)` | |
-| `RemoveAt(int)` | `remove(int)` | |
-| `RemoveAll(Predicate<T>)` | `removeIf(Predicate<? super T>)` | |
-| `SetItem(int, T)` | `set(int, T)` | |
-| `Replace(T, T)` | `replace(T, T)` | |
-| `Replace(T, T, IEqualityComparer<T>)` | `replace(T, T, EqualityComparator<? super T>)` | |
-| `Reverse()` | `reverse()` | |
-| `Reverse(int start, int length)` | `reverse(int fromIndex, int toIndex)` | 1 |
-| `Sort()` | `sort()` | |
-| `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | |
+| `IsEmpty` | `isEmpty()` | &check; |
+| `Count` | `size()` | &check; |
+| `this[int]` | `get(int)` | &check; |
+| `ToBuilder()` | `toBuilder()` | &check; |
+| `Add(T)` | `add(T)` | &check; |
+| `AddRange(IEnumerable<T>)` | `addAll(Iterable<? extends T>)` | &check; |
+| `Insert(int, T)` | `add(int, T)` | &check; |
+| `InsertRange(int, IEnumerable<T>)` | `addAll(int, Iterable<? extends T>)` | &check; |
+| `Remove(T)` | `remove(T)` | &check; |
+| `Remove(T, IEqualityComparer<T>)` | `remove(T, EqualityComparator<? super T>)` | &check; |
+| `RemoveRange(int start, int length)` | `removeAll(int fromIndex, int toIndex)` | &check; 1 |
+| `RemoveRange(IEnumerable<T>)` | `removeAll(Iterable<? extends T>)` | &check; |
+| `RemoveRange(IEnumerable<T>, IEqualityComparer<T>)` | `removeAll(Iterable<? extends T>, EqualityComparator<? super T>)` | &check; |
+| `RemoveAt(int)` | `remove(int)` | &check; |
+| `RemoveAll(Predicate<T>)` | `removeIf(Predicate<? super T>)` | &check; |
+| `SetItem(int, T)` | `set(int, T)` | &check; |
+| `Replace(T, T)` | `replace(T, T)` | &check; |
+| `Replace(T, T, IEqualityComparer<T>)` | `replace(T, T, EqualityComparator<? super T>)` | &check; |
+| `Reverse()` | `reverse()` | &check; |
+| `Reverse(int start, int length)` | `reverse(int fromIndex, int toIndex)` | &check; 1 |
+| `Sort()` | `sort()` | &check; |
+| `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | &check; |
 | `Sort(int start, int length, IComparer<T>)` | `sort(int fromIndex, int toIndex, Comparator<? super T>)` | 1 |
 | `CopyTo(T[])` | ? | |
 | `CopyTo(T[], int)` | ? | |
 | `CopyTo(int, T[], int, int)` | ? | |
-| `GetRange(int start, int length)` | `subList(int fromIndex, int toIndex)` | 1 |
-| `ConvertAll<TOutput>(Func<T, TOutput>)` | `<U>convertAll(Function<? super T, U>)` | |
-| `Exists(Predicate<T>)` | `exists(Predicate<? super T>)` | |
-| `Find(Predicate<T>)` | `find(Predicate<? super T>)` | |
-| `FindAll(Predicate<T>)` | `retainIf(Predicate<? super T>)` | |
-| `FindIndex(Predicate<T>)` | `findIndex(Predicate<? super T>)` | |
-| `FindIndex(int, Predicate<T>)` | `findIndex(int, Predicate<? super T>)` | |
-| `FindIndex(int start, int length, Predicate<T>)` | `findIndex(int fromIndex, int toIndex, Predicate<? super T>)` | 1 |
-| `FindLast(Predicate<T>)` | `findLast(Predicate<? super T>)` | |
-| `FindLastIndex(Predicate<T>)` | `findLastIndex(Predicate<? super T>)` | |
+| `GetRange(int start, int length)` | `subList(int fromIndex, int toIndex)` | &check; 1 |
+| `ConvertAll<TOutput>(Func<T, TOutput>)` | `<U>convertAll(Function<? super T, U>)` | &check; |
+| `Exists(Predicate<T>)` | `exists(Predicate<? super T>)` | &check; |
+| `Find(Predicate<T>)` | `find(Predicate<? super T>)` | &check; |
+| `FindAll(Predicate<T>)` | `retainIf(Predicate<? super T>)` | &check; |
+| `FindIndex(Predicate<T>)` | `findIndex(Predicate<? super T>)` | &check; |
+| `FindIndex(int, Predicate<T>)` | `findIndex(int, Predicate<? super T>)` | &check; |
+| `FindIndex(int start, int length, Predicate<T>)` | `findIndex(int fromIndex, int toIndex, Predicate<? super T>)` | &check; 1 |
+| `FindLast(Predicate<T>)` | `findLast(Predicate<? super T>)` | &check; |
+| `FindLastIndex(Predicate<T>)` | `findLastIndex(Predicate<? super T>)` | &check; |
 | `FindLastIndex(int, Predicate<T>)` | `findLastIndex(int, Predicate<? super T>)` | |
 | `FindLastIndex(int start, int length, Predicate<T>)` | `findLastIndex(int fromIndex, int toIndex, Predicate<? super T>)` | 1 |
 | `IndexOf(T, int start, int length, IEqualityComparer<T>)` | `indexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | 1 |
 | `LastIndexOf(T, int start, int length, IEqualityComparer<T>)` | `lastIndexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | 1 |
-| `TrueForAll(Predicate<T>)` | `trueForAll(Predicate<? super T>)` | |
-| `Contains(T)` | `contains(T)` | |
-| `IndexOf(T)` | `indexOf(T)` | |
-| `GetEnumerator()` | `iterator()` | |
+| `TrueForAll(Predicate<T>)` | `trueForAll(Predicate<? super T>)` | &check; |
+| `Contains(T)` | `contains(T)` | &check; |
+| `IndexOf(T)` | `indexOf(T)` | &check; |
+| `GetEnumerator()` | `iterator()` | &check; |
 
 #### `ImmutableList<T>` &rarr; No mapping
 
@@ -298,27 +298,27 @@ These members of `ImmutableList<T>` have no equivalent mapping in the Java progr
 
 | .NET Member | Java Member | Notes |
 | --- | --- | --- |
-| `Count` | `size()` | |
-| `this[int]` | `get(int)`, `set(int, T)` | |
-| `IndexOf(T)` | `indexOf(Object)` | |
-| `Insert(int, T)` | `add(int, T)` | |
-| `RemoveAt(int)` | `remove(int)` | |
-| `Add(T)` | `add(T)` | |
-| `Clear()` | `clear()` | |
-| `Contains(T)` | `contains(Object)` | |
-| `Remove(T)` | `remove(Object)` | |
-| `GetEnumerator()` | `iterator()` | |
+| `Count` | `size()` | &check; |
+| `this[int]` | `get(int)`, `set(int, T)` | &check; |
+| `IndexOf(T)` | `indexOf(Object)` | &check; |
+| `Insert(int, T)` | `add(int, T)` | &check; |
+| `RemoveAt(int)` | `remove(int)` | &check; |
+| `Add(T)` | `add(T)` | &check; |
+| `Clear()` | `clear()` | &check; |
+| `Contains(T)` | `contains(Object)` | &check; |
+| `Remove(T)` | `remove(Object)` | &check; |
+| `GetEnumerator()` | `iterator()` | &check; |
 | `CopyTo(T[])` | ? | |
 | `CopyTo(T[], int)` | ? | |
 | `CopyTo(int, T[], int, int)` | ? | |
 | `GetRange(int start, int length)` | `subList(int fromIndex, int toIndex)` | 1 |
-| `ConvertAll<TOutput>(Func<T, TOutput>)` | `<U>convertAll(Function<? super T, U>)` | |
-| `Exists(Predicate<T>)` | `exists(Predicate<? super T>)` | |
-| `Find(Predicate<T>)` | `find(Predicate<? super T>)` | |
-| `FindAll(Predicate<T>)` | `retainIf(Predicate<? super T>)` | |
-| `FindIndex(Predicate<T>)` | `findIndex(Predicate<? super T>)` | |
-| `FindIndex(int, Predicate<T>)` | `findIndex(int, Predicate<? super T>)` | |
-| `FindIndex(int start, int length, Predicate<T>)` | `findIndex(int fromIndex, int toIndex, Predicate<? super T>)` | 1 |
+| `ConvertAll<TOutput>(Func<T, TOutput>)` | `<U>convertAll(Function<? super T, U>)` | &check; |
+| `Exists(Predicate<T>)` | `exists(Predicate<? super T>)` | &check; |
+| `Find(Predicate<T>)` | `find(Predicate<? super T>)` | &check; |
+| `FindAll(Predicate<T>)` | `retainIf(Predicate<? super T>)` | &check; |
+| `FindIndex(Predicate<T>)` | `findIndex(Predicate<? super T>)` | &check; |
+| `FindIndex(int, Predicate<T>)` | `findIndex(int, Predicate<? super T>)` | &check; |
+| `FindIndex(int start, int length, Predicate<T>)` | `findIndex(int fromIndex, int toIndex, Predicate<? super T>)` | &check; 1 |
 | `FindLast(Predicate<T>)` | `findLast(Predicate<? super T>)` | |
 | `FindLastIndex(Predicate<T>)` | `findLastIndex(Predicate<? super T>)` | |
 | `FindLastIndex(int, Predicate<T>)` | `findLastIndex(int, Predicate<? super T>)` | |
@@ -326,23 +326,23 @@ These members of `ImmutableList<T>` have no equivalent mapping in the Java progr
 | `IndexOf(T, int)` | `indexOf(?, int)` | |
 | `IndexOf(T, int start, int length)` | `indexOf(?, int fromIndex, int toIndex)` | 1 |
 | `IndexOf(T, int start, int length, IEqualityComparer<? super T>)` | `indexOf(?, int fromIndex, int toIndex, ?)` | 1 |
-| `LastIndexOf(T)` | `lastIndexOf(Object)` | |
+| `LastIndexOf(T)` | `lastIndexOf(Object)` | &check; |
 | `LastIndexOf(T, int)` | `lastIndexOf(?, int)` | |
 | `LastIndexOf(T, int start, int length)` | `lastIndexOf(?, int start, int end)` | 1 |
 | `LastIndexOf(T, int start, int length, IEqualityComparer<? super T>)` | `lastIndexOf(?, int start, int end, ?)` | 1 |
-| `TrueForAll(Predicate<T>)` | `trueForAll(Predicate<? super T>)` | |
-| `AddRange(IEnumerable<T>)` | `addAll(Iterable<? extends T>)` | |
-| `InsertRange(int, IEnumerable<T>)` | `addAll(int, Iterable<? extends T>)` | |
-| `RemoveAll(Predicate<T>)` | `removeIf(Predicate<? super T>)` | |
-| `Reverse()` | `reverse()` | |
-| `Reverse(int start, int length)` | `reverse(int fromIndex, int toIndex)` | 1 |
-| `Sort()` | `sort()` | |
-| `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | |
-| `Sort(int start, int length, IComparer<T>)` | `sort(int fromIndex, int toIndex, Comparator<? super T>)` | 1 |
-| `BinarySearch<T>(T)` | `binarySearch(T)` | |
-| `BinarySearch<T>(T, IComparer<T>)` | `binarySearch(T, Comparator<? super T>)` | |
-| `BinarySearch<T>(int start, int length, T, IComparer<T>)` | `binarySearch(int fromIndex, int toIndex, T, Comparator<? super T>)` | 1 |
-| `ToImmutable()` | `toImmutable()` | |
+| `TrueForAll(Predicate<T>)` | `trueForAll(Predicate<? super T>)` | &check; |
+| `AddRange(IEnumerable<T>)` | `addAll(Iterable<? extends T>)` | &check; |
+| `InsertRange(int, IEnumerable<T>)` | `addAll(int, Iterable<? extends T>)` | &check; |
+| `RemoveAll(Predicate<T>)` | `removeIf(Predicate<? super T>)` | &check; |
+| `Reverse()` | `reverse()` | &check; |
+| `Reverse(int start, int length)` | `reverse(int fromIndex, int toIndex)` | &check; 1 |
+| `Sort()` | `sort()` | &check; |
+| `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | &check; |
+| `Sort(int start, int length, IComparer<T>)` | `sort(int fromIndex, int toIndex, Comparator<? super T>)` | &check; 1 |
+| `BinarySearch<T>(T)` | `binarySearch(T)` | &check; |
+| `BinarySearch<T>(T, IComparer<T>)` | `binarySearch(T, Comparator<? super T>)` | &check; |
+| `BinarySearch<T>(int start, int length, T, IComparer<T>)` | `binarySearch(int fromIndex, int toIndex, T, Comparator<? super T>)` | &check; 1 |
+| `ToImmutable()` | `toImmutable()` | &check; |
 
 #### `ImmutableList<T>.Builder` &rarr; No mapping
 

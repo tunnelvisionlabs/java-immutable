@@ -992,7 +992,7 @@ public class ImmutableListTest extends ImmutableListTestBase {
     protected <T> void reverseTestHelper(ImmutableTreeList<T> list, int index, int count) {
         ArrayList<T> expected = new ArrayList<T>(list.toBuilder());
         Collections.reverse(expected.subList(index, index + count));
-        ImmutableTreeList<T> actual = list.reverse(index, count);
+        ImmutableTreeList<T> actual = list.reverse(index, index + count);
         assertEqualSequences(expected, new ArrayList<T>(actual.toBuilder()));
     }
 
