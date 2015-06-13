@@ -4,6 +4,7 @@ package com.tvl.util;
 import com.tvl.util.function.BiFunction;
 import com.tvl.util.function.Function;
 import com.tvl.util.function.Predicate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -177,15 +178,73 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
     }
 
-    public static <T> ImmutableArrayList<T> createAll(T[] items, int start, int length) {
-        throw new UnsupportedOperationException("Not implemented.");
+    /**
+     * Creates a new immutable array from the specified range of elements in an existing array.
+     *
+     * @param <T> The type of element stored in the array.
+     * @param items The array to initialize the immutable array with. A defensive copy is made.
+     * @param fromIndex The index of the first element (inclusive) to include in the immutable array.
+     * @param toIndex The index of the last element (exclusive) to include in the immutable array.
+     * @return The new immutable array.
+     */
+    public static <T> ImmutableArrayList<T> createAll(T[] items, int fromIndex, int toIndex) {
+        Requires.notNull(items, "items");
+        Requires.range(fromIndex >= 0 && fromIndex <= items.length, "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= items.length, "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
+
+        if (fromIndex == toIndex) {
+            // avoid allocating a new array
+            return create();
+        }
+
+        @SuppressWarnings("unchecked")
+        T[] array = (T[])new Object[toIndex - fromIndex];
+        System.arraycopy(items, fromIndex, array, 0, array.length);
+        return new ImmutableArrayList<T>(array);
     }
 
-    public static <T> ImmutableArrayList<T> createAll(ImmutableArrayList<T> items, int start, int length) {
-        throw new UnsupportedOperationException("Not implemented.");
+    /**
+     * Creates a new immutable array from the specified range of elements in an existing array.
+     *
+     * @param <T> The type of element stored in the array.
+     * @param items The array to initialize the immutable array with. A defensive copy is made only when the specified
+     * range does not include all elements of the source array.
+     * @param fromIndex The index of the first element (inclusive) to include in the immutable array.
+     * @param toIndex The index of the last element (exclusive) to include in the immutable array.
+     * @return The new immutable array.
+     */
+    public static <T> ImmutableArrayList<T> createAll(ImmutableArrayList<T> items, int fromIndex, int toIndex) {
+        Requires.notNull(items, "items");
+        Requires.range(fromIndex >= 0 && fromIndex <= items.size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= items.size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
+
+        if (fromIndex == toIndex) {
+            // avoid allocating a new array
+            return create();
+        }
+
+        if (fromIndex == 0 && toIndex == items.size()) {
+            return items;
+        }
+
+        @SuppressWarnings("unchecked")
+        T[] array = (T[])new Object[toIndex - fromIndex];
+        System.arraycopy(items.array, fromIndex, array, 0, array.length);
+        return new ImmutableArrayList<T>(array);
     }
 
-    public static <Source, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, Function<Source, Result> selector) {
+    /**
+     * Creates an immutable array by applying a transformation function to the elements of an existing array.
+     *
+     * @param items The existing immutable array.
+     * @param selector The transformation function to apply to each element of {@code items} to obtain the target array.
+     * @param <Source> The type of elements stored in the source array.
+     * @param <Result> The type of elements stored in the target array.
+     * @return A new immutable array containing the transformed elements.
+     */
+    public static <Source, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, Function<? super Source, Result> selector) {
         Requires.notNull(selector, "selector");
 
         int length = items.size();
@@ -193,6 +252,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return create();
         }
 
+        @SuppressWarnings("unchecked")
         Result[] array = (Result[])new Object[length];
         for (int i = 0; i < length; i++) {
             array[i] = selector.apply(items.get(i));
@@ -201,11 +261,50 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         return new ImmutableArrayList<Result>(array);
     }
 
-    public static <Source, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, int start, int length, Function<Source, Result> selector) {
-        throw new UnsupportedOperationException("Not implemented");
+    /**
+     * Creates an immutable array by applying a transformation function to the elements of an existing array.
+     *
+     * @param <Source> The type of elements stored in the source array.
+     * @param <Result> The type of elements stored in the target array.
+     * @param items The existing immutable array.
+     * @param fromIndex The index of the first element (inclusive) to include in the immutable array.
+     * @param toIndex The index of the last element (exclusive) to include in the immutable array.
+     * @param selector The transformation function to apply to each element of {@code items} to obtain the target array.
+     * @return A new immutable array containing the transformed elements.
+     */
+    public static <Source, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, int fromIndex, int toIndex, Function<? super Source, Result> selector) {
+        Requires.notNull(items, "items");
+        Requires.range(fromIndex >= 0 && fromIndex <= items.size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= items.size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
+        Requires.notNull(selector, "selector");
+
+        if (fromIndex == toIndex) {
+            // avoid allocating a new array
+            return create();
+        }
+
+        @SuppressWarnings("unchecked")
+        Result[] array = (Result[])new Object[toIndex - fromIndex];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = selector.apply(items.get(i + fromIndex));
+        }
+
+        return new ImmutableArrayList<Result>(array);
     }
 
-    public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, BiFunction<Source, Arg, Result> selector, Arg arg) {
+    /**
+     * Creates an immutable array by applying a transformation function to the elements of an existing array.
+     *
+     * @param items The existing immutable array.
+     * @param selector The transformation function to apply to each element of {@code items} to obtain the target array.
+     * @param arg An additional argument to pass to the transformation function.
+     * @param <Source> The type of elements stored in the source array.
+     * @param <Arg> The type of the additional argument to the transformation function.
+     * @param <Result> The type of elements stored in the target array.
+     * @return A new immutable array containing the transformed elements.
+     */
+    public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, BiFunction<? super Source, Arg, Result> selector, Arg arg) {
         Requires.notNull(selector, "selector");
 
         int length = items.size();
@@ -222,8 +321,38 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         return new ImmutableArrayList<Result>(array);
     }
 
-    public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, int start, int length, BiFunction<Source, Arg, Result> selector, Arg arg) {
-        throw new UnsupportedOperationException("Not implemented");
+    /**
+     * Creates an immutable array by applying a transformation function to a range of elements of an existing array.
+     *
+     * @param <Source> The type of elements stored in the source array.
+     * @param <Arg> The type of the additional argument to the transformation function.
+     * @param <Result> The type of elements stored in the target array.
+     * @param items The existing immutable array.
+     * @param fromIndex The index of the first element (inclusive) to include in the immutable array.
+     * @param toIndex The index of the last element (exclusive) to include in the immutable array.
+     * @param selector The transformation function to apply to each element of {@code items} to obtain the target array.
+     * @param arg An additional argument to pass to the transformation function.
+     * @return A new immutable array containing the transformed elements.
+     */
+    public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, int fromIndex, int toIndex, BiFunction<? super Source, Arg, Result> selector, Arg arg) {
+        Requires.notNull(items, "items");
+        Requires.notNull(selector, "selector");
+        Requires.range(fromIndex >= 0 && fromIndex <= items.size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= items.size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
+
+        if (fromIndex == toIndex) {
+            // avoid allocating a new array
+            return create();
+        }
+
+        @SuppressWarnings("unchecked")
+        Result[] array = (Result[])new Object[toIndex - fromIndex];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = selector.apply(items.get(i + fromIndex), arg);
+        }
+
+        return new ImmutableArrayList<Result>(array);
     }
 
     /**
@@ -247,20 +376,102 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         return new Builder<T>(initialCapacity);
     }
 
+    /**
+     * Searches an entire one-dimensional sorted {@link ImmutableArrayList} for a specific element, using the default
+     * comparator for elements of type {@code T}.
+     *
+     * @param <T> The type of element stored in the array.
+     * @param array The sorted, one-dimensional array to search.
+     * @param value The object to search for.
+     * @return The index of the specified {@code value} in the specified array, if {@code value} is found. If
+     * {@code value} is not found and {@code value} is less than one or more elements in {@code array}, a negative
+     * number which is the bitwise complement of the index of the first element that is larger than {@code value}. If
+     * {@code value} is not found and {@code value} is greater than all of the elements in {@code array}, a negative
+     * number which is the bitwise complement of (the index of the last element plus 1).
+     */
     public static <T> int binarySearch(ImmutableArrayList<T> array, T value) {
-        throw new UnsupportedOperationException("Not implemented");
+        Requires.notNull(array, "array");
+        return binarySearch(array, value, 0, array.size(), null);
     }
 
+    /**
+     * Searches an entire one-dimensional sorted {@link ImmutableArrayList} for a specific element using the specified
+     * comparator.
+     *
+     * @param <T> The type of element stored in the array.
+     * @param array The sorted, one-dimensional array to search.
+     * @param value The object to search for.
+     * @param comparator The comparator to use for comparing elements, or {@code null} to use the default comparator for
+     * elements of type {@code T}.
+     * @return The index of the specified {@code value} in the specified array, if {@code value} is found. If
+     * {@code value} is not found and {@code value} is less than one or more elements in {@code array}, a negative
+     * number which is the bitwise complement of the index of the first element that is larger than {@code value}. If
+     * {@code value} is not found and {@code value} is greater than all of the elements in {@code array}, a negative
+     * number which is the bitwise complement of (the index of the last element plus 1).
+     */
     public static <T> int binarySearch(ImmutableArrayList<T> array, T value, Comparator<? super T> comparator) {
-        throw new UnsupportedOperationException("Not implemented");
+        Requires.notNull(array, "array");
+        return binarySearch(array, value, 0, array.size(), comparator);
     }
 
-    public static <T> int binarySearch(ImmutableArrayList<T> array, T value, int index, int length) {
-        throw new UnsupportedOperationException("Not implemented");
+    /**
+     * Searches a range of the specified array for the specified object using the binary search algorithm. The range
+     * must be sorted into ascending {@linkplain Comparable natural ordering} prior to making this call. If it is not
+     * sorted, the results are unspecified. If the range contains multiple elements equal to the specified object, there
+     * is no guarantee which one will be found.
+     *
+     * @param <T> The type of elements stored in the array.
+     * @param array The array to be searched.
+     * @param value The value to search for.
+     * @param fromIndex The index of the first element (inclusive) to be searched.
+     * @param toIndex The index of the last element (exclusive) to be searched.
+     * @return The index of the specified {@code value} in the specified array, if {@code value} is found. If
+     * {@code value} is not found and {@code value} is less than one or more elements in {@code array}, a negative
+     * number which is the bitwise complement of the index of the first element that is larger than {@code value}. If
+     * {@code value} is not found and {@code value} is greater than all of the elements in {@code array}, a negative
+     * number which is the bitwise complement of (the index of the last element plus 1).
+     *
+     * @throws ClassCastException If {@code value} is not comparable to the elements of the array within the specified
+     * range.
+     * @throws IllegalArgumentException if {@code fromIndex > toIndex}
+     * @throws IndexOutOfBoundsException if {@code fromIndex < 0 or toIndex > array.size()}.
+     */
+    public static <T> int binarySearch(ImmutableArrayList<T> array, T value, int fromIndex, int toIndex) {
+        return binarySearch(array, value, fromIndex, toIndex, null);
     }
 
-    public static <T> int binarySearch(ImmutableArrayList<T> array, T value, int index, int length, Comparator<? super T> comparator) {
-        throw new UnsupportedOperationException("Not implemented");
+    /**
+     * Searches a range of the specified array for the specified object using the binary search algorithm. The range
+     * must be sorted into ascending order according to the specified comparator (as by the
+     * {@link #sort(int, int, Comparator) sort(int, int, Comparator)} method) prior to making this
+     * call. If it is not sorted, the results are unspecified. If the range contains multiple elements equal to the
+     * specified object, there is no guarantee which one will be found.
+     *
+     * @param <T> The type of elements stored in the array.
+     * @param array The array to be searched.
+     * @param value The value to search for.
+     * @param fromIndex The index of the first element (inclusive) to be searched.
+     * @param toIndex The index of the last element (exclusive) to be searched.
+     * @param comparator The comparator by which the array is ordered. A {@code null} value indicates that the elements'
+     * {@linkplain Comparable natural ordering} should be used.
+     * @return The index of the specified {@code value} in the specified array, if {@code value} is found. If
+     * {@code value} is not found and {@code value} is less than one or more elements in {@code array}, a negative
+     * number which is the bitwise complement of the index of the first element that is larger than {@code value}. If
+     * {@code value} is not found and {@code value} is greater than all of the elements in {@code array}, a negative
+     * number which is the bitwise complement of (the index of the last element plus 1).
+     *
+     * @throws ClassCastException if the range contains elements that are not <i>mutually comparable</i> using the
+     * specified comparator, or the search key is not comparable to the elements in the range using this comparator.
+     * @throws IllegalArgumentException if {@code fromIndex > toIndex}
+     * @throws IndexOutOfBoundsException if {@code fromIndex < 0 or toIndex > array.size()}.
+     */
+    public static <T> int binarySearch(ImmutableArrayList<T> array, T value, int fromIndex, int toIndex, Comparator<? super T> comparator) {
+        Requires.notNull(array, "array");
+        if (comparator == null) {
+            comparator = (Comparator<? super T>)Comparators.<Integer>defaultComparator();
+        }
+
+        return Arrays.binarySearch(array.array, fromIndex, toIndex, value, comparator);
     }
 
     private static <T> ImmutableArrayList<T> createDefensiveCopy(T[] items) {
@@ -567,7 +778,15 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return The new immutable collection.
      */
     public ImmutableArrayList<T> addAll(int index, ImmutableArrayList<? extends T> items) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(items, "items");
+        Requires.range(index >= 0 && index <= size(), "index");
+        if (isEmpty()) {
+            return castUp(items);
+        } else if (items.isEmpty()) {
+            return this;
+        }
+
+        return addAll(index, (Iterable<? extends T>)items);
     }
 
     /**
@@ -578,7 +797,11 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> add(T item) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (isEmpty()) {
+            return create(item);
+        }
+
+        return add(size(), item);
     }
 
     /**
@@ -589,7 +812,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> addAll(Iterable<? extends T> items) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return addAll(size(), items);
     }
 
     /**
@@ -599,7 +822,14 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return A new immutable array with the elements added.
      */
     public ImmutableArrayList<T> addAll(ImmutableArrayList<? extends T> items) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(items, "items");
+        if (isEmpty()) {
+            return castUp(items);
+        } else if (items.isEmpty()) {
+            return this;
+        }
+
+        return addAll((Iterable<? extends T>)items);
     }
 
     /**
@@ -688,23 +918,29 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> remove(int index) {
-        return remove(index, 1);
+        return removeAll(index, index + 1);
     }
 
     /**
      * Returns an array with the elements at the specified position removed.
      *
-     * @param index The zero-based index into the array for the element to omit from the returned array.
-     * @param count The number of elements to remove.
+     * @param fromIndex The index of the first element (inclusive) to be removed.
+     * @param toIndex The index of the last element (exclusive) to be removed.
      * @return The new immutable array.
      */
     @Override
-    public ImmutableArrayList<T> remove(int index, int count) {
-        Requires.range(index >= 0 && index < size(), "index");
-        Requires.range(count >= 0 && index + count <= size(), "count");
+    public ImmutableArrayList<T> removeAll(int fromIndex, int toIndex) {
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
+
+        int count = toIndex - fromIndex;
+        if (count == 0) {
+            return this;
+        }
 
         T[] tmp = Arrays.copyOf(array, array.length - count);
-        System.arraycopy(array, index + count, tmp, index, size() - index - count);
+        System.arraycopy(array, toIndex, tmp, fromIndex, size() - toIndex);
         return new ImmutableArrayList<T>(tmp);
     }
 
@@ -785,7 +1021,23 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     @Override
     public ImmutableArrayList<T> removeIf(Predicate<? super T> predicate) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Requires.notNull(predicate, "predicate");
+        if (isEmpty()) {
+            return this;
+        }
+
+        ArrayList<Integer> removeIndexes = null;
+        for (int i = 0; i < array.length; i++) {
+            if (predicate.test(array[i])) {
+                if (removeIndexes == null) {
+                    removeIndexes = new ArrayList<Integer>();
+                }
+
+                removeIndexes.add(i);
+            }
+        }
+
+        return removeIndexes != null ? removeAtRange(removeIndexes) : this;
     }
 
     /**
@@ -820,24 +1072,27 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     /**
      * Returns a sorted instance of this array.
      *
-     * @param index The index of the first element to consider in the sort.
-     * @param count The number of elements to include in the sort.
+     * @param fromIndex The index of the first element (inclusive) to be sorted.
+     * @param toIndex The index of the last element (exclusive) to be sorted.
      * @param comparator The comparator to use in sorting. If {@code null}, a default comparator is used.
      * @return A sorted instance of this array.
      */
-    public ImmutableArrayList<T> sort(int index, int count, Comparator<? super T> comparator) {
-        Requires.range(index >= 0, "index");
-        Requires.range(count >= 0 && index + count <= size(), "count");
+    public ImmutableArrayList<T> sort(int fromIndex, int toIndex, Comparator<? super T> comparator) {
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
         if (comparator == null) {
             comparator = (Comparator<? super T>)(Comparator<?>)Comparators.<Integer>defaultComparator();
         }
 
+        int count = toIndex - fromIndex;
+
         // 0 and 1 element arrays don't need to be sorted.
         if (count > 1) {
             // Avoid copying the entire array when the array is already sorted.
             boolean outOfOrder = false;
-            for (int i = index + 1; i < index + count; i++) {
+            for (int i = fromIndex + 1; i < toIndex; i++) {
                 if (comparator.compare(array[i - 1], array[i]) > 0) {
                     outOfOrder = true;
                     break;
@@ -846,7 +1101,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
             if (outOfOrder) {
                 Builder<T> builder = toBuilder();
-                builder.sort(index, count, comparator);
+                builder.sort(fromIndex, count, comparator);
                 return builder.moveToImmutable();
             }
         }
@@ -938,11 +1193,11 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * instead.</p>
      *
      * @param clazz The element type to cast the current array to.
-     * @param <TOther> The type of element stored in the array.
-     * @return The current array as an instance of an immutable array of {@code TOther} objects.
-     * @throws ClassCastException if any object in the current instance cannot be cast to an instance of {@code TOther}.
+     * @param <Other> The type of element stored in the array.
+     * @return The current array as an instance of an immutable array of {@code Other} objects.
+     * @throws ClassCastException if any object in the current instance cannot be cast to an instance of {@code Other}.
      */
-    public <TOther> ImmutableArrayList<TOther> castArray(Class<TOther> clazz) {
+    public <Other> ImmutableArrayList<Other> castArray(Class<Other> clazz) {
         Requires.notNull(clazz, "clazz");
         for (T item : this) {
             clazz.cast(item);
@@ -950,7 +1205,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
         // It is now safe to cast the array.
         @SuppressWarnings("unchecked") // this is safe
-        ImmutableArrayList<TOther> result = (ImmutableArrayList<TOther>)this;
+        ImmutableArrayList<Other> result = (ImmutableArrayList<Other>)this;
         return result;
     }
 
@@ -962,11 +1217,11 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * instead.</p>
      *
      * @param clazz The element type to cast the current array to.
-     * @param <TOther> The type of element stored in the array.
-     * @return The current array as an instance of an immutable array of {@code TOther} objects if all objects in the
-     * array can be cast to {@code TOther}; otherwise, {@code null}.
+     * @param <Other> The type of element stored in the array.
+     * @return The current array as an instance of an immutable array of {@code Other} objects if all objects in the
+     * array can be cast to {@code Other}; otherwise, {@code null}.
      */
-    public <TOther> ImmutableArrayList<TOther> as(Class<TOther> clazz) {
+    public <Other> ImmutableArrayList<Other> as(Class<Other> clazz) {
         Requires.notNull(clazz, "clazz");
         for (T item : this) {
             if (item != null && !clazz.isInstance(item)) {
@@ -976,8 +1231,61 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
         // It is now safe to cast the array.
         @SuppressWarnings("unchecked") // this is safe
-        ImmutableArrayList<TOther> result = (ImmutableArrayList<TOther>)this;
+        ImmutableArrayList<Other> result = (ImmutableArrayList<Other>)this;
         return result;
+    }
+
+    /**
+     * Filters the elements of this array to those assignable to the specified type.
+     *
+     * @param clazz The desired type of element.
+     * @param <Result> The desired type of element.
+     * @return An iterable that contains the elements from the current array which are instances of type {@code Result}.
+     */
+    public <Result> Iterable<Result> ofType(final Class<Result> clazz) {
+        Requires.notNull(clazz, "clazz");
+        return new Iterable<Result>() {
+            @Override
+            public Iterator<Result> iterator() {
+                return new Iterator<Result>() {
+                    private Iterator<T> outerIterator = ImmutableArrayList.this.iterator();
+                    private Result nextElement;
+
+                    @Override
+                    public boolean hasNext() {
+                        if (nextElement != null) {
+                            return true;
+                        }
+
+                        while (outerIterator.hasNext()) {
+                            T current = outerIterator.next();
+                            if (clazz.isInstance(current)) {
+                                nextElement = clazz.cast(current);
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    }
+
+                    @Override
+                    public Result next() {
+                        if (!hasNext()) {
+                            throw new NoSuchElementException();
+                        }
+
+                        Result result = nextElement;
+                        nextElement = null;
+                        return result;
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException("This iterator is read-only.");
+                    }
+                };
+            }
+        };
     }
 
     @Override
@@ -1242,6 +1550,12 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return true;
         }
 
+        /**
+         * Adds the specified items to the end of the array.
+         *
+         * @param items The items to add.
+         * @return {@code true} if the collection changed as a result of the operation; otherwise, {@code false}.
+         */
         public boolean addAll(Iterable<? extends T> items) {
             Requires.notNull(items, "items");
 
@@ -1259,6 +1573,11 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return result;
         }
 
+        /**
+         * Adds the specified items to the end of the array.
+         *
+         * @param items The items to add.
+         */
         public void addAll(T... items) {
             Requires.notNull(items, "items");
 
@@ -1277,6 +1596,11 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             System.arraycopy(items, 0, elements, offset, length);
         }
 
+        /**
+         * Adds the specified items to the end of the array.
+         *
+         * @param items The items to add.
+         */
         public void addAll(ImmutableArrayList<? extends T> items) {
             Requires.notNull(items, "items");
             addAll(items, items.size());
@@ -1287,11 +1611,22 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             addAll(items.array, length);
         }
 
+        /**
+         * Adds the specified items to the end of the array.
+         *
+         * @param items The items to add.
+         */
         public void addAll(Builder<? extends T> items) {
             Requires.notNull(items, "items");
             addAll(items.elements, items.size());
         }
 
+        /**
+         * Removes the specified element from the array.
+         *
+         * @param o The element to remove.
+         * @return {@code true} if the array changed as a result of the operation; otherwise, {@code false}.
+         */
         @Override
         public boolean remove(Object o) {
             int index = indexOf(o);
@@ -1303,6 +1638,13 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return false;
         }
 
+        /**
+         * Removes the element at the specified {@code index}.
+         *
+         * @param index The index of the element to remove from the array.
+         * @return The value stored at the specified index prior to its removal.
+         * @exception IndexOutOfBoundsException if {@code index < 0} or {@code index >= }{@link #size()}.
+         */
         @Override
         public T remove(int index) {
             Requires.range(index >= 0 && index < size(), "index");
@@ -1316,9 +1658,12 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return value;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean contains(Object o) {
-            return Arrays.asList(elements).subList(0, count).contains(o);
+            return indexOf(o) >= 0;
         }
 
         @Override
@@ -1414,6 +1759,9 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             }
         }
 
+        /**
+         * Reverses the order of elements in the collection.
+         */
         public void reverse() {
             int i = 0;
             int j = count - 1;
@@ -1426,48 +1774,96 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             }
         }
 
+        /**
+         * Sorts the collection according to the natural {@link Comparable} order of the elements.
+         *
+         * @see Arrays#sort(Object[])
+         */
         public void sort() {
             sort(0, count, null);
         }
 
+        /**
+         * Sorts the collection using the specified {@link Comparator} to compare elements.
+         *
+         * @param comparator The {@link Comparator} to use for comparing elements, or {@code null} to sort the elements
+         * according to their natural {@link Comparable} order.
+         *
+         * @see Arrays#sort(Object[], Comparator)
+         */
         public void sort(Comparator<? super T> comparator) {
             sort(0, count, comparator);
         }
 
         public void sort(int index, int count, Comparator<? super T> comparator) {
-            if (!(index >= 0)) {
-                throw new IndexOutOfBoundsException("index");
-            }
-            if (!(count >= 0 && index + count <= size())) {
-                throw new IndexOutOfBoundsException("count");
-            }
-
+            Requires.range(index >= 0, "index");
+            Requires.range(count >= 0 && index + count <= size(), "count");
             Arrays.sort(elements, index, index + count, comparator);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Iterator<T> iterator() {
-            return Arrays.asList(elements).iterator();
+            return Arrays.asList(elements).subList(0, count).iterator();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public ListIterator<T> listIterator() {
             return Arrays.asList(elements).subList(0, count).listIterator();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public ListIterator<T> listIterator(int index) {
             return Arrays.asList(elements).subList(0, count).listIterator(index);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean containsAll(Collection<?> c) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.notNull(c, "c");
+            for (Object o : c) {
+                if (!contains(o)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean addAll(int index, Collection<? extends T> c) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.notNull(c, "c");
+            Requires.range(index >= 0 && index <= size(), "index");
+
+            if (c.isEmpty()) {
+                return false;
+            }
+
+            ArrayList<T> intermediate = new ArrayList<T>(c);
+            ensureCapacity(size() + intermediate.size());
+            count += intermediate.size();
+            if (index < size()) {
+                System.arraycopy(elements, index, elements, index + intermediate.size(), size() - index);
+            }
+
+            for (int i = 0; i < intermediate.size(); i++) {
+                elements[index + i] = intermediate.get(i);
+            }
+
+            return true;
         }
 
         @Override
@@ -1520,7 +1916,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException("remove");
+            throw new UnsupportedOperationException("This iterator is read-only.");
         }
     }
 }
