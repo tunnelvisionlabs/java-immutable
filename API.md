@@ -121,7 +121,7 @@ have already been implemented (with documentation).
 | `Remove(T)` | `remove(T)` | &check; |
 | `Remove(T, IEqualityComparer<T>)` | `remove(T, EqualityComparator<? super T>)` | &check; |
 | `RemoveAt(int)` | `remove(int)` | &check; |
-| `RemoveRange(int start, int length)` | `removeAll(int fromIndex, int toIndex)` | &check; |
+| `RemoveRange(int start, int length)` | `removeAll(int fromIndex, int toIndex)` | &check; 1 |
 | `RemoveRange(IEnumerable<T>)` | `removeAll(Iterable<? extends T>)` | &check; |
 | `RemoveRange(IEnumerable<T>, IEqualityComparer<T>)` | `removeAll(Iterable<? extends T>, EqualityComparator<? super T>)` | &check; |
 | `RemoveRange(ImmutableArray<T>)` | `removeAll(ImmutableArrayList<? extends T>)` | &check; |
@@ -185,11 +185,11 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 | `IndexOf(T)` | `indexOf(Object)` | |
 | `IndexOf(T, int)` | `indexOf(?, int)` | |
 | `IndexOf(T, int start, int length)` | `indexOf(?, int fromIndex, int toIndex)` | 1 |
-| `IndexOf(T, int start, int length, IEqualityComparator<? super T>)` | `indexOf(?, int fromIndex, int toIndex, ?)` | 1 |
+| `IndexOf(T, int start, int length, IEqualityComparer<? super T>)` | `indexOf(?, int fromIndex, int toIndex, ?)` | 1 |
 | `LastIndexOf(T)` | `lastIndexOf(Object)` | |
 | `LastIndexOf(T, int)` | `lastIndexOf(?, int)` | |
 | `LastIndexOf(T, int start, int length)` | `lastIndexOf(?, int start, int end)` | 1 |
-| `LastIndexOf(T, int start, int length, IEqualityComparator<? super T>)` | `lastIndexOf(?, int start, int end, ?)` | 1 |
+| `LastIndexOf(T, int start, int length, IEqualityComparer<? super T>)` | `lastIndexOf(?, int start, int end, ?)` | 1 |
 | `Reverse` | `reverse()` | &check; |
 | `Sort()` | `sort()` | &check; |
 | `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | &check; |
