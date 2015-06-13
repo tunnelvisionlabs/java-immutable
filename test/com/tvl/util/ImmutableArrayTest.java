@@ -985,23 +985,36 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
         assertEqualSequences(Arrays.asList(1, 2), MANY_ELEMENTS.remove((Integer)3));
     }
 
-//[Fact]
-//public void RemoveRange()
-//{
-//    Assert.Throws<ArgumentOutOfRangeException>(() => s_empty.RemoveRange(0, 0));
-//    Assert.Throws<NullReferenceException>(() => s_emptyDefault.RemoveRange(0, 0));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => s_oneElement.RemoveRange(1, 0));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => s_empty.RemoveRange(-1, 0));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => s_oneElement.RemoveRange(0, 2));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => s_oneElement.RemoveRange(0, -1));
+    @Test
+    public void removeRange() {
+        Assert.assertSame(EMPTY, EMPTY.removeAll(0, 0));
+        Assert.assertSame(ONE_ELEMENT, ONE_ELEMENT.removeAll(1, 1));
 
-//    var fourElements = ImmutableArray.Create(1, 2, 3, 4);
-//    Assert.Equal(new int[0], s_oneElement.RemoveRange(0, 1));
-//    Assert.Equal(s_oneElement.ToArray(), s_oneElement.RemoveRange(0, 0));
-//    Assert.Equal(new[] { 3, 4 }, fourElements.RemoveRange(0, 2));
-//    Assert.Equal(new[] { 1, 4 }, fourElements.RemoveRange(1, 2));
-//    Assert.Equal(new[] { 1, 2 }, fourElements.RemoveRange(2, 2));
-//}
+        try {
+            EMPTY.removeAll(-1, -1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ONE_ELEMENT.removeAll(0, 2);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ONE_ELEMENT.removeAll(0, -1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        ImmutableArrayList<Integer> fourElements = ImmutableArrayList.create(1, 2, 3, 4);
+        assertEqualSequences(Collections.emptyList(), ONE_ELEMENT.removeAll(0, 1));
+        Assert.assertSame(ONE_ELEMENT, ONE_ELEMENT.removeAll(0, 0));
+        assertEqualSequences(Arrays.asList(3, 4), fourElements.removeAll(0, 2));
+        assertEqualSequences(Arrays.asList(1, 4), fourElements.removeAll(1, 3));
+        assertEqualSequences(Arrays.asList(1, 2), fourElements.removeAll(2, 4));
+    }
 
 //[Fact]
 //public void RemoveRangeDefaultStruct()

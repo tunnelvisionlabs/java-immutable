@@ -935,6 +935,10 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
         int count = toIndex - fromIndex;
+        if (count == 0) {
+            return this;
+        }
+
         T[] tmp = Arrays.copyOf(array, array.length - count);
         System.arraycopy(array, toIndex, tmp, fromIndex, size() - toIndex);
         return new ImmutableArrayList<T>(tmp);
