@@ -97,15 +97,9 @@
 | .NET Member | Java Member | Notes |
 | --- | --- | --- |
 | `Empty` | `<T>empty()` | &check; |
-| `operator==(ImmutableArray<T>, ImmutableArray<T>)` | n/a | |
-| `operator!=(ImmutableArray<T>, ImmutableArray<T>)` | n/a | |
-| `operator==(ImmutableArray<T>?, ImmutableArray<T>?)` | n/a | |
-| `operator!=(ImmutableArray<T>?, ImmutableArray<T>?)` | n/a | |
 | `this[int]` | `get(int)` | &check; |
 | `IsEmpty` | `isEmpty()` | &check; |
 | `Length` | `size()` | &check; |
-| `IsDefault` | n/a | |
-| `IsDefaultOrEmpty` | n/a | |
 | `IndexOf(T)` | `indexOf(T)` | |
 | `IndexOf(T, int start)` | `indexOf(T, int start)` | |
 | `IndexOf(T, int start, int length)` | `indexOf(T, int start, int end)` | |
@@ -146,6 +140,19 @@
 | `CastArray<TOther>(ImmutableArray<TOther>)` | `<Other>castArray(Class<Other>)` | &check; |
 | `As<TOther>()` | `<Other>as(Class<Other>)` | &check; |
 | `OfType<TResult>()` | `<Result>ofType(Class<Result> clazz)` | &check; |
+
+#### `ImmutableArray<T>` &rarr; No mapping
+
+These members of `ImmutableArray<T>` have no equivalent mapping in the Java programming language.
+
+| .NET Member | Notes |
+| --- | --- |
+| `operator==(ImmutableArray<T>, ImmutableArray<T>)` | Use `equals` instead |
+| `operator!=(ImmutableArray<T>, ImmutableArray<T>)` | Use `equals` instead |
+| `operator==(ImmutableArray<T>?, ImmutableArray<T>?)` | Use `equals` instead |
+| `operator!=(ImmutableArray<T>?, ImmutableArray<T>?)` | Use `equals` instead |
+| `IsDefault` | Only relevant for value types |
+| `IsDefaultOrEmpty` | Only relevant for value types |
 
 ### Builder
 
