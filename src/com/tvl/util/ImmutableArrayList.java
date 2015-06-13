@@ -1916,7 +1916,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException("remove");
+            throw new UnsupportedOperationException("This iterator is read-only.");
         }
     }
 }
