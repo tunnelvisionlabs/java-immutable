@@ -84,7 +84,7 @@ have already been implemented (with documentation).
 | `BinarySearch<T>(ImmutableArray<T>, int start, int length, T)` | `<T>binarySearch(ImmutableArrayList<T>, int fromIndex, int toIndex, T)` | 1 |
 | `BinarySearch<T>(ImmutableArray<T>, int start, int length, T, IComparer<T>)` | `<T>binarySearch(ImmutableArrayList<T>, int fromIndex, int toIndex, T, Comparator<? super T>)` | 1 |
 
-¹ Java convention is to use start/end instead of start/length for ranges.<br>
+¹ Java convention is to use fromIndex/toIndex instead of start/length for ranges.<br>
 ² These methods were renamed to `createAll` to avoid conflicts with `create(T...)`.
 
 #### `ImmutableArray` &rarr; `Immutables`
@@ -104,9 +104,9 @@ have already been implemented (with documentation).
 | `IsEmpty` | `isEmpty()` | &check; |
 | `Length` | `size()` | &check; |
 | `IndexOf(T)` | `indexOf(T)` | |
-| `IndexOf(T, int start)` | `indexOf(T, int start)` | |
+| `IndexOf(T, int start)` | `indexOf(T, int fromIndex)` | |
 | `IndexOf(T, int start, int length)` | `indexOf(T, int fromIndex, int toIndex)` | |
-| `IndexOf(T, int start, int length, IEqualityComparer<T>)` | `indexOf(T, int start, int end, EqualityComparator<? super T>)` | |
+| `IndexOf(T, int start, int length, IEqualityComparer<T>)` | `indexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | |
 | `LastIndexOf(T)` | `lastIndexOf(T)` | |
 | `LastIndexOf(T, int start)` | `lastIndexOf(T, int start)` | |
 | `LastIndexOf(T, int start, int length)` | `lastIndexOf(T, int start, int end)` | |
@@ -187,8 +187,8 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 | `CopyTo(T[], int)` | ? | |
 | `IndexOf(T)` | `indexOf(Object)` | |
 | `IndexOf(T, int)` | `indexOf(?, int)` | |
-| `IndexOf(T, int start, int length)` | `indexOf(?, int start, int end)` | 1 |
-| `IndexOf(T, int start, int length, IEqualityComparator<? super T>)` | `indexOf(?, int start, int end, ?)` | 1 |
+| `IndexOf(T, int start, int length)` | `indexOf(?, int fromIndex, int toIndex)` | 1 |
+| `IndexOf(T, int start, int length, IEqualityComparator<? super T>)` | `indexOf(?, int fromIndex, int toIndex, ?)` | 1 |
 | `LastIndexOf(T)` | `lastIndexOf(Object)` | |
 | `LastIndexOf(T, int)` | `lastIndexOf(?, int)` | |
 | `LastIndexOf(T, int start, int length)` | `lastIndexOf(?, int start, int end)` | 1 |
@@ -196,7 +196,7 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 | `Reverse` | `reverse()` | &check; |
 | `Sort()` | `sort()` | &check; |
 | `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | &check; |
-| `Sort(int start, int length, IComparer<T>)` | `sort(int start, int end, Comparator<? super T>)` | 1 |
+| `Sort(int start, int length, IComparer<T>)` | `sort(int fromIndex, int toIndex, Comparator<? super T>)` | 1 |
 | `GetEnumerator()` | `iterator()` | |
 
-¹ Java convention is to use start/end instead of start/length for ranges.
+¹ Java convention is to use fromIndex/toIndex instead of start/length for ranges.
