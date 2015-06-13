@@ -67,19 +67,19 @@
 | `Create<T>(T, T, T)` | `<T>create(T, T, T)` | &check; |
 | `Create<T>(T, T, T, T)` | `<T>create(T, T, T, T)` | &check; |
 | `Create<T>(params T[])` | `<T>create(T...)` | &check; |
-| `Create<T>(T[], int start, int length)` | `<T>createAll(T[], int start, int end)` | 1, 2 |
-| `Create<T>(ImmutableArray<T>, int start, int length)` | `<T>createAll(ImmutableArrayList<T>, int start, int end)` | 1, 2 |
+| `Create<T>(T[], int start, int length)` | `<T>createAll(T[], int fromIndex, int toIndex)` | 1, 2 |
+| `Create<T>(ImmutableArray<T>, int start, int length)` | `<T>createAll(ImmutableArrayList<T>, int fromIndex, int toIndex)` | 1, 2 |
 | `CreateRange<T>(IEnumerable<T>)` | `<T>createAll(Iterable<? extends T>)` | &check; |
 | `CreateRange<TSource, TResult>(ImmutableArray<TSource>, Func<TSource, TResult>)` | `<Source, Result>createAll(ImmutableArrayList<Source>, Function<? super Source, Result>)` | &check; |
-| `CreateRange<TSource, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TResult>)` | `<Source, Result>createAll(ImmutableArrayList<Source>, int start, int end, Function<? super Source, Result>)` | 1 |
+| `CreateRange<TSource, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TResult>)` | `<Source, Result>createAll(ImmutableArrayList<Source>, int fromIndex, int toIndex, Function<? super Source, Result>)` | 1 |
 | `CreateRange<TSource, TArg, TResult>(ImmutableArray<TSource>, Func<TSource, TArg, TResult>, TArg)` | `<Source, Arg, Result>createAll(ImmutableArrayList<Source>, BiFunction<? super Source, Arg, Result>, Arg)` | &check; |
-| `CreateRange<TSource, TArg, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TArg, TResult>, TArg)` | `<Source, Arg, Result>createAll(ImmutableArrayList<Source>, int start, int end, BiFunction<? super Source, Arg, Result>, Arg)` | 1 |
+| `CreateRange<TSource, TArg, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TArg, TResult>, TArg)` | `<Source, Arg, Result>createAll(ImmutableArrayList<Source>, int fromIndex, int toIndex, BiFunction<? super Source, Arg, Result>, Arg)` | 1 |
 | `CreateBuilder<T>()` | `<T>createBuilder()` | &check; |
 | `CreateBuilder<T>(int)` | `<T>createBuilder(int)` | &check; |
 | `BinarySearch<T>(ImmutableArray<T>, T)` | `<T>binarySearch(ImmutableArrayList<T>, T)` | &check; |
 | `BinarySearch<T>(ImmutableArray<T>, T, IComparer<T>)` | `<T>binarySearch(ImmutableArrayList<T>, T, Comparator<? super T>)` | &check; |
-| `BinarySearch<T>(ImmutableArray<T>, int start, int length, T)` | `<T>binarySearch(ImmutableArrayList<T>, int start, int end, T)` | 1 |
-| `BinarySearch<T>(ImmutableArray<T>, int start, int length, T, IComparer<T>)` | `<T>binarySearch(ImmutableArrayList<T>, int start, int end, T, Comparator<? super T>)` | 1 |
+| `BinarySearch<T>(ImmutableArray<T>, int start, int length, T)` | `<T>binarySearch(ImmutableArrayList<T>, int fromIndex, int toIndex, T)` | 1 |
+| `BinarySearch<T>(ImmutableArray<T>, int start, int length, T, IComparer<T>)` | `<T>binarySearch(ImmutableArrayList<T>, int fromIndex, int toIndex, T, Comparator<? super T>)` | 1 |
 
 ¹ Java convention is to use start/end instead of start/length for ranges.<br>
 ² These methods were renamed to `createAll` to avoid conflicts with `create(T...)`.
@@ -102,7 +102,7 @@
 | `Length` | `size()` | &check; |
 | `IndexOf(T)` | `indexOf(T)` | |
 | `IndexOf(T, int start)` | `indexOf(T, int start)` | |
-| `IndexOf(T, int start, int length)` | `indexOf(T, int start, int end)` | |
+| `IndexOf(T, int start, int length)` | `indexOf(T, int fromIndex, int toIndex)` | |
 | `IndexOf(T, int start, int length, IEqualityComparer<T>)` | `indexOf(T, int start, int end, EqualityComparator<? super T>)` | |
 | `LastIndexOf(T)` | `lastIndexOf(T)` | |
 | `LastIndexOf(T, int start)` | `lastIndexOf(T, int start)` | |
@@ -121,7 +121,7 @@
 | `Remove(T)` | `remove(T)` | &check; |
 | `Remove(T, IEqualityComparer<T>)` | `remove(T, EqualityComparator<? super T>)` | &check; |
 | `RemoveAt(int)` | `remove(int)` | &check; |
-| `RemoveRange(int start, int length)` | `removeAll(int start, int end)` | |
+| `RemoveRange(int start, int length)` | `removeAll(int fromIndex, int toIndex)` | |
 | `RemoveRange(IEnumerable<T>)` | `removeAll(Iterable<? extends T>)` | &check; |
 | `RemoveRange(IEnumerable<T>, IEqualityComparer<T>)` | `removeAll(Iterable<? extends T>, EqualityComparator<? super T>)` | &check; |
 | `RemoveRange(ImmutableArray<T>)` | `removeAll(ImmutableArrayList<? extends T>)` | &check; |
@@ -130,7 +130,7 @@
 | `Clear()` | `clear()` | &check; |
 | `Sort()` | `sort()` | &check; |
 | `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | &check; |
-| `Sort(int start, int length, IComparer<T>)` | `sort(int start, int end, Comparator<? super T>)` | |
+| `Sort(int start, int length, IComparer<T>)` | `sort(int fromIndex, int toIndex, Comparator<? super T>)` | |
 | `ToBuilder()` | `toBuilder()` | &check; |
 | `GetEnumerator()` | `iterator()` | &check; |
 | `GetHashCode()` | `hashCode()` | &check; |
