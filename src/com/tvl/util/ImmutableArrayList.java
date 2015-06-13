@@ -468,7 +468,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     public static <T> int binarySearch(ImmutableArrayList<T> array, T value, int fromIndex, int toIndex, Comparator<? super T> comparator) {
         Requires.notNull(array, "array");
         if (comparator == null) {
-            comparator = (Comparator<? super T>)Comparators.<Integer>defaultComparator();
+            comparator = Comparators.anyComparator();
         }
 
         return Arrays.binarySearch(array.array, fromIndex, toIndex, value, comparator);
@@ -1083,7 +1083,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
         if (comparator == null) {
-            comparator = (Comparator<? super T>)(Comparator<?>)Comparators.<Integer>defaultComparator();
+            comparator = Comparators.anyComparator();
         }
 
         int count = toIndex - fromIndex;

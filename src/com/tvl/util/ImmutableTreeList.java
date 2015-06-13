@@ -1186,8 +1186,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         }
 
         Node<T> sort() {
-            @SuppressWarnings("unchecked") // will throw at runtime if invalid.
-            Comparator<? super T> comparator = (Comparator<? super T>)(Comparator<?>)Comparators.<Integer>defaultComparator();
+            Comparator<? super T> comparator = Comparators.anyComparator();
             return sort(comparator);
         }
 
@@ -1200,11 +1199,11 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             Requires.range(index >= 0, "index");
             Requires.range(count >= 0, "count");
             Requires.argument(index + count <= size());
-            Requires.notNull(comparator, "comparer");
+            Requires.notNull(comparator, "comparator");
 
             // PERF: Eventually this might be reimplemented in a way that does not require allocating an array.
             ArrayList<T> arrayList = new ArrayList<T>(ImmutableTreeList.wrapNode(this).toBuilder());
-            //Array.Sort(array, index, count, comparer);
+            //Array.Sort(array, index, count, comparator);
             Collections.sort(arrayList.subList(index, index + count), comparator);
             return nodeTreeFromList(asOrderedCollection(arrayList), 0, size());
         }
@@ -1213,9 +1212,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             Requires.range(index >= 0, "index");
             Requires.range(count >= 0, "count");
             if (comparator == null) {
-                @SuppressWarnings("unchecked") // will throw at runtime if invalid.
-                Comparator<? super T> defaultComparator = (Comparator<? super T>)(Comparator<?>)Comparators.<Integer>defaultComparator();
-                comparator = defaultComparator;
+                comparator = Comparators.anyComparator();
             }
 
             if (isEmpty() || count <= 0) {

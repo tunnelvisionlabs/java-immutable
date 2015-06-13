@@ -11,6 +11,12 @@ final class Comparators {
         return result;
     }
 
+    static <T> Comparator<T> anyComparator() {
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
+        Comparator<T> result = (Comparator<T>)ComparableComparator.INSTANCE;
+        return result;
+    }
+
     private static final class ComparableComparator<T extends Comparable<T>> implements Comparator<T> {
         static final ComparableComparator<?> INSTANCE = new ComparableComparator<Integer>();
 
