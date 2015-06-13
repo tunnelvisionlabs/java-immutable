@@ -116,153 +116,319 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
         ImmutableArrayList.createAll(array, (BiFunction<Integer, Integer, Integer>)null, 0);
     }
 
-//[Fact]
-//public void CreateRangeSliceFromImmutableArrayWithSelector()
-//{
-//    var array = ImmutableArray.Create(4, 5, 6, 7);
+    @Test
+    public void createRangeSliceFromImmutableArrayWithSelector() {
+        ImmutableArrayList<Integer> array = ImmutableArrayList.create(4, 5, 6, 7);
 
-//    var copy1 = ImmutableArray.CreateRange(array, 0, 0, i => i + 0.5);
-//    Assert.Equal(new double[] { }, copy1);
+        ImmutableArrayList<Double> copy1 = ImmutableArrayList.createAll(array, 0, 0, new Function<Integer, Double>() {
+            @Override
+            public Double apply(Integer integer) {
+                return integer + 0.5;
+            }
+        });
+        assertEqualSequences(Collections.emptyList(), copy1);
 
-//    var copy2 = ImmutableArray.CreateRange(array, 0, 0, i => i);
-//    Assert.Equal(new int[] { }, copy2);
+        Function<Integer, Integer> identity = new Function<Integer, Integer>() {
+            @Override
+            public Integer apply(Integer o) {
+                return o;
+            }
+        };
 
-//    var copy3 = ImmutableArray.CreateRange(array, 0, 1, i => i * 2);
-//    Assert.Equal(new int[] { 8 }, copy3);
+        ImmutableArrayList<Integer> copy2 = ImmutableArrayList.createAll(array, 0, 0, identity);
+        assertEqualSequences(Collections.emptyList(), copy2);
 
-//    var copy4 = ImmutableArray.CreateRange(array, 0, 2, i => i + 1);
-//    Assert.Equal(new int[] { 5, 6 }, copy4);
+        ImmutableArrayList<Integer> copy3 = ImmutableArrayList.createAll(array, 0, 1, new Function<Integer, Integer>() {
+            @Override
+            public Integer apply(Integer integer) {
+                return integer * 2;
+            }
+        });
+        assertEqualSequences(Collections.singletonList(8), copy3);
 
-//    var copy5 = ImmutableArray.CreateRange(array, 0, 4, i => i);
-//    Assert.Equal(new int[] { 4, 5, 6, 7 }, copy5);
+        ImmutableArrayList<Integer> copy4 = ImmutableArrayList.createAll(array, 0, 2, new Function<Integer, Integer>() {
+            @Override
+            public Integer apply(Integer integer) {
+                return integer + 1;
+            }
+        });
+        assertEqualSequences(Arrays.asList(5, 6), copy4);
 
-//    var copy6 = ImmutableArray.CreateRange(array, 3, 1, i => i);
-//    Assert.Equal(new int[] { 7 }, copy6);
+        ImmutableArrayList<Integer> copy5 = ImmutableArrayList.createAll(array, 0, 4, identity);
+        assertEqualSequences(Arrays.asList(4, 5, 6, 7), copy5);
 
-//    var copy7 = ImmutableArray.CreateRange(array, 3, 0, i => i);
-//    Assert.Equal(new int[] { }, copy7);
+        ImmutableArrayList<Integer> copy6 = ImmutableArrayList.createAll(array, 3, 4, identity);
+        assertEqualSequences(Collections.singletonList(7), copy6);
 
-//    var copy8 = ImmutableArray.CreateRange(array, 4, 0, i => i);
-//    Assert.Equal(new int[] { }, copy8);
+        ImmutableArrayList<Integer> copy7 = ImmutableArrayList.createAll(array, 3, 3, identity);
+        assertEqualSequences(Collections.emptyList(), copy7);
 
-//    Assert.Throws<ArgumentNullException>(() => ImmutableArray.CreateRange(array, 0, 0, (Func<int, int>)null));
-//    Assert.Throws<ArgumentNullException>(() => ImmutableArray.CreateRange(s_empty, 0, 0, (Func<int, int>)null));
+        ImmutableArrayList<Integer> copy8 = ImmutableArrayList.createAll(array, 4, 4, identity);
+        assertEqualSequences(Collections.emptyList(), copy8);
 
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.CreateRange(array, -1, 1, (Func<int, int>)null));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.CreateRange(array, -1, 1, i => i));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.CreateRange(array, 0, 5, i => i));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.CreateRange(array, 4, 1, i => i));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.CreateRange(array, 3, 2, i => i));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.CreateRange(array, 1, -1, i => i));
-//}
+        try {
+            ImmutableArrayList.createAll(array, 0, 0, (Function<Integer, Integer>)null);
+            Assert.fail();
+        } catch (NullPointerException ignored) {
+        }
 
-//[Fact]
-//public void CreateRangeSliceFromImmutableArrayWithSelectorAndArgument()
-//{
-//    var array = ImmutableArray.Create(4, 5, 6, 7);
+        try {
+            ImmutableArrayList.createAll(EMPTY, 0, 0, (Function<Integer, Integer>)null);
+            Assert.fail();
+        } catch (NullPointerException ignored) {
+        }
 
-//    var copy1 = ImmutableArray.CreateRange(array, 0, 0, (i, j) => i + j, 0.5);
-//    Assert.Equal(new double[] { }, copy1);
+        try {
+            ImmutableArrayList.createAll(array, -1, 0, (Function<Integer, Integer>)null);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
 
-//    var copy2 = ImmutableArray.CreateRange(array, 0, 0, (i, j) => i + j, 0);
-//    Assert.Equal(new int[] { }, copy2);
+        try {
+            ImmutableArrayList.createAll(array, -1, 0, identity);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
 
-//    var copy3 = ImmutableArray.CreateRange(array, 0, 1, (i, j) => i * j, 2);
-//    Assert.Equal(new int[] { 8 }, copy3);
+        try {
+            ImmutableArrayList.createAll(array, 0, 5, identity);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
 
-//    var copy4 = ImmutableArray.CreateRange(array, 0, 2, (i, j) => i + j, 1);
-//    Assert.Equal(new int[] { 5, 6 }, copy4);
+        try {
+            ImmutableArrayList.createAll(array, 4, 5, identity);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
 
-//    var copy5 = ImmutableArray.CreateRange(array, 0, 4, (i, j) => i + j, 0);
-//    Assert.Equal(new int[] { 4, 5, 6, 7 }, copy5);
+        try {
+            ImmutableArrayList.createAll(array, 3, 5, identity);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
 
-//    var copy6 = ImmutableArray.CreateRange(array, 3, 1, (i, j) => i + j, 0);
-//    Assert.Equal(new int[] { 7 }, copy6);
+        try {
+            ImmutableArrayList.createAll(array, 1, 0, identity);
+            Assert.fail();
+        } catch (IllegalArgumentException ignored) {
+        }
+    }
 
-//    var copy7 = ImmutableArray.CreateRange(array, 3, 0, (i, j) => i + j, 0);
-//    Assert.Equal(new int[] { }, copy7);
+    @Test
+    public void createRangeSliceFromImmutableArrayWithSelectorAndArgument() {
+        BiFunction<Integer, Integer, Integer> addIntegers = new BiFunction<Integer, Integer, Integer>() {
+            @Override
+            public Integer apply(Integer x, Integer y) {
+                return x + y;
+            }
+        };
 
-//    var copy8 = ImmutableArray.CreateRange(array, 4, 0, (i, j) => i + j, 0);
-//    Assert.Equal(new int[] { }, copy8);
+        ImmutableArrayList<Integer> array = ImmutableArrayList.create(4, 5, 6, 7);
 
-//    var copy9 = ImmutableArray.CreateRange(array, 0, 1, (int i, object j) => i, null);
-//    Assert.Equal(new int[] { 4 }, copy9);
+        ImmutableArrayList<Double> copy1 = ImmutableArrayList.createAll(array, 0, 0, new BiFunction<Integer, Double, Double>() {
+            @Override
+            public Double apply(Integer x, Double y) {
+                return x + y;
+            }
+        }, 0.5);
+        assertEqualSequences(Collections.emptyList(), copy1);
 
-//    Assert.Equal(new int[] { }, ImmutableArray.CreateRange(s_empty, 0, 0, (i, j) => i + j, 0));
+        ImmutableArrayList<Integer> copy2 = ImmutableArrayList.createAll(array, 0, 0, addIntegers, 0);
+        assertEqualSequences(Collections.emptyList(), copy2);
 
-//    Assert.Throws<ArgumentNullException>(() => ImmutableArray.CreateRange(array, 0, 0, (Func<int, int, int>)null, 0));
-//    Assert.Throws<ArgumentNullException>(() => ImmutableArray.CreateRange(s_empty, 0, 0, (Func<int, int, int>)null, 0));
+        ImmutableArrayList<Integer> copy3 = ImmutableArrayList.createAll(array, 0, 1, new BiFunction<Integer, Integer, Integer>() {
+            @Override
+            public Integer apply(Integer x, Integer y) {
+                return x * y;
+            }
+        }, 2);
+        assertEqualSequences(Collections.singletonList(8), copy3);
 
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.CreateRange(s_empty, -1, 1, (Func<int, int, int>)null, 0));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.CreateRange(array, -1, 1, (i, j) => i + j, 0));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.CreateRange(array, 0, 5, (i, j) => i + j, 0));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.CreateRange(array, 4, 1, (i, j) => i + j, 0));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.CreateRange(array, 3, 2, (i, j) => i + j, 0));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.CreateRange(array, 1, -1, (i, j) => i + j, 0));
-//}
+        ImmutableArrayList<Integer> copy4 = ImmutableArrayList.createAll(array, 0, 2, addIntegers, 1);
+        assertEqualSequences(Arrays.asList(5, 6), copy4);
 
-//[Fact]
-//public void CreateFromSliceOfImmutableArray()
-//{
-//    var array = ImmutableArray.Create(4, 5, 6, 7);
-//    Assert.Equal(new[] { 4, 5 }, ImmutableArray.Create(array, 0, 2));
-//    Assert.Equal(new[] { 5, 6 }, ImmutableArray.Create(array, 1, 2));
-//    Assert.Equal(new[] { 6, 7 }, ImmutableArray.Create(array, 2, 2));
-//    Assert.Equal(new[] { 7 }, ImmutableArray.Create(array, 3, 1));
-//    Assert.Equal(new int[0], ImmutableArray.Create(array, 4, 0));
+        ImmutableArrayList<Integer> copy5 = ImmutableArrayList.createAll(array, 0, 4, addIntegers, 0);
+        assertEqualSequences(Arrays.asList(4, 5, 6, 7), copy5);
 
-//    Assert.Equal(new int[] { }, ImmutableArray.Create(s_empty, 0, 0));
+        ImmutableArrayList<Integer> copy6 = ImmutableArrayList.createAll(array, 3, 4, addIntegers, 0);
+        assertEqualSequences(Collections.singletonList(7), copy6);
 
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.Create(s_empty, 0, 1));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.Create(array, -1, 0));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.Create(array, 0, -1));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.Create(array, 0, array.Length + 1));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.Create(array, 1, array.Length));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.Create(array, array.Length + 1, 0));
-//}
+        ImmutableArrayList<Integer> copy7 = ImmutableArrayList.createAll(array, 3, 3, addIntegers, 0);
+        assertEqualSequences(Collections.emptyList(), copy7);
 
-//[Fact]
-//public void CreateFromSliceOfImmutableArrayOptimizations()
-//{
-//    var array = ImmutableArray.Create(4, 5, 6, 7);
-//    var slice = ImmutableArray.Create(array, 0, array.Length);
-//    Assert.Equal(array, slice); // array instance actually shared between the two
-//}
+        ImmutableArrayList<Integer> copy8 = ImmutableArrayList.createAll(array, 4, 4, addIntegers, 0);
+        assertEqualSequences(Collections.emptyList(), copy8);
 
-//[Fact]
-//public void CreateFromSliceOfImmutableArrayEmptyReturnsSingleton()
-//{
-//    var array = ImmutableArray.Create(4, 5, 6, 7);
-//    var slice = ImmutableArray.Create(array, 1, 0);
-//    Assert.Equal(s_empty, slice);
-//}
+        ImmutableArrayList<Object> copy9 = ImmutableArrayList.createAll(array, 0, 1, new BiFunction<Integer, Object, Object>() {
+            @Override
+            public Object apply(Integer integer, Object o) {
+                return integer;
+            }
+        }, null);
+        assertEqualSequences(Collections.singletonList(4), copy9);
 
-//[Fact]
-//public void CreateFromSliceOfArray()
-//{
-//    var array = new int[] { 4, 5, 6, 7 };
-//    Assert.Equal(new[] { 4, 5 }, ImmutableArray.Create(array, 0, 2));
-//    Assert.Equal(new[] { 5, 6 }, ImmutableArray.Create(array, 1, 2));
-//    Assert.Equal(new[] { 6, 7 }, ImmutableArray.Create(array, 2, 2));
-//    Assert.Equal(new[] { 7 }, ImmutableArray.Create(array, 3, 1));
-//    Assert.Equal(new int[0], ImmutableArray.Create(array, 4, 0));
+        assertEqualSequences(Collections.emptyList(), ImmutableArrayList.createAll(EMPTY, 0, 0, addIntegers, 0));
 
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.Create(array, -1, 0));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.Create(array, 0, -1));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.Create(array, 0, array.Length + 1));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.Create(array, 1, array.Length));
-//    Assert.Throws<ArgumentOutOfRangeException>(() => ImmutableArray.Create(array, array.Length + 1, 0));
-//}
+        try {
+            ImmutableArrayList.createAll(array, 0, 0, (BiFunction<Integer, Integer, Integer>)null, 0);
+            Assert.fail();
+        } catch (NullPointerException ignored) {
+        }
 
-//[Fact]
-//public void CreateFromSliceOfArrayEmptyReturnsSingleton()
-//{
-//    var array = new int[] { 4, 5, 6, 7 };
-//    var slice = ImmutableArray.Create(array, 1, 0);
-//    Assert.Equal(s_empty, slice);
-//    slice = ImmutableArray.Create(array, array.Length, 0);
-//    Assert.Equal(s_empty, slice);
-//}
+        try {
+            ImmutableArrayList.createAll(EMPTY, 0, 0, (BiFunction<Integer, Integer, Integer>)null, 0);
+            Assert.fail();
+        } catch (NullPointerException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(EMPTY, -1, 0, (BiFunction<Integer, Integer, Integer>)null, 0);
+            Assert.fail();
+        } catch (NullPointerException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, -1, 0, addIntegers, 0);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, 0, 5, addIntegers, 0);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, 4, 5, addIntegers, 0);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, 3, 5, addIntegers, 0);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, 1, 0, addIntegers, 0);
+            Assert.fail();
+        } catch (IllegalArgumentException ignored) {
+        }
+    }
+
+    @Test
+    public void createFromSliceOfImmutableArray() {
+        ImmutableArrayList<Integer> array = ImmutableArrayList.create(4, 5, 6, 7);
+        assertEqualSequences(Arrays.asList(4, 5), ImmutableArrayList.createAll(array, 0, 2));
+        assertEqualSequences(Arrays.asList(5, 6), ImmutableArrayList.createAll(array, 1, 3));
+        assertEqualSequences(Arrays.asList(6, 7), ImmutableArrayList.createAll(array, 2, 4));
+        assertEqualSequences(Collections.singletonList(7), ImmutableArrayList.createAll(array, 3, 4));
+        assertEqualSequences(Collections.emptyList(), ImmutableArrayList.createAll(array, 4, 4));
+
+        assertEqualSequences(Collections.emptyList(), ImmutableArrayList.createAll(EMPTY, 0, 0));
+
+        try {
+            ImmutableArrayList.createAll(EMPTY, 0, 1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, -1, -1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, 0, -1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, 0, array.size() + 1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, 1, array.size() + 1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, array.size() + 1, array.size() + 1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+    }
+
+    @Test
+    public void createFromSliceOfImmutableArrayOptimizations() {
+        ImmutableArrayList<Integer> array = ImmutableArrayList.create(4, 5, 6, 7);
+        ImmutableArrayList<Integer> slice = ImmutableArrayList.createAll(array, 0, array.size());
+        Assert.assertSame(array, slice); // array instance actually shared between the two
+    }
+
+    @Test
+    public void createFromSliceOfImmutableArrayEmptyReturnsSingleton() {
+        ImmutableArrayList<Integer> array = ImmutableArrayList.create(4, 5, 6, 7);
+        ImmutableArrayList<Integer> slice = ImmutableArrayList.createAll(array, 1, 1);
+        Assert.assertSame(EMPTY, slice);
+    }
+
+    @Test
+    public void createFromSliceOfArray() {
+        Integer[] array = { 4, 5, 6, 7 };
+        assertEqualSequences(Arrays.asList(4, 5), ImmutableArrayList.createAll(array, 0, 2));
+        assertEqualSequences(Arrays.asList(5, 6), ImmutableArrayList.createAll(array, 1, 3));
+        assertEqualSequences(Arrays.asList(6, 7), ImmutableArrayList.createAll(array, 2, 4));
+        assertEqualSequences(Collections.singletonList(7), ImmutableArrayList.createAll(array, 3, 4));
+        assertEqualSequences(Collections.emptyList(), ImmutableArrayList.createAll(array, 4, 4));
+
+        try {
+            ImmutableArrayList.createAll(array, -1, 0);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, 0, -1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, 0, array.length + 1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, 1, array.length + 1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        try {
+            ImmutableArrayList.createAll(array, array.length + 1, array.length + 1);
+            Assert.fail();
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+    }
+
+    @Test
+    public void createFromSliceOfArrayEmptyReturnsSingleton() {
+        Integer[] array = { 4, 5, 6, 7 };
+        ImmutableArrayList<Integer> slice = ImmutableArrayList.createAll(array, 1, 1);
+        Assert.assertSame(EMPTY, slice);
+        slice = ImmutableArrayList.createAll(array, array.length, array.length);
+        Assert.assertSame(EMPTY, slice);
+    }
 
     @Test
     public void createFromArray() {

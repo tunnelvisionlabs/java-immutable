@@ -70,19 +70,19 @@ have already been implemented (with documentation).
 | `Create<T>(T, T, T)` | `<T>create(T, T, T)` | &check; |
 | `Create<T>(T, T, T, T)` | `<T>create(T, T, T, T)` | &check; |
 | `Create<T>(params T[])` | `<T>create(T...)` | &check; |
-| `Create<T>(T[], int start, int length)` | `<T>createAll(T[], int fromIndex, int toIndex)` | 1, 2 |
-| `Create<T>(ImmutableArray<T>, int start, int length)` | `<T>createAll(ImmutableArrayList<T>, int fromIndex, int toIndex)` | 1, 2 |
+| `Create<T>(T[], int start, int length)` | `<T>createAll(T[], int fromIndex, int toIndex)` | &check; 1, 2 |
+| `Create<T>(ImmutableArray<T>, int start, int length)` | `<T>createAll(ImmutableArrayList<T>, int fromIndex, int toIndex)` | &check; 1, 2 |
 | `CreateRange<T>(IEnumerable<T>)` | `<T>createAll(Iterable<? extends T>)` | &check; |
 | `CreateRange<TSource, TResult>(ImmutableArray<TSource>, Func<TSource, TResult>)` | `<Source, Result>createAll(ImmutableArrayList<Source>, Function<? super Source, Result>)` | &check; |
-| `CreateRange<TSource, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TResult>)` | `<Source, Result>createAll(ImmutableArrayList<Source>, int fromIndex, int toIndex, Function<? super Source, Result>)` | 1 |
+| `CreateRange<TSource, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TResult>)` | `<Source, Result>createAll(ImmutableArrayList<Source>, int fromIndex, int toIndex, Function<? super Source, Result>)` | &check; 1 |
 | `CreateRange<TSource, TArg, TResult>(ImmutableArray<TSource>, Func<TSource, TArg, TResult>, TArg)` | `<Source, Arg, Result>createAll(ImmutableArrayList<Source>, BiFunction<? super Source, Arg, Result>, Arg)` | &check; |
-| `CreateRange<TSource, TArg, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TArg, TResult>, TArg)` | `<Source, Arg, Result>createAll(ImmutableArrayList<Source>, int fromIndex, int toIndex, BiFunction<? super Source, Arg, Result>, Arg)` | 1 |
+| `CreateRange<TSource, TArg, TResult>(ImmutableArray<TSource>, int start, int length, Func<TSource, TArg, TResult>, TArg)` | `<Source, Arg, Result>createAll(ImmutableArrayList<Source>, int fromIndex, int toIndex, BiFunction<? super Source, Arg, Result>, Arg)` | &check; 1 |
 | `CreateBuilder<T>()` | `<T>createBuilder()` | &check; |
 | `CreateBuilder<T>(int)` | `<T>createBuilder(int)` | &check; |
 | `BinarySearch<T>(ImmutableArray<T>, T)` | `<T>binarySearch(ImmutableArrayList<T>, T)` | &check; |
 | `BinarySearch<T>(ImmutableArray<T>, T, IComparer<T>)` | `<T>binarySearch(ImmutableArrayList<T>, T, Comparator<? super T>)` | &check; |
-| `BinarySearch<T>(ImmutableArray<T>, int start, int length, T)` | `<T>binarySearch(ImmutableArrayList<T>, int fromIndex, int toIndex, T)` | 1 |
-| `BinarySearch<T>(ImmutableArray<T>, int start, int length, T, IComparer<T>)` | `<T>binarySearch(ImmutableArrayList<T>, int fromIndex, int toIndex, T, Comparator<? super T>)` | 1 |
+| `BinarySearch<T>(ImmutableArray<T>, int start, int length, T)` | `<T>binarySearch(ImmutableArrayList<T>, int fromIndex, int toIndex, T)` | &check; 1 |
+| `BinarySearch<T>(ImmutableArray<T>, int start, int length, T, IComparer<T>)` | `<T>binarySearch(ImmutableArrayList<T>, int fromIndex, int toIndex, T, Comparator<? super T>)` | &check; 1 |
 
 ¹ Java convention is to use fromIndex/toIndex instead of start/length for ranges.<br>
 ² These methods were renamed to `createAll` to avoid conflicts with `create(T...)`.
