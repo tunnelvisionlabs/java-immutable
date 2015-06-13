@@ -133,7 +133,7 @@ have already been implemented (with documentation).
 | `Clear()` | `clear()` | &check; |
 | `Sort()` | `sort()` | &check; |
 | `Sort(IComparer<T>)` | `sort(Comparator<? super T>)` | &check; |
-| `Sort(int start, int length, IComparer<T>)` | `sort(int fromIndex, int toIndex, Comparator<? super T>)` | |
+| `Sort(int start, int length, IComparer<T>)` | `sort(int fromIndex, int toIndex, Comparator<? super T>)` | &check; |
 | `ToBuilder()` | `toBuilder()` | &check; |
 | `GetEnumerator()` | `iterator()` | &check; |
 | `GetHashCode()` | `hashCode()` | &check; |

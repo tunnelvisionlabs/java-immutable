@@ -915,24 +915,27 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     /**
      * Returns a sorted instance of this array.
      *
-     * @param index The index of the first element to consider in the sort.
-     * @param count The number of elements to include in the sort.
+     * @param fromIndex The index of the first element (inclusive) to be sorted.
+     * @param toIndex The index of the last element (exclusive) to be sorted.
      * @param comparator The comparator to use in sorting. If {@code null}, a default comparator is used.
      * @return A sorted instance of this array.
      */
-    public ImmutableArrayList<T> sort(int index, int count, Comparator<? super T> comparator) {
-        Requires.range(index >= 0, "index");
-        Requires.range(count >= 0 && index + count <= size(), "count");
+    public ImmutableArrayList<T> sort(int fromIndex, int toIndex, Comparator<? super T> comparator) {
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
         if (comparator == null) {
             comparator = (Comparator<? super T>)(Comparator<?>)Comparators.<Integer>defaultComparator();
         }
 
+        int count = toIndex - fromIndex;
+
         // 0 and 1 element arrays don't need to be sorted.
         if (count > 1) {
             // Avoid copying the entire array when the array is already sorted.
             boolean outOfOrder = false;
-            for (int i = index + 1; i < index + count; i++) {
+            for (int i = fromIndex + 1; i < toIndex; i++) {
                 if (comparator.compare(array[i - 1], array[i]) > 0) {
                     outOfOrder = true;
                     break;
@@ -941,7 +944,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
             if (outOfOrder) {
                 Builder<T> builder = toBuilder();
-                builder.sort(index, count, comparator);
+                builder.sort(fromIndex, count, comparator);
                 return builder.moveToImmutable();
             }
         }

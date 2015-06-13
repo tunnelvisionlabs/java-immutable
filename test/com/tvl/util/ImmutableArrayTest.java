@@ -1106,19 +1106,19 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
     public void sortRange() {
         ImmutableArrayList<Integer> array = ImmutableArrayList.create(2, 4, 1, 3);
         try {
-            array.sort(-1, 2, Comparators.<Integer>defaultComparator());
+            array.sort(-1, 1, Comparators.<Integer>defaultComparator());
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            array.sort(1, 4, Comparators.<Integer>defaultComparator());
+            array.sort(1, 5, Comparators.<Integer>defaultComparator());
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
-        assertEqualSequences(Arrays.asList(2, 4, 1, 3), array.sort(array.size(), 0, Comparators.<Integer>defaultComparator()));
-        assertEqualSequences(Arrays.asList(2, 1, 4, 3), array.sort(1, 2, Comparators.<Integer>defaultComparator()));
+        assertEqualSequences(Arrays.asList(2, 4, 1, 3), array.sort(array.size(), array.size(), Comparators.<Integer>defaultComparator()));
+        assertEqualSequences(Arrays.asList(2, 1, 4, 3), array.sort(1, 3, Comparators.<Integer>defaultComparator()));
     }
 
     @Test
@@ -1135,8 +1135,8 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
 
         ImmutableArrayList<Integer> mostlySorted = ImmutableArrayList.create(1, 2, 3, 4, 6, 5, 7, 8, 9, 10);
         Assert.assertSame(mostlySorted, mostlySorted.sort(0, 5, Comparators.<Integer>defaultComparator()));
-        Assert.assertSame(mostlySorted, mostlySorted.sort(5, 5, Comparators.<Integer>defaultComparator()));
-        assertEqualSequences(new Range(1, 10), mostlySorted.sort(4, 2, Comparators.<Integer>defaultComparator()));
+        Assert.assertSame(mostlySorted, mostlySorted.sort(5, 10, Comparators.<Integer>defaultComparator()));
+        assertEqualSequences(new Range(1, 10), mostlySorted.sort(4, 6, Comparators.<Integer>defaultComparator()));
     }
 
     @Test
