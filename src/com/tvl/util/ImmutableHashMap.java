@@ -67,7 +67,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
      * Gets an empty immutable map with default equality comparators.
      */
     public static <K, V> ImmutableHashMap<K, V> empty() {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableHashMap<K, V> result = (ImmutableHashMap<K, V>)EMPTY_MAP;
         return result;
     }
@@ -1106,7 +1106,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         }
 
         private static <K, V> HashBucket<K, V> empty() {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
             HashBucket<K, V> result = (HashBucket<K, V>)EMPTY_BUCKET;
             return result;
         }
@@ -1491,7 +1491,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         }
 
         static <K, V> Comparators<K, V> defaultComparators() {
-            @SuppressWarnings("unchecked") // safe
+            @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
             Comparators<K, V> result = (Comparators<K, V>)DEFAULT;
             return result;
         }

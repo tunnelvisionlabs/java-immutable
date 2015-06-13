@@ -6,7 +6,7 @@ import java.util.Comparator;
 final class Comparators {
 
     static <T extends Comparable<T>> Comparator<T> defaultComparator() {
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         Comparator<T> result = (ComparableComparator<T>)ComparableComparator.INSTANCE;
         return result;
     }

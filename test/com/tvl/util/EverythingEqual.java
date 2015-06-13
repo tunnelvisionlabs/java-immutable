@@ -9,7 +9,8 @@ class EverythingEqual<T> implements EqualityComparator<T> {
     }
 
     public static <T> EverythingEqual<T> instance() {
-        @SuppressWarnings("unchecked") // safe; objects are never used
+        // safe; objects are never used
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         EverythingEqual<T> result = (EverythingEqual<T>)INSTANCE;
         return result;
     }

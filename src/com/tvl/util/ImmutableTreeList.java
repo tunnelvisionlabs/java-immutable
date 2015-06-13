@@ -57,7 +57,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
     }
 
     public static <T> ImmutableTreeList<T> empty() {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableTreeList<T> result = (ImmutableTreeList<T>)EMPTY_LIST;
         return result;
     }
@@ -431,7 +431,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         // If the items being added actually come from an ImmutableList<T> then there is no value in reconstructing it.
         ImmutableTreeList<? extends T> other = tryCastToImmutableList(items);
         if (other != null) {
-            @SuppressWarnings("unchecked") // safe
+            @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
             ImmutableTreeList<T> result = (ImmutableTreeList<T>)other;
             return result;
         }
@@ -817,7 +817,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
 
         @Override
         public Object[] toArray() {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
             T[] result = (T[])new Object[size()];
             copyTo(result);
             return result;
@@ -950,7 +950,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
          * @return An empty node.
          */
         public static <T> Node<T> empty() {
-            @SuppressWarnings("unchecked") // safe
+            @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
             Node<T> result = (Node<T>)EMPTY_NODE;
             return result;
         }
@@ -1073,7 +1073,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             if (isEmpty()) {
                 ImmutableTreeList<? extends T> other = tryCastToImmutableList(keys);
                 if (other != null) {
-                    @SuppressWarnings("unchecked") // safe
+                    @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
                     Node<T> result = (Node<T>)other.root;
                     return result;
                 }

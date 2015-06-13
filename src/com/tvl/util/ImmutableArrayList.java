@@ -37,7 +37,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return An empty immutable array.
      */
     public static <T> ImmutableArrayList<T> empty() {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableArrayList<T> emptyArray = (ImmutableArrayList<T>)EMPTY_ARRAY;
         return emptyArray;
     }
@@ -60,7 +60,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return A one-element array.
      */
     public static <T> ImmutableArrayList<T> create(T item) {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[] { item };
         return new ImmutableArrayList<T>(array);
     }
@@ -74,7 +74,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return A two-element array.
      */
     public static <T> ImmutableArrayList<T> create(T item1, T item2) {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[] { item1, item2 };
         return new ImmutableArrayList<T>(array);
     }
@@ -89,7 +89,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return A three-element array.
      */
     public static <T> ImmutableArrayList<T> create(T item1, T item2, T item3) {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[] { item1, item2, item3 };
         return new ImmutableArrayList<T>(array);
     }
@@ -105,7 +105,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return A four-element array.
      */
     public static <T> ImmutableArrayList<T> create(T item1, T item2, T item3, T item4) {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[] { item1, item2, item3, item4 };
         return new ImmutableArrayList<T>(array);
     }
@@ -198,7 +198,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return create();
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[toIndex - fromIndex];
         System.arraycopy(items, fromIndex, array, 0, array.length);
         return new ImmutableArrayList<T>(array);
@@ -229,7 +229,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return items;
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[toIndex - fromIndex];
         System.arraycopy(items.array, fromIndex, array, 0, array.length);
         return new ImmutableArrayList<T>(array);
@@ -252,7 +252,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return create();
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         Result[] array = (Result[])new Object[length];
         for (int i = 0; i < length; i++) {
             array[i] = selector.apply(items.get(i));
@@ -284,7 +284,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return create();
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         Result[] array = (Result[])new Object[toIndex - fromIndex];
         for (int i = 0; i < array.length; i++) {
             array[i] = selector.apply(items.get(i + fromIndex));
@@ -346,7 +346,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return create();
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         Result[] array = (Result[])new Object[toIndex - fromIndex];
         for (int i = 0; i < array.length; i++) {
             array[i] = selector.apply(items.get(i + fromIndex), arg);
@@ -1180,7 +1180,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     public static <T> ImmutableArrayList<T> castUp(ImmutableArrayList<? extends T> items) {
         // Since this class is immutable, we can actually return the same instance
-        @SuppressWarnings("unchecked") // this is safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableArrayList<T> result = (ImmutableArrayList<T>)items;
         return result;
     }
@@ -1204,7 +1204,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         // It is now safe to cast the array.
-        @SuppressWarnings("unchecked") // this is safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableArrayList<Other> result = (ImmutableArrayList<Other>)this;
         return result;
     }
@@ -1230,7 +1230,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         // It is now safe to cast the array.
-        @SuppressWarnings("unchecked") // this is safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableArrayList<Other> result = (ImmutableArrayList<Other>)this;
         return result;
     }
@@ -1355,7 +1355,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         Builder(int capacity) {
             Requires.argument(capacity >= 0, "capacity", "capacity must be greater than or equal to zero");
 
-            @SuppressWarnings("unchecked") // safe
+            @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
             T[] elementsArray = (T[])new Object[capacity];
             elements = elementsArray;
             count = 0;

@@ -112,7 +112,7 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
      * @return The empty stack.
      */
     public static <T> ImmutableLinkedStack<T> empty() {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableLinkedStack<T> result = (ImmutableLinkedStack<T>)EMPTY_STACK;
         return result;
     }
