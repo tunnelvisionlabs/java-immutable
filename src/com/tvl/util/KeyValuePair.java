@@ -25,6 +25,18 @@ final class KeyValuePair<K, V> implements Map.Entry<K, V> {
     }
 
     /**
+     * Constructs a new instance of the {@link KeyValuePair} class with the specified key and value.
+     *
+     * @param <K> The type of the key.
+     * @param <V> The type of the value.
+     * @param key The key for the pair.
+     * @param value The value for the pair.
+     */
+    public static <K, V> KeyValuePair<K, V> create(K key, V value) {
+        return new KeyValuePair<K, V>(key, value);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

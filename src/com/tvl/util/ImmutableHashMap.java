@@ -1182,25 +1182,25 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
          * returns an {@link OperationResult} describing the type of change which was made to the collection.
          */
         KeyValuePair<HashBucket<K, V>, OperationResult> add(K key, V value, EqualityComparator<? super Map.Entry<K, V>> keyOnlyComparator, EqualityComparator<? super V> valueComparator, KeyCollisionBehavior behavior) {
-            KeyValuePair<K, V> kv = new KeyValuePair<K, V>(key, value);
+            KeyValuePair<K, V> kv = KeyValuePair.create(key, value);
             if (isEmpty()) {
-                return new KeyValuePair<HashBucket<K, V>, OperationResult>(new HashBucket<K, V>(kv), OperationResult.SIZE_CHANGED);
+                return KeyValuePair.create(new HashBucket<K, V>(kv), OperationResult.SIZE_CHANGED);
             }
 
             if (keyOnlyComparator.equals(kv, firstValue)) {
                 switch (behavior) {
                 case SET_VALUE:
-                    return new KeyValuePair<HashBucket<K, V>, OperationResult>(new HashBucket<K, V>(kv, additionalElements), OperationResult.APPLIED_WITHOUT_SIZE_CHANGE);
+                    return KeyValuePair.create(new HashBucket<K, V>(kv, additionalElements), OperationResult.APPLIED_WITHOUT_SIZE_CHANGE);
 
                 case SKIP:
-                    return new KeyValuePair<HashBucket<K, V>, OperationResult>(this, OperationResult.NO_CHANGE_REQUIRED);
+                    return KeyValuePair.create(this, OperationResult.NO_CHANGE_REQUIRED);
 
                 case THROW_IF_VALUE_DIFFERENT:
                     if (!valueComparator.equals(firstValue.getValue(), value)) {
                         throw new IllegalArgumentException(String.format("An element with the same key but a different value already exists. Key: %s", key));
                     }
 
-                    return new KeyValuePair<HashBucket<K, V>, OperationResult>(this, OperationResult.NO_CHANGE_REQUIRED);
+                    return KeyValuePair.create(this, OperationResult.NO_CHANGE_REQUIRED);
 
                 case THROW_ALWAYS:
                     throw new IllegalArgumentException(String.format("An element with the same key but a different value already exists. Key: %s", key));
@@ -1212,14 +1212,14 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
 
             int keyCollisionIndex = additionalElements.indexOf(kv, keyOnlyComparator);
             if (keyCollisionIndex < 0) {
-                return new KeyValuePair<HashBucket<K, V>, OperationResult>(new HashBucket<K, V>(firstValue, additionalElements.add(kv)), OperationResult.SIZE_CHANGED);
+                return KeyValuePair.create(new HashBucket<K, V>(firstValue, additionalElements.add(kv)), OperationResult.SIZE_CHANGED);
             } else {
                 switch (behavior) {
                 case SET_VALUE:
-                    return new KeyValuePair<HashBucket<K, V>, OperationResult>(new HashBucket<K, V>(firstValue, additionalElements.replace(keyCollisionIndex, kv)), OperationResult.APPLIED_WITHOUT_SIZE_CHANGE);
+                    return KeyValuePair.create(new HashBucket<K, V>(firstValue, additionalElements.replace(keyCollisionIndex, kv)), OperationResult.APPLIED_WITHOUT_SIZE_CHANGE);
 
                 case SKIP:
-                    return new KeyValuePair<HashBucket<K, V>, OperationResult>(this, OperationResult.NO_CHANGE_REQUIRED);
+                    return KeyValuePair.create(this, OperationResult.NO_CHANGE_REQUIRED);
 
                 case THROW_IF_VALUE_DIFFERENT:
                     Map.Entry<K, V> existingEntry = additionalElements.get(keyCollisionIndex);
@@ -1227,7 +1227,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
                         throw new IllegalArgumentException("The key already exists with a different value");
                     }
 
-                    return new KeyValuePair<HashBucket<K, V>, OperationResult>(this, OperationResult.NO_CHANGE_REQUIRED);
+                    return KeyValuePair.create(this, OperationResult.NO_CHANGE_REQUIRED);
 
                 case THROW_ALWAYS:
                     throw new IllegalArgumentException("The key already exists with a different value");
@@ -1249,26 +1249,26 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
          */
         KeyValuePair<HashBucket<K, V>, OperationResult> remove(K key, EqualityComparator<? super Map.Entry<K, V>> keyOnlyComparator) {
             if (isEmpty()) {
-                return new KeyValuePair<HashBucket<K, V>, OperationResult>(this, OperationResult.NO_CHANGE_REQUIRED);
+                return KeyValuePair.create(this, OperationResult.NO_CHANGE_REQUIRED);
             }
 
             KeyValuePair<K, V> kv = new KeyValuePair<K, V>(key, null);
             if (keyOnlyComparator.equals(firstValue, kv)) {
                 if (additionalElements.isEmpty()) {
-                    return new KeyValuePair<HashBucket<K, V>, OperationResult>(HashBucket.<K, V>empty(), OperationResult.SIZE_CHANGED);
+                    return KeyValuePair.create(HashBucket.<K, V>empty(), OperationResult.SIZE_CHANGED);
                 } else {
                     // We can promote any element from the list into the first position, but it's most efficient to
                     // remove the root node in the binary tree that implements the list.
                     int indexOfRootNode = additionalElements.getLeft().size();
-                    return new KeyValuePair<HashBucket<K, V>, OperationResult>(new HashBucket<K, V>(additionalElements.getKey(), additionalElements.remove(indexOfRootNode)), OperationResult.SIZE_CHANGED);
+                    return KeyValuePair.create(new HashBucket<K, V>(additionalElements.getKey(), additionalElements.remove(indexOfRootNode)), OperationResult.SIZE_CHANGED);
                 }
             }
 
             int index = additionalElements.indexOf(kv, keyOnlyComparator);
             if (index < 0) {
-                return new KeyValuePair<HashBucket<K, V>, OperationResult>(this, OperationResult.APPLIED_WITHOUT_SIZE_CHANGE);
+                return KeyValuePair.create(this, OperationResult.APPLIED_WITHOUT_SIZE_CHANGE);
             } else {
-                return new KeyValuePair<HashBucket<K, V>, OperationResult>(new HashBucket<K, V>(firstValue, additionalElements.remove(index)), OperationResult.SIZE_CHANGED);
+                return KeyValuePair.create(new HashBucket<K, V>(firstValue, additionalElements.remove(index)), OperationResult.SIZE_CHANGED);
             }
         }
 
