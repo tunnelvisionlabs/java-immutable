@@ -21,7 +21,7 @@ public final class Immutables {
      * @param source The sequence to iterate.
      * @return An {@link ImmutableArrayList}.
      */
-    public static <T> ImmutableArrayList<T> toImmutableArrayList(Iterable<? extends T> source) {
+    public static <T> ImmutableArrayList<T> toImmutableArrayList(Iterable<T> source) {
         return ImmutableArrayList.createAll(source);
     }
 

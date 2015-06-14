@@ -88,7 +88,7 @@ have already been implemented (with documentation).
 
 | .NET Member | Java Member | Notes |
 | --- | --- | --- |
-| `ToImmutableArray<TSource>(this IEnumerable<TSource>)` | `<T>toImmutableArrayList(Iterable<? extends T>)` | &check; |
+| `ToImmutableArray<TSource>(this IEnumerable<TSource>)` | `<T>toImmutableArrayList(Iterable<T>)` | &check; |
 
 ### Collection
 
