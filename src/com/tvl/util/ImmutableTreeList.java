@@ -949,18 +949,6 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
         }
 
         /**
-         * Transforms an immutable list by applying a conversion function to each element of the list.
-         *
-         * @param <U> The type of element stored in the converted list.
-         * @param converter The conversion function to apply to each element of the list.
-         * @return The transformed immutable list.
-         */
-        public <U> ImmutableTreeList<U> convertAll(Function<T, U> converter) {
-            Requires.notNull(converter, "converter");
-            return wrapNode(root.convertAll(converter));
-        }
-
-        /**
          * Determines whether the list contains elements that match the conditions defined by the specified predicate.
          *
          * @param match The {@link Predicate} that defines the conditions of the elements to search for.
@@ -983,18 +971,6 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
         public T find(Predicate<? super T> match) {
             Requires.notNull(match, "match");
             return root.find(match);
-        }
-
-        /**
-         * Retrieves all the elements that match the conditions defined by the specified predicate.
-         *
-         * @param match The {@link Predicate} that defines the conditions of the elements to search for.
-         * @return An immutable list containing all the elements that match the conditions defined by {@code match}, if
-         * found; otherwise, an empty immutable list.
-         */
-        public ImmutableTreeList<T> retainIf(Predicate<? super T> match) {
-            Requires.notNull(match, "match");
-            return root.findIf(match);
         }
 
         /**
@@ -1357,6 +1333,202 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
         @Override
         public List<T> subList(int fromIndex, int toIndex) {
             throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Returns a wrapper for this {@link Builder} instance which implements {@link ImmutableListQueries}.
+         *
+         * @return An {@link ImmutableListQueries} wrapper for the current {@link Builder}.
+         */
+        ImmutableListQueries<T> asImmutableListQueries() {
+            return new QueriesWrapper();
+        }
+
+        private final class QueriesWrapper implements ImmutableListQueries<T> {
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public <U> ImmutableList<U> convertAll(Function<? super T, U> converter) {
+                Requires.notNull(converter, "converter");
+                return wrapNode(root.convertAll(converter));
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public ImmutableList<T> subList(int fromIndex, int toIndex) {
+                return toImmutable().subList(fromIndex, toIndex);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void copyTo(T[] array) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void copyTo(T[] array, int arrayIndex) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void copyTo(int index, T[] array, int arrayIndex, int count) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public boolean exists(Predicate<? super T> match) {
+                return Builder.this.exists(match);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public T find(Predicate<? super T> match) {
+                return Builder.this.find(match);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public ImmutableList<T> retainIf(Predicate<? super T> match) {
+                return toImmutable().retainIf(match);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public int findIndex(Predicate<? super T> match) {
+                return Builder.this.findIndex(match);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public int findIndex(int fromIndex, Predicate<? super T> match) {
+                return Builder.this.findIndex(fromIndex, match);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public int findIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
+                return Builder.this.findIndex(fromIndex, toIndex, match);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public T findLast(Predicate<? super T> match) {
+                return Builder.this.findLast(match);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public int findLastIndex(Predicate<? super T> match) {
+                return Builder.this.findLastIndex(match);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public int findLastIndex(int startIndex, Predicate<? super T> match) {
+                return Builder.this.findLastIndex(startIndex, match);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public int findLastIndex(int startIndex, int count, Predicate<? super T> match) {
+                return Builder.this.findLastIndex(startIndex, count, match);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public boolean trueForAll(Predicate<? super T> match) {
+                return Builder.this.trueForAll(match);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public int binarySearch(T item) {
+                return Builder.this.binarySearch(item);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public int binarySearch(T item, Comparator<? super T> comparator) {
+                return Builder.this.binarySearch(item, comparator);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public int binarySearch(int fromIndex, int toIndex, T item, Comparator<? super T> comparator) {
+                return Builder.this.binarySearch(fromIndex, toIndex, item, comparator);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public T get(int index) {
+                return Builder.this.get(index);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public int size() {
+                return Builder.this.size();
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public boolean isEmpty() {
+                return Builder.this.isEmpty();
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public Iterator<T> iterator() {
+                return Builder.this.iterator();
+            }
         }
     }
 
