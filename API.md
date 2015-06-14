@@ -100,14 +100,14 @@ have already been implemented (with documentation).
 | `this[int]` | `get(int)` | &check; |
 | `IsEmpty` | `isEmpty()` | &check; |
 | `Length` | `size()` | &check; |
-| `IndexOf(T)` | `indexOf(T)` | &check; |
-| `IndexOf(T, int start)` | `indexOf(T, int fromIndex)` | &check; |
-| `IndexOf(T, int start, int length)` | `indexOf(T, int fromIndex, int toIndex)` | &check; |
+| `IndexOf(T)` | `indexOf(T)` | Inherited |
+| `IndexOf(T, int start)` | `indexOf(T, int fromIndex)` | Inherited |
+| `IndexOf(T, int start, int length)` | `indexOf(T, int fromIndex, int toIndex)` | Inherited |
 | `IndexOf(T, int start, int length, IEqualityComparer<T>)` | `indexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | &check; |
-| `LastIndexOf(T)` | `lastIndexOf(T)` | |
-| `LastIndexOf(T, int start)` | `lastIndexOf(T, int start)` | |
-| `LastIndexOf(T, int start, int length)` | `lastIndexOf(T, int start, int end)` | |
-| `LastIndexOf(T, int start, int length, IEqualityComparer<T>)` | `lastIndexOf(T, int start, int end, EqualityComparator<? super T>)` | |
+| `LastIndexOf(T)` | `lastIndexOf(T)` | Inherited |
+| `LastIndexOf(T, int start)` | `lastIndexOf(T, int fromIndex)` | Inherited |
+| `LastIndexOf(T, int start, int length)` | `lastIndexOf(T, int fromIndex, int toIndex)` | Inherited |
+| `LastIndexOf(T, int start, int length, IEqualityComparer<T>)` | `lastIndexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | &check; 1 |
 | `Contains(T)` | `contains(T)` | &check; |
 | `Insert(int, T)` | `add(int, T)` | &check; |
 | `InsertRange(int, IEnumerable<T>)` | `addAll(int, Iterable<? extends T>)` | &check; |
@@ -214,18 +214,23 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 
 | .NET Member | Java Member | Notes |
 | --- | --- | --- |
-| `ToImmutableList<TSource>(this IEnumerable<TSource>)` | `<T>toImmutableTreeList(Iterable<? extends T>)` | |
-| `Replace<T>(this IImmutableList<T>, T, T)` | `<T>replace(ImmutableList<T>, T, T)` | |
-| `Remove<T>(this IImmutableList<T>, T)` | `<T>remove(ImmutableList<T>, T)` | |
-| `RemoveRange<T>(this IImmutableList<T>, IEnumerable<T>)` | `<T>removeAll(ImmutableList<T>, Iterable<? extends T>)` | |
-| `IndexOf(this IImmutableList<T>, T)` | `<T>indexOf(ImmutableList<T>, T)` | |
-| `IndexOf(this IImmutableList<T>, T, IEqualityComparer<? super T>)` | `<T>indexOf(ImmutableList<T>, T, EqualityComparator<? super T>)` | |
-| `IndexOf(this IImmutableList<T>, T, int)` | `<T>indexOf(ImmutableList<T>, T, int)` | |
-| `IndexOf(this IImmutableList<T>, T, int start, int length)` | `<T>indexOf(ImmutableList<T>, T, int fromIndex, int toIndex)` | 1 |
-| `LastIndexOf(this IImmutableList<T>, T)` | `<T>lastIndexOf(ImmutableList<T>, T)` | |
-| `LastIndexOf(this IImmutableList<T>, T, IEqualityComparer<? super T>)` | `<T>lastIndexOf(ImmutableList<T>, T, EqualityComparator<? super T>)` | |
-| `LastIndexOf(this IImmutableList<T>, T, int)` | `<T>lastIndexOf(ImmutableList<T>, T, int)` | |
-| `LastIndexOf(this IImmutableList<T>, T, int start, int length)` | `<T>lastIndexOf(ImmutableList<T>, T, int fromIndex, int toIndex)` | 1 |
+| `ToImmutableList<TSource>(this IEnumerable<TSource>)` | `<T>toImmutableTreeList(Iterable<T>)` | &check; |
+
+#### `ImmutableList` &rarr; `AbstractImmutableList<T>`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `Replace<T>(this IImmutableList<T>, T, T)` | `replace(T, T)` | &check; |
+| `Remove<T>(this IImmutableList<T>, T)` | `remove(T)` | &check; |
+| `RemoveRange<T>(this IImmutableList<T>, IEnumerable<T>)` | `removeAll(Iterable<? extends T>)` | &check; |
+| `IndexOf(this IImmutableList<T>, T)` | `indexOf(T)` | &check; |
+| `IndexOf(this IImmutableList<T>, T, IEqualityComparer<? super T>)` | `indexOf(T, EqualityComparator<? super T>)` | &check; |
+| `IndexOf(this IImmutableList<T>, T, int)` | `indexOf(T, int)` | &check; |
+| `IndexOf(this IImmutableList<T>, T, int start, int length)` | `indexOf(T, int fromIndex, int toIndex)` | &check; 1 |
+| `LastIndexOf(this IImmutableList<T>, T)` | `lastIndexOf(T)` | &check; |
+| `LastIndexOf(this IImmutableList<T>, T, IEqualityComparer<? super T>)` | `lastIndexOf(T, EqualityComparator<? super T>)` | &check; |
+| `LastIndexOf(this IImmutableList<T>, T, int)` | `lastIndexOf(T, int fromIndex)` | &check; |
+| `LastIndexOf(this IImmutableList<T>, T, int start, int length)` | `lastIndexOf(T, int fromIndex, int toIndex)` | &check; 1 |
 
 ### Collection
 
@@ -277,7 +282,7 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 | `FindLastIndex(int, Predicate<T>)` | `findLastIndex(int, Predicate<? super T>)` | |
 | `FindLastIndex(int start, int length, Predicate<T>)` | `findLastIndex(int fromIndex, int toIndex, Predicate<? super T>)` | 1 |
 | `IndexOf(T, int start, int length, IEqualityComparer<T>)` | `indexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | &check; 1 |
-| `LastIndexOf(T, int start, int length, IEqualityComparer<T>)` | `lastIndexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | 1 |
+| `LastIndexOf(T, int start, int length, IEqualityComparer<T>)` | `lastIndexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | &check; 1 |
 | `TrueForAll(Predicate<T>)` | `trueForAll(Predicate<? super T>)` | &check; |
 | `Contains(T)` | `contains(T)` | &check; |
 | `IndexOf(T)` | `indexOf(T)` | &check; |

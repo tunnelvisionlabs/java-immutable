@@ -216,29 +216,25 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
                 @Override
                 public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, EqualityComparator<? super Integer> eq) {
                     //return b.lastIndexOf(v, eq);
-                    if (b.isEmpty()) {
-                        return b.lastIndexOf(v, 0, 0, eq);
-                    } else {
-                        return b.lastIndexOf(v, b.size() - 1, b.size(), eq);
-                    }
+                    return b.lastIndexOf(v, 0, b.size(), eq);
                 }
             },
             new IndexOfTests.TriFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer, Integer>() {
                 @Override
-                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer i) {
-                    return b.lastIndexOf(v, i);
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer f) {
+                    return b.lastIndexOf(v, f);
                 }
             },
             new IndexOfTests.QuadFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer, Integer, Integer>() {
                 @Override
-                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer i, Integer c) {
-                    return b.lastIndexOf(v, i, c);
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer f, Integer t) {
+                    return b.lastIndexOf(v, f, t);
                 }
             },
             new IndexOfTests.PentFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer, Integer, EqualityComparator<? super Integer>, Integer>() {
                 @Override
-                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer i, Integer c, EqualityComparator<? super Integer> eq) {
-                    return b.lastIndexOf(v, i, c, eq);
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer f, Integer t, EqualityComparator<? super Integer> eq) {
+                    return b.lastIndexOf(v, f, t, eq);
                 }
             }
         );

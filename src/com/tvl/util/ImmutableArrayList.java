@@ -20,7 +20,7 @@ import java.util.TreeSet;
  *
  * @param <T> The type of element stored by the array.
  */
-public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyList<T> {
+public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implements ImmutableList<T>, ReadOnlyList<T> {
 
     public static final ImmutableArrayList<?> EMPTY_ARRAY = new ImmutableArrayList<Object>(new Object[0]);
 
@@ -522,27 +522,6 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * Searches the array for the specified item.
      *
      * @param item The item to search for.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
-     */
-    public int indexOf(T item) {
-        return indexOf(item, 0, size(), EqualityComparators.defaultComparator());
-    }
-
-    /**
-     * Searches the array for the specified item.
-     *
-     * @param item The item to search for.
-     * @param fromIndex The index at which to begin the search.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
-     */
-    public int indexOf(T item, int fromIndex) {
-        return indexOf(item, fromIndex, size(), EqualityComparators.defaultComparator());
-    }
-
-    /**
-     * Searches the array for the specified item.
-     *
-     * @param item The item to search for.
      * @param fromIndex The index at which to begin the search.
      * @param equalityComparator The equality comparator to use in the search.
      * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
@@ -552,33 +531,11 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     }
 
     /**
-     * Searches for the specified object and returns the zero-based index of the first occurrence within the range of
-     * elements in the {@link ImmutableList} that extends from {@code startIndex} through (but not including)
-     * {@code toIndex}.
-     *
-     * @param item The object to locate in the {@link ImmutableList}, which can be {@code null}.
-     * @param fromIndex The index of the first element (inclusive) to be searched.
-     * @param toIndex The index of the last element (exclusive) to be searched.
-     * @return The zero-based index of the first occurrence of {@code item} within the range of elements that extends
-     * from {@code startIndex} through (but not including) {@code toIndex}, if found;
-     * otherwise, -1.
-     */
-    public int indexOf(T item, int fromIndex, int toIndex) {
-        return indexOf(item, fromIndex, toIndex, EqualityComparators.defaultComparator());
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public int indexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
         Requires.notNull(equalityComparator, "equalityComparator");
-
-        int count = toIndex - fromIndex;
-        if (count == 0 && fromIndex == 0) {
-            return -1;
-        }
-
         Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
         Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
         Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
@@ -593,67 +550,16 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     }
 
     /**
-     * Searches the array for the specified item in reverse.
-     *
-     * @param item The item to search for.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
-     */
-    public int lastIndexOf(T item) {
-        if (isEmpty()) {
-            return -1;
-        }
-
-        return lastIndexOf(item, size() - 1, size(), EqualityComparators.defaultComparator());
-    }
-
-    /**
-     * Searches the array for the specified item in reverse.
-     *
-     * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
-     */
-    public int lastIndexOf(T item, int startIndex) {
-        if (isEmpty() && startIndex == 0) {
-            return -1;
-        }
-
-        return lastIndexOf(item, startIndex, startIndex + 1, EqualityComparators.defaultComparator());
-    }
-
-    /**
-     * Searches the array for the specified item in reverse.
-     *
-     * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
-     * @param count The number of elements to search.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
-     */
-    public int lastIndexOf(T item, int startIndex, int count) {
-        return lastIndexOf(item, startIndex, count, EqualityComparators.defaultComparator());
-    }
-
-    /**
-     * Searches the array for the specified item in reverse.
-     *
-     * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
-     * @param count The number of elements to search.
-     * @param equalityComparator The equality comparator to use in the search.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
+     * {@inheritDoc}
      */
     @Override
-    public int lastIndexOf(T item, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
+    public int lastIndexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
         Requires.notNull(equalityComparator, "equalityComparator");
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
-        if (startIndex == 0 && count == 0) {
-            return -1;
-        }
-
-        Requires.range(startIndex >= 0 && startIndex < size(), "startIndex");
-        Requires.range(count >= 0 && startIndex - count + 1 >= 0, "count");
-
-        for (int i = startIndex; i >= startIndex - count + 1; i--) {
+        for (int i = toIndex - 1; i >= fromIndex; i--) {
             if (equalityComparator.equals(item, array[i])) {
                 return i;
             }
@@ -849,13 +755,9 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     }
 
     /**
-     * Replaces the first equal element in the list with the specified element.
-     *
-     * @param oldValue The element to replace.
-     * @param newValue The element to replace the old element with.
-     * @return The new immutable array, even if the value being replaced is equal to the new value for that position.
-     * @throws IllegalArgumentException if the old value does not exist in the list.
+     * {@inheritDoc}
      */
+    @Override
     public ImmutableArrayList<T> replace(T oldValue, T newValue) {
         return replace(oldValue, newValue, EqualityComparators.defaultComparator());
     }
@@ -880,13 +782,9 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     }
 
     /**
-     * Returns an array with the first occurrence of the specified element removed from the array.
-     *
-     * If no match is found, the current array is returned.
-     *
-     * @param value The item to remove.
-     * @return The new immutable array.
+     * {@inheritDoc}
      */
+    @Override
     public ImmutableArrayList<T> remove(T value) {
         return remove(value, EqualityComparators.defaultComparator());
     }
@@ -894,7 +792,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     /**
      * Returns an array with the first occurrence of the specified element removed from the array.
      *
-     * If no match is found, the current array is returned.
+     * <p>If no match is found, the current array is returned.</p>
      *
      * @param value The item to remove.
      * @param equalityComparator The equality comparator to use in the search.
@@ -945,11 +843,9 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     }
 
     /**
-     * Removes the specified values from this array.
-     *
-     * @param items The items to remove if matches are found in this array.
-     * @return A new immutable array with the elements removed.
+     * {@inheritDoc}
      */
+    @Override
     public ImmutableArrayList<T> removeAll(Iterable<? extends T> items) {
         return removeAll(items, EqualityComparators.defaultComparator());
     }
@@ -1710,46 +1606,34 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
         @Override
         public int lastIndexOf(Object o) {
-            if (isEmpty()) {
-                return -1;
-            }
-
-            return lastIndexOf((T)o, size() - 1, size(), EqualityComparators.defaultComparator());
+            return lastIndexOf((T)o, 0, size(), EqualityComparators.defaultComparator());
         }
 
-        public int lastIndexOf(T o, int startIndex) {
-            if (size() == 0 && startIndex == 0) {
-                return -1;
-            }
+        public int lastIndexOf(T o, int fromIndex) {
+            Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
 
-            Requires.range(startIndex >= 0 && startIndex < size(), "startIndex");
-
-            return lastIndexOf(o, startIndex, startIndex + 1, EqualityComparators.defaultComparator());
+            return lastIndexOf(o, fromIndex, size(), EqualityComparators.defaultComparator());
         }
 
-        public int lastIndexOf(T o, int startIndex, int count) {
-            return lastIndexOf(o, startIndex, count, EqualityComparators.defaultComparator());
+        public int lastIndexOf(T o, int fromIndex, int toIndex) {
+            return lastIndexOf(o, fromIndex, toIndex, EqualityComparators.defaultComparator());
         }
 
-        public int lastIndexOf(T o, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
+        public int lastIndexOf(T o, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
             Requires.notNull(equalityComparator, "equalityComparator");
-
-            if (count == 0 && startIndex == 0) {
-                return -1;
-            }
-
-            Requires.range(startIndex >= 0 && startIndex < size(), "startIndex");
-            Requires.range(count >= 0 && startIndex - count + 1 >= 0, "count");
+            Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+            Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+            Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
             if (equalityComparator == EqualityComparators.defaultComparator()) {
-                int result = Arrays.asList(elements).subList(startIndex - count + 1, startIndex + 1).lastIndexOf(o);
+                int result = Arrays.asList(elements).subList(fromIndex, toIndex).lastIndexOf(o);
                 if (result >= 0) {
-                    result += startIndex - count + 1;
+                    result += fromIndex;
                 }
 
                 return result;
             } else {
-                for (int i = startIndex; i >= startIndex - count + 1; i--) {
+                for (int i = toIndex - 1; i >= fromIndex; i--) {
                     if (equalityComparator.equals(o, elements[i])) {
                         return i;
                     }

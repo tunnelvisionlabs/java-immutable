@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableListQueries<T>, OrderedCollection<T> {
+public final class ImmutableTreeList<T> extends AbstractImmutableList<T> implements ImmutableList<T>, ImmutableListQueries<T>, OrderedCollection<T> {
     /**
      * An empty immutable list.
      */
@@ -229,11 +229,9 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
     }
 
     /**
-     * Removes the specified value from the list.
-     *
-     * @param value The value to remove.
-     * @return A new list with the element removed, or this list if the element is not in this list.
+     * {@inheritDoc}
      */
+    @Override
     public ImmutableTreeList<T> remove(T value) {
         return remove(value, EqualityComparators.defaultComparator());
     }
@@ -266,11 +264,9 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
     }
 
     /**
-     * Removes the specified values from this list.
-     *
-     * @param items The items to remove if matches are found in this list.
-     * @return A new list with the elements removed.
+     * {@inheritDoc}
      */
+    @Override
     public ImmutableTreeList<T> removeAll(Iterable<? extends T> items) {
         return removeAll(items, EqualityComparators.defaultComparator());
     }
@@ -329,13 +325,9 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
     }
 
     /**
-     * Replaces the first equal element in the list with the specified element.
-     *
-     * @param oldValue The element to replace.
-     * @param newValue The element to replace the old element with.
-     * @return The new list, even if the value being replaced is equal to the new value for that position.
-     * @throws IllegalArgumentException if the old value does not exist in the list.
+     * {@inheritDoc}
      */
+    @Override
     public ImmutableTreeList<T> replace(T oldValue, T newValue) {
         return replace(oldValue, newValue, EqualityComparators.defaultComparator());
     }
@@ -572,8 +564,16 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
      * {@inheritDoc}
      */
     @Override
-    public int lastIndexOf(T item, int index, int count, EqualityComparator<? super T> equalityComparator) {
-        return root.lastIndexOf(item, index, count, equalityComparator);
+    public int lastIndexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
+
+        if (fromIndex == toIndex) {
+            return -1;
+        }
+
+        return root.lastIndexOf(item, toIndex - 1, toIndex - fromIndex, equalityComparator);
     }
 
     /**
@@ -593,16 +593,6 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
      */
     public boolean contains(T value) {
         return indexOf(value) >= 0;
-    }
-
-    /**
-     * Searches the list for the specified item.
-     *
-     * @param value The item to search for.
-     * @return The zero-based index into the list where the item was found; or -1 if it could not be found.
-     */
-    public int indexOf(T value) {
-        return indexOf(value, 0, size(), EqualityComparators.defaultComparator());
     }
 
     /**

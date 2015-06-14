@@ -25,6 +25,17 @@ public final class Immutables {
         return ImmutableArrayList.createAll(source);
     }
 
+    /**
+     * Iterates a sequence exactly once and produces an {@link ImmutableTreeList} of its contents.
+     *
+     * @param <T> The type of element in the sequence.
+     * @param source The sequence to iterate.
+     * @return An {@link ImmutableTreeList}.
+     */
+    public static <T> ImmutableTreeList<T> toImmutableTreeList(Iterable<T> source) {
+        return ImmutableTreeList.createAll(source);
+    }
+
     static <T> ImmutableArrayList<T> asImmutableArrayList(Iterable<T> source) {
         if (source instanceof ImmutableArrayList<?>) {
             return (ImmutableArrayList<T>)source;
