@@ -33,49 +33,49 @@ public class IndexOfTests {
         T collection1256 = factory.apply(Arrays.asList(1, 2, 5, 6));
 
         try {
-            indexOfItemIndexCountEQ.apply(emptyCollection, 100, 1, 1, EqualityComparators.defaultComparator());
+            indexOfItemIndexCountEQ.apply(emptyCollection, 100, 1, 2, EqualityComparators.defaultComparator());
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            indexOfItemIndexCountEQ.apply(emptyCollection, 100, -1, 1, EqualityComparators.defaultComparator());
+            indexOfItemIndexCountEQ.apply(emptyCollection, 100, -1, 0, EqualityComparators.defaultComparator());
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            indexOfItemIndexCountEQ.apply(collection1256, 100, 1, 20, EqualityComparators.defaultComparator());
+            indexOfItemIndexCountEQ.apply(collection1256, 100, -18, 2, EqualityComparators.defaultComparator());
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            indexOfItemIndexCountEQ.apply(collection1256, 100, 1, -1, EqualityComparators.defaultComparator());
+            indexOfItemIndexCountEQ.apply(collection1256, 100, 3, 2, EqualityComparators.defaultComparator());
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            indexOfItemIndexCountEQ.apply(emptyCollection, 100, 1, 1, new CustomComparator(50));
+            indexOfItemIndexCountEQ.apply(emptyCollection, 100, 1, 2, new CustomComparator(50));
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            indexOfItemIndexCountEQ.apply(emptyCollection, 100, -1, 1, new CustomComparator(50));
+            indexOfItemIndexCountEQ.apply(emptyCollection, 100, -1, 0, new CustomComparator(50));
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            indexOfItemIndexCountEQ.apply(collection1256, 100, 1, 20, new CustomComparator(1));
+            indexOfItemIndexCountEQ.apply(collection1256, 100, -18, 2, new CustomComparator(1));
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            indexOfItemIndexCountEQ.apply(collection1256, 100, 1, -1, new CustomComparator(1));
+            indexOfItemIndexCountEQ.apply(collection1256, 100, 3, 2, new CustomComparator(1));
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
@@ -137,51 +137,51 @@ public class IndexOfTests {
         T collection1256 = factory.apply(Arrays.asList(1, 2, 5, 6));
 
         try {
-            lastIndexOfItemIndexCountEQ.apply(emptyCollection, 100, 1, 1, EqualityComparators.defaultComparator());
+            lastIndexOfItemIndexCountEQ.apply(emptyCollection, 100, 1, 2, EqualityComparators.defaultComparator());
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            lastIndexOfItemIndexCountEQ.apply(emptyCollection, 100, -1, 1, EqualityComparators.defaultComparator());
+            lastIndexOfItemIndexCountEQ.apply(emptyCollection, 100, -1, 0, EqualityComparators.defaultComparator());
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            lastIndexOfItemIndexCountEQ.apply(collection1256, 100, 1, 20, EqualityComparators.defaultComparator());
+            lastIndexOfItemIndexCountEQ.apply(collection1256, 100, -18, 2, EqualityComparators.defaultComparator());
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            lastIndexOfItemIndexCountEQ.apply(collection1256, 100, 1, -1, EqualityComparators.defaultComparator());
+            lastIndexOfItemIndexCountEQ.apply(collection1256, 100, 3, 2, EqualityComparators.defaultComparator());
+            Assert.fail();
+        } catch (IllegalArgumentException ignored) {
+        }
+
+        try {
+            lastIndexOfItemIndexCountEQ.apply(emptyCollection, 100, 1, 2, new CustomComparator(50));
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            lastIndexOfItemIndexCountEQ.apply(emptyCollection, 100, 1, 1, new CustomComparator(50));
+            lastIndexOfItemIndexCountEQ.apply(emptyCollection, 100, -1, 0, new CustomComparator(50));
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            lastIndexOfItemIndexCountEQ.apply(emptyCollection, 100, -1, 1, new CustomComparator(50));
+            lastIndexOfItemIndexCountEQ.apply(collection1256, 100, -18, 2, new CustomComparator(1));
             Assert.fail();
         } catch (IndexOutOfBoundsException ignored) {
         }
 
         try {
-            lastIndexOfItemIndexCountEQ.apply(collection1256, 100, 1, 20, new CustomComparator(1));
+            lastIndexOfItemIndexCountEQ.apply(collection1256, 100, 3, 2, new CustomComparator(1));
             Assert.fail();
-        } catch (IndexOutOfBoundsException ignored) {
-        }
-
-        try {
-            lastIndexOfItemIndexCountEQ.apply(collection1256, 100, 1, -1, new CustomComparator(1));
-            Assert.fail();
-        } catch (IndexOutOfBoundsException ignored) {
+        } catch (IllegalArgumentException ignored) {
         }
 
         Assert.assertEquals(-1, (int)lastIndexOfItem.apply(emptyCollection, 5));
@@ -194,31 +194,31 @@ public class IndexOfTests {
         ArrayList<Integer> bclList = new ArrayList<Integer>(list.toBuilder());
         Assert.assertEquals(-1, (int)lastIndexOfItem.apply(factory.apply(list), 6));
 
-        for (int idx = 0; idx < list.size(); idx++) {
-            for (int count = 0; count <= idx + 1; count++) {
+        for (int fromIndex = 0; fromIndex <= list.size(); fromIndex++) {
+            for (int toIndex = fromIndex; toIndex <= list.size(); toIndex++) {
                 for (int match : Iterables.concat(list, Collections.singletonList(88))) {
-                    int expected = bclList.subList(idx - count + 1, idx + 1).lastIndexOf(match);
+                    int expected = bclList.subList(fromIndex, toIndex).lastIndexOf(match);
                     if (expected >= 0) {
-                        expected += idx - count + 1;
+                        expected += fromIndex;
                     }
 
-                    int actual = lastIndexOfItemIndexCount.apply(factory.apply(list), match, idx, count);
+                    int actual = lastIndexOfItemIndexCount.apply(factory.apply(list), match, fromIndex, toIndex);
                     Assert.assertEquals(expected, actual);
 
                     expected = bclList.lastIndexOf(match);
                     actual = lastIndexOfItemEQ.apply(factory.apply(list), match, EqualityComparators.defaultComparator());
                     Assert.assertEquals(expected, actual);
 
-                    actual = lastIndexOfItemIndexCountEQ.apply(factory.apply(list), match, idx, count, new CustomComparator(count));
-                    Assert.assertEquals(count > 0 ? (idx - count + 1) : -1, actual);
+                    actual = lastIndexOfItemIndexCountEQ.apply(factory.apply(list), match, fromIndex, toIndex, new CustomComparator(toIndex - fromIndex));
+                    Assert.assertEquals(toIndex - fromIndex > 0 ? fromIndex : -1, actual);
 
-                    if (count == list.size()) {
-                        // Also test the LastIndexOf overload that takes no count parameter.
-                        actual = lastIndexOfItemIndex.apply(factory.apply(list), match, idx);
-                        Assert.assertEquals(expected, actual);
+                    if (toIndex == list.size()) {
+                        // Also test the lastIndexOf overload that takes no toIndex parameter.
+                        actual = lastIndexOfItemIndex.apply(factory.apply(list), match, fromIndex);
+                        Assert.assertEquals(expected >= fromIndex ? expected : -1, actual);
 
-                        if (idx == list.size() - 1) {
-                            // Also test the LastIndexOf overload that takes no index parameter.
+                        if (fromIndex == 0) {
+                            // Also test the lastIndexOf overload that takes no fromIndex parameter.
                             actual = lastIndexOfItem.apply(factory.apply(list), match);
                             Assert.assertEquals(expected, actual);
                         }

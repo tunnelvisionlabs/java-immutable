@@ -97,14 +97,14 @@ public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestB
 
     @Test
     public void findIfTest() {
-        Assert.assertTrue(getListQuery(ImmutableTreeList.<Integer>empty()).findIf(new Predicate<Integer>() {
+        Assert.assertTrue(getListQuery(ImmutableTreeList.<Integer>empty()).retainIf(new Predicate<Integer>() {
             @Override
             public boolean test(Integer integer) {
                 return true;
             }
         }).isEmpty());
         ImmutableTreeList<Integer> list = ImmutableTreeList.<Integer>empty().addAll(Arrays.asList(2, 3, 4, 5, 6));
-        ImmutableTreeList<Integer> actual = getListQuery(list).findIf(new Predicate<Integer>() {
+        ImmutableList<Integer> actual = getListQuery(list).retainIf(new Predicate<Integer>() {
             @Override
             public boolean test(Integer integer) {
                 return (integer % 2) == 1;
@@ -192,7 +192,7 @@ public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestB
                     }
 
                     predicateInvocationCount.set(0);
-                    int actual = getListQuery(list).findIndex(idx, count, match);
+                    int actual = getListQuery(list).findIndex(idx, idx + count, match);
                     int actualInvocationCount = predicateInvocationCount.get();
                     Assert.assertEquals(expected, actual);
                     Assert.assertEquals(expectedInvocationCount, actualInvocationCount);
@@ -307,20 +307,20 @@ public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestB
             }
         };
         List<Double> expected = Arrays.asList(10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0);
-        ImmutableTreeList<Double> actual = getListQuery(list).convertAll(converter);
+        ImmutableList<Double> actual = getListQuery(list).convertAll(converter);
         assertEqualSequences(expected, actual);
     }
 
     @Test
     public void getRangeTest() {
-        Assert.assertTrue(getListQuery(ImmutableTreeList.<Integer>empty()).getRange(0, 0).isEmpty());
+        Assert.assertTrue(getListQuery(ImmutableTreeList.<Integer>empty()).subList(0, 0).isEmpty());
         ImmutableTreeList<Integer> list = ImmutableTreeList.<Integer>empty().addAll(new Range(5, 10));
         ArrayList<Integer> bclList = new ArrayList<Integer>(list.toBuilder());
 
         for (int index = 0; index < list.size(); index++) {
             for (int count = 0; count < list.size() - index; count++) {
                 List<Integer> expected = bclList.subList(index, index + count);
-                ImmutableTreeList<Integer> actual = getListQuery(list).getRange(index, count);
+                ImmutableList<Integer> actual = getListQuery(list).subList(index, index + count);
                 assertEqualSequences(expected, actual);
             }
         }
@@ -469,7 +469,7 @@ public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestB
                         expected -= index;
                     }
 
-                    actual = query.binarySearch(index, count, value, null);
+                    actual = query.binarySearch(index, index + count, value, null);
                     Assert.assertEquals(expected, actual);
                 }
             }
@@ -491,7 +491,7 @@ public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestB
     private void binarySearchPartialSortedListHelper(ImmutableTreeList<Integer> inputData, int sortedIndex, int sortedLength) {
         Requires.range(sortedIndex >= 0, "sortedIndex");
         Requires.range(sortedLength > 0, "sortedLength");
-        inputData = inputData.sort(sortedIndex, sortedLength, Comparators.<Integer>defaultComparator());
+        inputData = inputData.sort(sortedIndex, sortedIndex + sortedLength, Comparators.<Integer>defaultComparator());
         int min = inputData.get(sortedIndex);
         int max = inputData.get(sortedIndex + sortedLength - 1);
 
@@ -508,7 +508,7 @@ public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestB
                         expected -= index;
                     }
 
-                    int actual = query.binarySearch(index, count, value, null);
+                    int actual = query.binarySearch(index, index + count, value, null);
                     Assert.assertEquals(expected, actual);
                 }
             }

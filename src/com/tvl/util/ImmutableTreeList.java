@@ -9,13 +9,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableListQueries<T>, OrderedCollection<T> {
+public final class ImmutableTreeList<T> extends AbstractImmutableList<T> implements ImmutableList<T>, ImmutableListQueries<T>, OrderedCollection<T> {
     /**
      * An empty immutable list.
      */
@@ -36,76 +37,163 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         this.root = root;
     }
 
+    /**
+     * Creates an empty {@link ImmutableTreeList}.
+     *
+     * @param <T> The type of elements stored in the list.
+     * @return An empty immutable list.
+     */
     public static <T> ImmutableTreeList<T> create() {
         return empty();
     }
 
+    /**
+     * Creates an {@link ImmutableTreeList} with the specified element as its only member.
+     *
+     * @param <T> The type of element stored in the list.
+     * @param item The element to store in the list.
+     * @return A one-element list.
+     */
     public static <T> ImmutableTreeList<T> create(T item) {
         return ImmutableTreeList.<T>empty().add(item);
     }
 
+    /**
+     * Creates an {@link ImmutableTreeList} populated with the specified elements.
+     *
+     * @param <T> The type of element stored in the list.
+     * @param items The elements to store in the list.
+     * @return An immutable list.
+     */
     public static <T> ImmutableTreeList<T> create(T... items) {
         return createAll(Arrays.asList(items));
     }
 
+    /**
+     * Creates an {@link ImmutableTreeList} populated with the contents of the specified sequence.
+     *
+     * @param <T> The type of element stored in the list.
+     * @param items The elements to store in the list.
+     * @return An immutable list.
+     */
     public static <T> ImmutableTreeList<T> createAll(Iterable<? extends T> items) {
         return ImmutableTreeList.<T>empty().addAll(items);
     }
 
+    /**
+     * Creates a new instance of the {@link Builder} class.
+     *
+     * @param <T> The type of elements stored in the list.
+     * @return A new builder.
+     */
     public static <T> ImmutableTreeList.Builder<T> createBuilder() {
         return ImmutableTreeList.<T>empty().toBuilder();
     }
 
+    /**
+     * Gets an empty {@link ImmutableTreeList} instance.
+     *
+     * @param <T> The type of elements stored in the list.
+     * @return An empty immutable list.
+     */
     public static <T> ImmutableTreeList<T> empty() {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableTreeList<T> result = (ImmutableTreeList<T>)EMPTY_LIST;
         return result;
     }
 
+    /**
+     * Returns an empty list.
+     *
+     * @return An empty immutable list.
+     */
     @Override
     public ImmutableTreeList<T> clear() {
         return empty();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int binarySearch(T item) {
         return binarySearch(item, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int binarySearch(T item, Comparator<? super T> comparator) {
         return binarySearch(0, size(), item, comparator);
     }
 
-    public int binarySearch(int index, int count, T item, Comparator<? super T> comparator) {
-        return root.binarySearch(index, count, item, comparator);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int binarySearch(int fromIndex, int toIndex, T item, Comparator<? super T> comparator) {
+        return root.binarySearch(fromIndex, toIndex - fromIndex, item, comparator);
     }
 
+    /**
+     * Gets a value indicating whether this collection is empty.
+     *
+     * @return {@code true} if the collection is empty; otherwise, {@code false}.
+     */
     @Override
     public boolean isEmpty() {
         return root.isEmpty();
     }
 
+    /**
+     * Gets the number of elements in the list.
+     *
+     * @return The number of elements in the list.
+     */
     @Override
     public int size() {
         return root.size();
     }
 
+    /**
+     * Gets the element at the specified index in the immutable list.
+     *
+     * @param index The zero-based index of the element to get.
+     * @return The element at the specified index in the immutable list.
+     */
     @Override
     public T get(int index) {
         return root.get(index);
     }
 
+    /**
+     * Creates a collection with the same contents as this collection but that can be efficiently mutated across
+     * multiple operations using standard mutable collection interfaces.
+     *
+     * <p>This is an O(1) operation and results in only a single (small) memory allocation. The mutable collection that
+     * is returned is <em>not</em> thread-safe.</p>
+     *
+     * @return A {@link Builder} instance initialized with the contents of this immutable list.
+     */
     public Builder<T> toBuilder() {
         // We must not cache the instance created here and return it to various callers. Those who request a mutable
         // collection must get references to the collection that version independently of each other.
         return new Builder<T>(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImmutableTreeList<T> add(T value) {
         ImmutableTreeList.Node<T> result = root.add(value);
         return wrap(result);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImmutableTreeList<T> addAll(Iterable<? extends T> items) {
         Requires.notNull(items, "items");
@@ -119,12 +207,18 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         return wrap(result);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImmutableTreeList<T> add(int index, T element) {
         Requires.range(index >= 0 && index <= size(), "index");
         return wrap(root.insert(index, element));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImmutableTreeList<T> addAll(int index, Iterable<? extends T> items) {
         Requires.range(index >= 0 && index <= size(), "index");
@@ -134,16 +228,26 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         return wrap(result);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ImmutableTreeList<T> remove(T value) {
         return remove(value, EqualityComparators.defaultComparator());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImmutableTreeList<T> remove(T value, EqualityComparator<? super T> equalityComparator) {
         int index = indexOf(value, 0, size(), equalityComparator);
         return index < 0 ? this : remove(index);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImmutableTreeList<T> removeAll(int fromIndex, int toIndex) {
         Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
@@ -159,10 +263,17 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         return wrap(result);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ImmutableTreeList<T> removeAll(Iterable<? extends T> items) {
         return removeAll(items, EqualityComparators.defaultComparator());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImmutableTreeList<T> removeAll(Iterable<? extends T> items, EqualityComparator<? super T> equalityComparator) {
         Requires.notNull(items, "items");
@@ -186,6 +297,9 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         return wrap(result);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImmutableTreeList<T> remove(int index) {
         Requires.range(index >= 0 && index < size(), "index");
@@ -193,21 +307,34 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         return wrap(result);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImmutableTreeList<T> removeIf(Predicate<? super T> predicate) {
         Requires.notNull(predicate, "predicate");
         return wrap(root.removeIf(predicate));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImmutableTreeList<T> set(int index, T value) {
         return wrap(root.replace(index, value));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ImmutableTreeList<T> replace(T oldValue, T newValue) {
         return replace(oldValue, newValue, EqualityComparators.defaultComparator());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImmutableTreeList<T> replace(T oldValue, T newValue, EqualityComparator<? super T> equalityComparator) {
         Requires.notNull(equalityComparator, "equalityComparator");
@@ -217,30 +344,67 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         return set(index, newValue);
     }
 
+    /**
+     * Reverses the order of the elements in the list.
+     *
+     * @return The reversed list.
+     */
     public ImmutableTreeList<T> reverse() {
         return wrap(root.reverse());
     }
 
-    public ImmutableTreeList<T> reverse(int index, int count) {
-        return wrap(root.reverse(index, count));
+    /**
+     * Reverses the order of the elements in the specified range of the list.
+     *
+     * @param fromIndex The index of the first element (inclusive) to be reversed.
+     * @param toIndex The index of the last element (exclusive) to be reversed.
+     * @return The reversed list.
+     */
+    public ImmutableTreeList<T> reverse(int fromIndex, int toIndex) {
+        return wrap(root.reverse(fromIndex, toIndex - fromIndex));
     }
 
+    /**
+     * Returns a sorted instance of this list.
+     *
+     * @return A sorted instance of this list.
+     */
     public ImmutableTreeList<T> sort() {
         return wrap(root.sort());
     }
 
+    /**
+     * Returns a sorted instance of this list.
+     *
+     * @param comparator The comparator to use in sorting. If {@code null}, a default comparator is used.
+     * @return A sorted instance of this list.
+     */
     public ImmutableTreeList<T> sort(Comparator<? super T> comparator) {
         Requires.notNull(comparator, "comparator");
         return wrap(root.sort(comparator));
     }
 
-    public ImmutableTreeList<T> sort(int index, int count, Comparator<? super T> comparator) {
-        Requires.notNull(comparator, "comparator");
-        Requires.range(index >= 0, "index");
-        Requires.range(count >= 0, "count");
-        Requires.range(index + count <= size(), "count");
+    /**
+     * Sorts the specified range of elements in the collection using the specified {@link Comparator} to compare
+     * elements.
+     *
+     * @param fromIndex The index of the first element (inclusive) to be sorted.
+     * @param toIndex The index of the last element (exclusive) to be sorted.
+     * @param comparator The {@link Comparator} to use for comparing elements, or {@code null} to sort the elements
+     * according to their natural {@link Comparable} order.
+     *
+     * @see Arrays#sort(Object[], int, int, Comparator)
+     */
+    public ImmutableTreeList<T> sort(int fromIndex, int toIndex, Comparator<? super T> comparator) {
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
-        return wrap(root.sort(index, count, comparator));
+        if (comparator == null) {
+            comparator = Comparators.anyComparator();
+        }
+
+        return wrap(root.sort(fromIndex, toIndex - fromIndex, comparator));
     }
 
     @Override
@@ -265,75 +429,108 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         root.copyTo(index, array, startIndex, count);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ImmutableTreeList<T> getRange(int index, int count) {
-        Requires.range(index >= 0, "index");
-        Requires.range(count >= 0, "count");
-        Requires.range(index + count <= size(), "count");
+    public ImmutableTreeList<T> subList(int fromIndex, int toIndex) {
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
-        return wrap(Node.nodeTreeFromList(this, index, count));
+        return wrap(Node.nodeTreeFromList(this, fromIndex, toIndex - fromIndex));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public <U> ImmutableTreeList<U> convertAll(Function<? super T, ? extends U> converter) {
+    public <U> ImmutableTreeList<U> convertAll(Function<? super T, U> converter) {
         Requires.notNull(converter, "converter");
         return ImmutableTreeList.wrapNode(root.convertAll(converter));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean exists(Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.exists(match);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public T find(Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.find(match);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ImmutableTreeList<T> findIf(Predicate<? super T> match) {
+    public ImmutableTreeList<T> retainIf(Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.findIf(match);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int findIndex(Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.findIndex(match);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public int findIndex(int startIndex, Predicate<? super T> match) {
+    public int findIndex(int fromIndex, Predicate<? super T> match) {
         Requires.notNull(match, "match");
-        Requires.range(startIndex >= 0, "startIndex");
-        Requires.range(startIndex <= size(), "startIndex");
-        return root.findIndex(startIndex, match);
+        Requires.range(fromIndex >= 0, "fromIndex");
+        Requires.range(fromIndex <= size(), "fromIndex");
+        return root.findIndex(fromIndex, match);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public int findIndex(int startIndex, int count, Predicate<? super T> match) {
+    public int findIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
         Requires.notNull(match, "match");
-        Requires.range(startIndex >= 0, "startIndex");
-        Requires.range(count >= 0, "count");
-        Requires.range(startIndex + count <= size(), "count");
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
-        return root.findIndex(startIndex, count, match);
+        return root.findIndex(fromIndex, toIndex - fromIndex, match);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public T findLast(Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.findLast(match);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int findLastIndex(Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.findLastIndex(match);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int findLastIndex(int startIndex, Predicate<? super T> match) {
         Requires.notNull(match, "match");
@@ -342,6 +539,9 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         return root.findLastIndex(startIndex, match);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int findLastIndex(int startIndex, int count, Predicate<? super T> match) {
         Requires.notNull(match, "match");
@@ -352,30 +552,52 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         return root.findLastIndex(startIndex, count, match);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public int indexOf(T item, int index, int count, EqualityComparator<? super T> equalityComparator) {
-        return root.indexOf(item, index, count, equalityComparator);
+    public int indexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
+        return root.indexOf(item, fromIndex, toIndex - fromIndex, equalityComparator);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public int lastIndexOf(T item, int index, int count, EqualityComparator<? super T> equalityComparator) {
-        return root.lastIndexOf(item, index, count, equalityComparator);
+    public int lastIndexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
+
+        if (fromIndex == toIndex) {
+            return -1;
+        }
+
+        return root.lastIndexOf(item, toIndex - 1, toIndex - fromIndex, equalityComparator);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean trueForAll(Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.trueForAll(match);
     }
 
+    /**
+     * Determines whether the specified item exists in the list.
+     *
+     * @param value The item to search for.
+     * @return {@code true} if an equal value was found in the list; otherwise, {@code false}.
+     */
     public boolean contains(T value) {
         return indexOf(value) >= 0;
     }
 
-    public int indexOf(T value) {
-        return indexOf(value, 0, size(), EqualityComparators.defaultComparator());
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Itr<T> iterator() {
         return new Itr<T>(root);
@@ -431,7 +653,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         // If the items being added actually come from an ImmutableList<T> then there is no value in reconstructing it.
         ImmutableTreeList<? extends T> other = tryCastToImmutableList(items);
         if (other != null) {
-            @SuppressWarnings("unchecked") // safe
+            @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
             ImmutableTreeList<T> result = (ImmutableTreeList<T>)other;
             return result;
         }
@@ -561,7 +783,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
 
         private void throwIfChanged() {
             if (builder != null && builder.getVersion() != iteratingBuilderVersion) {
-                throw new IllegalStateException();
+                throw new ConcurrentModificationException();
             }
         }
     }
@@ -579,11 +801,17 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             this.immutable = list;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int size() {
             return getRoot().size();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean isEmpty() {
             return getRoot().isEmpty();
@@ -610,10 +838,17 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public T get(int index) {
             return getRoot().get(index);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public T set(int index, T element) {
             T result = get(index);
@@ -621,44 +856,80 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             return result;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int indexOf(Object o) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return root.indexOf((T)o, EqualityComparators.defaultComparator());
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void add(int index, T element) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.range(index >= 0 && index <= size(), "index");
+            root = root.insert(index, element);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public T remove(int index) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.range(index >= 0 && index < size(), "index");
+
+            T removed = root.get(index);
+            root = root.remove(index);
+            return removed;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean add(T t) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            root = root.add(t);
+            return true;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void clear() {
             setRoot(Node.<T>empty());
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean contains(Object o) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return indexOf(o) >= 0;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean remove(Object o) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            int index = indexOf(o);
+            if (index < 0) {
+                return false;
+            }
+
+            root = root.remove(index);
+            return true;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Itr<T> iterator() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return new Itr<T>(root, this, 0, size(), false);
         }
 
         public void copyTo(T[] array) {
@@ -677,36 +948,103 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             root.copyTo(index, array, arrayIndex, count);
         }
 
-        public ImmutableTreeList<T> getRange(int index, int count) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
+        /**
+         * Transforms an immutable list by applying a conversion function to each element of the list.
+         *
+         * @param <U> The type of element stored in the converted list.
+         * @param converter The conversion function to apply to each element of the list.
+         * @return The transformed immutable list.
+         */
         public <U> ImmutableTreeList<U> convertAll(Function<T, U> converter) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.notNull(converter, "converter");
+            return wrapNode(root.convertAll(converter));
         }
 
+        /**
+         * Determines whether the list contains elements that match the conditions defined by the specified predicate.
+         *
+         * @param match The {@link Predicate} that defines the conditions of the elements to search for.
+         * @return {@code true} if the list contains one or more elements that match the conditions defined by
+         * {@code match}; otherwise, {@code false}.
+         */
         public boolean exists(Predicate<? super T> match) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.notNull(match, "match");
+            return root.exists(match);
         }
 
+        /**
+         * Searches for an element that matches the conditions defined by the specified predicate, and returns the first
+         * occurrence within the entire list.
+         *
+         * @param match The {@link Predicate} that defines the conditions of the elements to search for.
+         * @return The first element that matches the conditions defined by {@code match}, if found; otherwise,
+         * {@code null}.
+         */
         public T find(Predicate<? super T> match) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.notNull(match, "match");
+            return root.find(match);
         }
 
-        public ImmutableTreeList<T> findAll(Predicate<? super T> match) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * Retrieves all the elements that match the conditions defined by the specified predicate.
+         *
+         * @param match The {@link Predicate} that defines the conditions of the elements to search for.
+         * @return An immutable list containing all the elements that match the conditions defined by {@code match}, if
+         * found; otherwise, an empty immutable list.
+         */
+        public ImmutableTreeList<T> retainIf(Predicate<? super T> match) {
+            Requires.notNull(match, "match");
+            return root.findIf(match);
         }
 
+        /**
+         * Searches for an element that matches the conditions defined by the specified predicate, and returns the
+         * zero-based index of the first occurrence within the entire list.
+         *
+         * @param match The {@link Predicate} that defines the conditions of the elements to search for.
+         * @return The zero-based index of the first element that matches the conditions defined by {@code match}, if
+         * found; otherwise, -1.
+         */
         public int findIndex(Predicate<? super T> match) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.notNull(match, "match");
+            return root.findIndex(match);
         }
 
-        public int findIndex(int startIndex, Predicate<? super T> match) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * Searches for an element that matches the conditions defined by the specified predicate, and returns the
+         * zero-based index of the first occurrence within the range of elements that extends from the specified index
+         * to the last element.
+         *
+         * @param fromIndex The index of the first element (inclusive) to be searched.
+         * @param match The {@link Predicate} that defines the conditions of the elements to search for.
+         * @return The zero-based index of the first element that matches the conditions defined by {@code match}, if
+         * found; otherwise, -1.
+         */
+        public int findIndex(int fromIndex, Predicate<? super T> match) {
+            Requires.notNull(match, "match");
+            Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+
+            return root.findIndex(fromIndex, match);
         }
 
-        public int findIndex(int startIndex, int count, Predicate<? super T> match) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * Searches for an element that matches the conditions defined by the specified predicate, and returns the
+         * zero-based index of the first occurrence within the range of elements that extends from {@code startIndex}
+         * through (but not including) {@code toIndex}.
+         *
+         * @param fromIndex The index of the first element (inclusive) to be searched.
+         * @param toIndex The index of the last element (exclusive) to be searched.
+         * @param match The {@link Predicate} that defines the conditions of the elements to search for.
+         * @return The zero-based index of the first element that matches the conditions defined by {@code match}, if
+         * found; otherwise, -1.
+         */
+        public int findIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
+            Requires.notNull(match, "match");
+            Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+            Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+            Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
+
+            return root.findIndex(fromIndex, toIndex - fromIndex, match);
         }
 
         public T findLast(Predicate<? super T> match) {
@@ -737,9 +1075,16 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int lastIndexOf(Object o) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            if (isEmpty()) {
+                return -1;
+            }
+
+            return root.lastIndexOf((T)o, size() - 1, size(), EqualityComparators.defaultComparator());
         }
 
         public int lastIndexOf(T item, int index) {
@@ -754,56 +1099,212 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        /**
+         * Determines whether every element in the {@link ImmutableList} matches the conditions defined by the specified
+         * predicate.
+         *
+         * @param match The {@link Predicate} that defines the conditions to check against the elements.
+         * @return {@code true} if every element in the immutable list matches the conditions defined by {@code match};
+         * otherwise, {@code false}. If the list is empty, this method returns {@code true}.
+         */
         public boolean trueForAll(Predicate<? super T> match) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.notNull(match, "match");
+            return root.trueForAll(match);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean addAll(Collection<? extends T> c) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return addAll(size(), c);
         }
 
+        /**
+         * Adds the specified items to the end of the array.
+         *
+         * @param items The items to add.
+         * @return {@code true} if the collection changed as a result of the operation; otherwise, {@code false}.
+         */
+        public boolean addAll(Iterable<? extends T> items) {
+            return addAll(size(), items);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean addAll(int index, Collection<? extends T> c) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.range(index >= 0 && index <= size(), "index");
+            Requires.notNull(c, "c");
+
+            int previousSize = size();
+            root = root.addAll(index, c);
+            return size() != previousSize;
         }
 
-        public void removeIf(Predicate<? super T> match) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * Inserts the specified values at the specified index.
+         *
+         * @param index The index at which to insert the value.
+         * @param items The elements to insert.
+         * @return {@code true} if the collection changed as a result of the operation; otherwise, {@code false}.
+         */
+        public boolean addAll(int index, Iterable<? extends T> items) {
+            Requires.range(index >= 0 && index <= size(), "index");
+            Requires.notNull(items, "items");
+
+            int previousSize = size();
+            root = root.addAll(index, items);
+            return size() != previousSize;
         }
 
+        /**
+         * Removes all the elements that match the conditions defined by the specified predicate.
+         *
+         * @param match The {@link Predicate} that defines the conditions of the elements to remove.
+         * @return The number of elements removed from the list.
+         */
+        public int removeIf(Predicate<? super T> match) {
+            Requires.notNull(match, "match");
+
+            int previousSize = size();
+            root = root.removeIf(match);
+            return previousSize - size();
+        }
+
+        /**
+         * Reverses the order of the elements in the list.
+         *
+         * @return The reversed list.
+         */
         public void reverse() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            reverse(0, size());
         }
 
-        public void reverse(int index, int count) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * Reverses the order of the elements in the specified range of the list.
+         *
+         * @param fromIndex The index of the first element (inclusive) to be reversed.
+         * @param toIndex The index of the last element (exclusive) to be reversed.
+         * @return The reversed list.
+         */
+        public void reverse(int fromIndex, int toIndex) {
+            Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+            Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+            Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
+
+            root = root.reverse(fromIndex, toIndex - fromIndex);
         }
 
+        /**
+         * Sorts the collection according to the natural {@link Comparable} order of the elements.
+         *
+         * @see Arrays#sort(Object[])
+         */
         public void sort() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            root = root.sort();
         }
 
+        /**
+         * Sorts the collection using the specified {@link Comparator} to compare elements.
+         *
+         * @param comparator The {@link Comparator} to use for comparing elements, or {@code null} to sort the elements
+         * according to their natural {@link Comparable} order.
+         *
+         * @see Arrays#sort(Object[], Comparator)
+         */
         public void sort(Comparator<? super T> comparator) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.notNull(comparator, "comparator");
+            root = root.sort(comparator);
         }
 
-        public void sort(int index, int count, Comparator<? super T> comparator) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * Sorts the specified range of elements in the collection using the specified {@link Comparator} to compare
+         * elements.
+         *
+         * @param fromIndex The index of the first element (inclusive) to be sorted.
+         * @param toIndex The index of the last element (exclusive) to be sorted.
+         * @param comparator The {@link Comparator} to use for comparing elements, or {@code null} to sort the elements
+         * according to their natural {@link Comparable} order.
+         *
+         * @see Arrays#sort(Object[], int, int, Comparator)
+         */
+        public void sort(int fromIndex, int toIndex, Comparator<? super T> comparator) {
+            Requires.notNull(comparator, "comparator");
+            Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+            Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+            Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
+
+            root = root.sort(fromIndex, toIndex - fromIndex, comparator);
         }
 
-        public int binarySearch(T item) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * Searches an entire one-dimensional sorted list for a specific element, using the default comparator for
+         * elements of type {@code T}.
+         *
+         * @param value The object to search for.
+         * @return The index of the specified {@code value} in the specified array, if {@code value} is found. If
+         * {@code value} is not found and {@code value} is less than one or more elements in {@code array}, a negative
+         * number which is the bitwise complement of the index of the first element that is larger than {@code value}. If
+         * {@code value} is not found and {@code value} is greater than all of the elements in {@code array}, a negative
+         * number which is the bitwise complement of (the index of the last element plus 1).
+         */
+        public int binarySearch(T value) {
+            return binarySearch(value, null);
         }
 
-        public int binarySearch(T item, Comparator<? super T> comparator) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * Searches an entire one-dimensional sorted list for a specific element using the specified comparator.
+         *
+         * @param value The object to search for.
+         * @param comparator The comparator to use for comparing elements, or {@code null} to use the default comparator for
+         * elements of type {@code T}.
+         * @return The index of the specified {@code value} in the specified array, if {@code value} is found. If
+         * {@code value} is not found and {@code value} is less than one or more elements in {@code array}, a negative
+         * number which is the bitwise complement of the index of the first element that is larger than {@code value}. If
+         * {@code value} is not found and {@code value} is greater than all of the elements in {@code array}, a negative
+         * number which is the bitwise complement of (the index of the last element plus 1).
+         */
+        public int binarySearch(T value, Comparator<? super T> comparator) {
+            return binarySearch(0, size(), value, comparator);
         }
 
-        public int binarySearch(int index, int count, T item, Comparator<? super T> comparator) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * Searches a range of the list for the specified object using the binary search algorithm. The range must be
+         * sorted into ascending order according to the specified comparator (as by the
+         * {@link #sort(int, int, Comparator) sort(int, int, Comparator)} method) prior to making this call. If it is
+         * not sorted, the results are unspecified. If the range contains multiple elements equal to the specified
+         * object, there is no guarantee which one will be found.
+         *
+         * @param fromIndex The index of the first element (inclusive) to be searched.
+         * @param toIndex The index of the last element (exclusive) to be searched.
+         * @param value The value to search for.
+         * @param comparator The comparator by which the array is ordered. A {@code null} value indicates that the elements'
+         * {@linkplain Comparable natural ordering} should be used.
+         * @return The index of the specified {@code value} in the specified array, if {@code value} is found. If
+         * {@code value} is not found and {@code value} is less than one or more elements in {@code array}, a negative
+         * number which is the bitwise complement of the index of the first element that is larger than {@code value}. If
+         * {@code value} is not found and {@code value} is greater than all of the elements in {@code array}, a negative
+         * number which is the bitwise complement of (the index of the last element plus 1).
+         *
+         * @throws ClassCastException if the range contains elements that are not <i>mutually comparable</i> using the
+         * specified comparator, or the search key is not comparable to the elements in the range using this comparator.
+         * @throws IllegalArgumentException if {@code fromIndex > toIndex}
+         * @throws IndexOutOfBoundsException if {@code fromIndex < 0 or toIndex > array.size()}.
+         */
+        public int binarySearch(int fromIndex, int toIndex, T value, Comparator<? super T> comparator) {
+            return root.binarySearch(fromIndex, toIndex - fromIndex, value, comparator);
         }
 
+        /**
+         * Creates an immutable list based on the contents of this instance.
+         *
+         * <p>This method is an O(n) operation, and approaches O(1) as the number of actual mutations to the set since
+         * the last call to this method approaches 0.</p>
+         *
+         * @return An immutable list.
+         */
         public ImmutableTreeList<T> toImmutable() {
             // Creating an instance of ImmutableList<T> with our root node automatically freezes our tree, ensuring that
             // the returned instance is immutable.  Any further mutations made to this builder will clone (and unfreeze)
@@ -817,7 +1318,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
 
         @Override
         public Object[] toArray() {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
             T[] result = (T[])new Object[size()];
             copyTo(result);
             return result;
@@ -950,7 +1451,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
          * @return An empty node.
          */
         public static <T> Node<T> empty() {
-            @SuppressWarnings("unchecked") // safe
+            @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
             Node<T> result = (Node<T>)EMPTY_NODE;
             return result;
         }
@@ -1073,7 +1574,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             if (isEmpty()) {
                 ImmutableTreeList<? extends T> other = tryCastToImmutableList(keys);
                 if (other != null) {
-                    @SuppressWarnings("unchecked") // safe
+                    @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
                     Node<T> result = (Node<T>)other.root;
                     return result;
                 }
@@ -1186,8 +1687,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
         }
 
         Node<T> sort() {
-            @SuppressWarnings("unchecked") // will throw at runtime if invalid.
-            Comparator<? super T> comparator = (Comparator<? super T>)(Comparator<?>)Comparators.<Integer>defaultComparator();
+            Comparator<? super T> comparator = Comparators.anyComparator();
             return sort(comparator);
         }
 
@@ -1200,11 +1700,11 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             Requires.range(index >= 0, "index");
             Requires.range(count >= 0, "count");
             Requires.argument(index + count <= size());
-            Requires.notNull(comparator, "comparer");
+            Requires.notNull(comparator, "comparator");
 
             // PERF: Eventually this might be reimplemented in a way that does not require allocating an array.
             ArrayList<T> arrayList = new ArrayList<T>(ImmutableTreeList.wrapNode(this).toBuilder());
-            //Array.Sort(array, index, count, comparer);
+            //Array.Sort(array, index, count, comparator);
             Collections.sort(arrayList.subList(index, index + count), comparator);
             return nodeTreeFromList(asOrderedCollection(arrayList), 0, size());
         }
@@ -1213,9 +1713,7 @@ public final class ImmutableTreeList<T> implements ImmutableList<T>, ImmutableLi
             Requires.range(index >= 0, "index");
             Requires.range(count >= 0, "count");
             if (comparator == null) {
-                @SuppressWarnings("unchecked") // will throw at runtime if invalid.
-                Comparator<? super T> defaultComparator = (Comparator<? super T>)(Comparator<?>)Comparators.<Integer>defaultComparator();
-                comparator = defaultComparator;
+                comparator = Comparators.anyComparator();
             }
 
             if (isEmpty() || count <= 0) {

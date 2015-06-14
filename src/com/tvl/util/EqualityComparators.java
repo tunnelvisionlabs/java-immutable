@@ -29,7 +29,7 @@ public abstract class EqualityComparators {
         }
 
         // Treat like a normal object
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         EqualityComparator<T> comparator = (EqualityComparator<T>)ObjectEqualityComparator.INSTANCE;
         return comparator;
     }

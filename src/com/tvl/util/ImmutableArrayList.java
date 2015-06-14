@@ -20,7 +20,7 @@ import java.util.TreeSet;
  *
  * @param <T> The type of element stored by the array.
  */
-public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyList<T> {
+public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implements ImmutableList<T>, ReadOnlyList<T> {
 
     public static final ImmutableArrayList<?> EMPTY_ARRAY = new ImmutableArrayList<Object>(new Object[0]);
 
@@ -37,7 +37,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return An empty immutable array.
      */
     public static <T> ImmutableArrayList<T> empty() {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableArrayList<T> emptyArray = (ImmutableArrayList<T>)EMPTY_ARRAY;
         return emptyArray;
     }
@@ -60,7 +60,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return A one-element array.
      */
     public static <T> ImmutableArrayList<T> create(T item) {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[] { item };
         return new ImmutableArrayList<T>(array);
     }
@@ -74,7 +74,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return A two-element array.
      */
     public static <T> ImmutableArrayList<T> create(T item1, T item2) {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[] { item1, item2 };
         return new ImmutableArrayList<T>(array);
     }
@@ -89,7 +89,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return A three-element array.
      */
     public static <T> ImmutableArrayList<T> create(T item1, T item2, T item3) {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[] { item1, item2, item3 };
         return new ImmutableArrayList<T>(array);
     }
@@ -105,7 +105,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * @return A four-element array.
      */
     public static <T> ImmutableArrayList<T> create(T item1, T item2, T item3, T item4) {
-        @SuppressWarnings("unchecked") // safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[] { item1, item2, item3, item4 };
         return new ImmutableArrayList<T>(array);
     }
@@ -198,7 +198,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return create();
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[toIndex - fromIndex];
         System.arraycopy(items, fromIndex, array, 0, array.length);
         return new ImmutableArrayList<T>(array);
@@ -229,7 +229,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return items;
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[toIndex - fromIndex];
         System.arraycopy(items.array, fromIndex, array, 0, array.length);
         return new ImmutableArrayList<T>(array);
@@ -252,7 +252,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return create();
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         Result[] array = (Result[])new Object[length];
         for (int i = 0; i < length; i++) {
             array[i] = selector.apply(items.get(i));
@@ -284,7 +284,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return create();
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         Result[] array = (Result[])new Object[toIndex - fromIndex];
         for (int i = 0; i < array.length; i++) {
             array[i] = selector.apply(items.get(i + fromIndex));
@@ -346,7 +346,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             return create();
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         Result[] array = (Result[])new Object[toIndex - fromIndex];
         for (int i = 0; i < array.length; i++) {
             array[i] = selector.apply(items.get(i + fromIndex), arg);
@@ -468,7 +468,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     public static <T> int binarySearch(ImmutableArrayList<T> array, T value, int fromIndex, int toIndex, Comparator<? super T> comparator) {
         Requires.notNull(array, "array");
         if (comparator == null) {
-            comparator = (Comparator<? super T>)Comparators.<Integer>defaultComparator();
+            comparator = Comparators.anyComparator();
         }
 
         return Arrays.binarySearch(array.array, fromIndex, toIndex, value, comparator);
@@ -522,68 +522,25 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      * Searches the array for the specified item.
      *
      * @param item The item to search for.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
-     */
-    public int indexOf(T item) {
-        return indexOf(item, 0, size(), EqualityComparators.defaultComparator());
-    }
-
-    /**
-     * Searches the array for the specified item.
-     *
-     * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
-     */
-    public int indexOf(T item, int startIndex) {
-        return indexOf(item, startIndex, size() - startIndex, EqualityComparators.defaultComparator());
-    }
-
-    /**
-     * Searches the array for the specified item.
-     *
-     * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
+     * @param fromIndex The index at which to begin the search.
      * @param equalityComparator The equality comparator to use in the search.
      * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
      */
-    public int indexOf(T item, int startIndex, EqualityComparator<? super T> equalityComparator) {
-        return indexOf(item, startIndex, size() - startIndex, equalityComparator);
+    public int indexOf(T item, int fromIndex, EqualityComparator<? super T> equalityComparator) {
+        return indexOf(item, fromIndex, size(), equalityComparator);
     }
 
     /**
-     * Searches the array for the specified item.
-     *
-     * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
-     * @param count The number of elements to search.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
-     */
-    public int indexOf(T item, int startIndex, int count) {
-        return indexOf(item, startIndex, count, EqualityComparators.defaultComparator());
-    }
-
-    /**
-     * Searches the array for the specified item.
-     *
-     * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
-     * @param count The number of elements to search.
-     * @param equalityComparator The equality comparator to use in the search.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
+     * {@inheritDoc}
      */
     @Override
-    public int indexOf(T item, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
+    public int indexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
         Requires.notNull(equalityComparator, "equalityComparator");
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
-        if (count == 0 && startIndex == 0) {
-            return -1;
-        }
-
-        Requires.range(startIndex >= 0 && startIndex < size(), "startIndex");
-        Requires.range(count >= 0 && startIndex + count <= size(), "count");
-
-        for (int i = startIndex; i < startIndex + count; i++) {
+        for (int i = fromIndex; i < toIndex; i++) {
             if (equalityComparator.equals(array[i], item)) {
                 return i;
             }
@@ -593,67 +550,16 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     }
 
     /**
-     * Searches the array for the specified item in reverse.
-     *
-     * @param item The item to search for.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
-     */
-    public int lastIndexOf(T item) {
-        if (isEmpty()) {
-            return -1;
-        }
-
-        return lastIndexOf(item, size() - 1, size(), EqualityComparators.defaultComparator());
-    }
-
-    /**
-     * Searches the array for the specified item in reverse.
-     *
-     * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
-     */
-    public int lastIndexOf(T item, int startIndex) {
-        if (isEmpty() && startIndex == 0) {
-            return -1;
-        }
-
-        return lastIndexOf(item, startIndex, startIndex + 1, EqualityComparators.defaultComparator());
-    }
-
-    /**
-     * Searches the array for the specified item in reverse.
-     *
-     * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
-     * @param count The number of elements to search.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
-     */
-    public int lastIndexOf(T item, int startIndex, int count) {
-        return lastIndexOf(item, startIndex, count, EqualityComparators.defaultComparator());
-    }
-
-    /**
-     * Searches the array for the specified item in reverse.
-     *
-     * @param item The item to search for.
-     * @param startIndex The index at which to begin the search.
-     * @param count The number of elements to search.
-     * @param equalityComparator The equality comparator to use in the search.
-     * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
+     * {@inheritDoc}
      */
     @Override
-    public int lastIndexOf(T item, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
+    public int lastIndexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
         Requires.notNull(equalityComparator, "equalityComparator");
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
-        if (startIndex == 0 && count == 0) {
-            return -1;
-        }
-
-        Requires.range(startIndex >= 0 && startIndex < size(), "startIndex");
-        Requires.range(count >= 0 && startIndex - count + 1 >= 0, "count");
-
-        for (int i = startIndex; i >= startIndex - count + 1; i--) {
+        for (int i = toIndex - 1; i >= fromIndex; i--) {
             if (equalityComparator.equals(item, array[i])) {
                 return i;
             }
@@ -849,13 +755,9 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     }
 
     /**
-     * Replaces the first equal element in the list with the specified element.
-     *
-     * @param oldValue The element to replace.
-     * @param newValue The element to replace the old element with.
-     * @return The new immutable array, even if the value being replaced is equal to the new value for that position.
-     * @throws IllegalArgumentException if the old value does not exist in the list.
+     * {@inheritDoc}
      */
+    @Override
     public ImmutableArrayList<T> replace(T oldValue, T newValue) {
         return replace(oldValue, newValue, EqualityComparators.defaultComparator());
     }
@@ -880,13 +782,9 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     }
 
     /**
-     * Returns an array with the first occurrence of the specified element removed from the array.
-     *
-     * If no match is found, the current array is returned.
-     *
-     * @param value The item to remove.
-     * @return The new immutable array.
+     * {@inheritDoc}
      */
+    @Override
     public ImmutableArrayList<T> remove(T value) {
         return remove(value, EqualityComparators.defaultComparator());
     }
@@ -894,7 +792,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     /**
      * Returns an array with the first occurrence of the specified element removed from the array.
      *
-     * If no match is found, the current array is returned.
+     * <p>If no match is found, the current array is returned.</p>
      *
      * @param value The item to remove.
      * @param equalityComparator The equality comparator to use in the search.
@@ -945,11 +843,9 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
     }
 
     /**
-     * Removes the specified values from this array.
-     *
-     * @param items The items to remove if matches are found in this array.
-     * @return A new immutable array with the elements removed.
+     * {@inheritDoc}
      */
+    @Override
     public ImmutableArrayList<T> removeAll(Iterable<? extends T> items) {
         return removeAll(items, EqualityComparators.defaultComparator());
     }
@@ -1083,7 +979,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
         if (comparator == null) {
-            comparator = (Comparator<? super T>)(Comparator<?>)Comparators.<Integer>defaultComparator();
+            comparator = Comparators.anyComparator();
         }
 
         int count = toIndex - fromIndex;
@@ -1101,7 +997,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
             if (outOfOrder) {
                 Builder<T> builder = toBuilder();
-                builder.sort(fromIndex, count, comparator);
+                builder.sort(fromIndex, toIndex, comparator);
                 return builder.moveToImmutable();
             }
         }
@@ -1180,7 +1076,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
      */
     public static <T> ImmutableArrayList<T> castUp(ImmutableArrayList<? extends T> items) {
         // Since this class is immutable, we can actually return the same instance
-        @SuppressWarnings("unchecked") // this is safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableArrayList<T> result = (ImmutableArrayList<T>)items;
         return result;
     }
@@ -1204,7 +1100,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         // It is now safe to cast the array.
-        @SuppressWarnings("unchecked") // this is safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableArrayList<Other> result = (ImmutableArrayList<Other>)this;
         return result;
     }
@@ -1230,7 +1126,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         }
 
         // It is now safe to cast the array.
-        @SuppressWarnings("unchecked") // this is safe
+        @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableArrayList<Other> result = (ImmutableArrayList<Other>)this;
         return result;
     }
@@ -1355,7 +1251,7 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
         Builder(int capacity) {
             Requires.argument(capacity >= 0, "capacity", "capacity must be greater than or equal to zero");
 
-            @SuppressWarnings("unchecked") // safe
+            @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
             T[] elementsArray = (T[])new Object[capacity];
             elements = elementsArray;
             count = 0;
@@ -1710,46 +1606,34 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
 
         @Override
         public int lastIndexOf(Object o) {
-            if (isEmpty()) {
-                return -1;
-            }
-
-            return lastIndexOf((T)o, size() - 1, size(), EqualityComparators.defaultComparator());
+            return lastIndexOf((T)o, 0, size(), EqualityComparators.defaultComparator());
         }
 
-        public int lastIndexOf(T o, int startIndex) {
-            if (size() == 0 && startIndex == 0) {
-                return -1;
-            }
+        public int lastIndexOf(T o, int fromIndex) {
+            Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
 
-            Requires.range(startIndex >= 0 && startIndex < size(), "startIndex");
-
-            return lastIndexOf(o, startIndex, startIndex + 1, EqualityComparators.defaultComparator());
+            return lastIndexOf(o, fromIndex, size(), EqualityComparators.defaultComparator());
         }
 
-        public int lastIndexOf(T o, int startIndex, int count) {
-            return lastIndexOf(o, startIndex, count, EqualityComparators.defaultComparator());
+        public int lastIndexOf(T o, int fromIndex, int toIndex) {
+            return lastIndexOf(o, fromIndex, toIndex, EqualityComparators.defaultComparator());
         }
 
-        public int lastIndexOf(T o, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
+        public int lastIndexOf(T o, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
             Requires.notNull(equalityComparator, "equalityComparator");
-
-            if (count == 0 && startIndex == 0) {
-                return -1;
-            }
-
-            Requires.range(startIndex >= 0 && startIndex < size(), "startIndex");
-            Requires.range(count >= 0 && startIndex - count + 1 >= 0, "count");
+            Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+            Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+            Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
             if (equalityComparator == EqualityComparators.defaultComparator()) {
-                int result = Arrays.asList(elements).subList(startIndex - count + 1, startIndex + 1).lastIndexOf(o);
+                int result = Arrays.asList(elements).subList(fromIndex, toIndex).lastIndexOf(o);
                 if (result >= 0) {
-                    result += startIndex - count + 1;
+                    result += fromIndex;
                 }
 
                 return result;
             } else {
-                for (int i = startIndex; i >= startIndex - count + 1; i--) {
+                for (int i = toIndex - 1; i >= fromIndex; i--) {
                     if (equalityComparator.equals(o, elements[i])) {
                         return i;
                     }
@@ -1795,10 +1679,23 @@ public final class ImmutableArrayList<T> implements ImmutableList<T>, ReadOnlyLi
             sort(0, count, comparator);
         }
 
-        public void sort(int index, int count, Comparator<? super T> comparator) {
-            Requires.range(index >= 0, "index");
-            Requires.range(count >= 0 && index + count <= size(), "count");
-            Arrays.sort(elements, index, index + count, comparator);
+        /**
+         * Sorts the specified range of elements in the collection using the specified {@link Comparator} to compare
+         * elements.
+         *
+         * @param fromIndex The index of the first element (inclusive) to be sorted.
+         * @param toIndex The index of the last element (exclusive) to be sorted.
+         * @param comparator The {@link Comparator} to use for comparing elements, or {@code null} to sort the elements
+         * according to their natural {@link Comparable} order.
+         *
+         * @see Arrays#sort(Object[], int, int, Comparator)
+         */
+        public void sort(int fromIndex, int toIndex, Comparator<? super T> comparator) {
+            Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+            Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+            Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
+
+            Arrays.sort(elements, fromIndex, toIndex, comparator);
         }
 
         /**

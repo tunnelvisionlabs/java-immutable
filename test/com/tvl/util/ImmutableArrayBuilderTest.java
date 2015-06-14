@@ -216,29 +216,25 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
                 @Override
                 public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, EqualityComparator<? super Integer> eq) {
                     //return b.lastIndexOf(v, eq);
-                    if (b.isEmpty()) {
-                        return b.lastIndexOf(v, 0, 0, eq);
-                    } else {
-                        return b.lastIndexOf(v, b.size() - 1, b.size(), eq);
-                    }
+                    return b.lastIndexOf(v, 0, b.size(), eq);
                 }
             },
             new IndexOfTests.TriFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer, Integer>() {
                 @Override
-                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer i) {
-                    return b.lastIndexOf(v, i);
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer f) {
+                    return b.lastIndexOf(v, f);
                 }
             },
             new IndexOfTests.QuadFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer, Integer, Integer>() {
                 @Override
-                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer i, Integer c) {
-                    return b.lastIndexOf(v, i, c);
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer f, Integer t) {
+                    return b.lastIndexOf(v, f, t);
                 }
             },
             new IndexOfTests.PentFunction<ImmutableArrayList.Builder<Integer>, Integer, Integer, Integer, EqualityComparator<? super Integer>, Integer>() {
                 @Override
-                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer i, Integer c, EqualityComparator<? super Integer> eq) {
-                    return b.lastIndexOf(v, i, c, eq);
+                public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer f, Integer t, EqualityComparator<? super Integer> eq) {
+                    return b.lastIndexOf(v, f, t, eq);
                 }
             }
         );
@@ -385,10 +381,10 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         ImmutableArrayList.Builder<Integer> builder = ImmutableArrayList.createBuilder();
         builder.addAll(2, 4, 1, 3);
 
-        builder.sort(builder.size(), 0, Comparators.<Integer>defaultComparator());
+        builder.sort(builder.size(), builder.size(), Comparators.<Integer>defaultComparator());
         assertEqualSequences(Arrays.asList(2, 4, 1, 3), builder);
 
-        builder.sort(1, 2, Comparators.<Integer>defaultComparator());
+        builder.sort(1, 3, Comparators.<Integer>defaultComparator());
         assertEqualSequences(Arrays.asList(2, 1, 4, 3), builder);
     }
 
@@ -397,7 +393,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         ImmutableArrayList.Builder<Integer> builder = ImmutableArrayList.createBuilder();
         builder.addAll(2, 4, 1, 3);
         thrown.expect(instanceOf(IndexOutOfBoundsException.class));
-        builder.sort(-1, 2, Comparators.<Integer>defaultComparator());
+        builder.sort(-1, 1, Comparators.<Integer>defaultComparator());
     }
 
     @Test
@@ -405,7 +401,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
         ImmutableArrayList.Builder<Integer> builder = ImmutableArrayList.createBuilder();
         builder.addAll(2, 4, 1, 3);
         thrown.expect(instanceOf(IndexOutOfBoundsException.class));
-        builder.sort(1, 4, Comparators.<Integer>defaultComparator());
+        builder.sort(1, 5, Comparators.<Integer>defaultComparator());
     }
 
     @Test
