@@ -316,11 +316,8 @@ These members of `ImmutableList<T>` have no equivalent mapping in the Java progr
 | `CopyTo(T[])` | ? | |
 | `CopyTo(T[], int)` | ? | |
 | `CopyTo(int, T[], int, int)` | ? | |
-| `GetRange(int start, int length)` | `subList(int fromIndex, int toIndex)` | 1 |
-| `ConvertAll<TOutput>(Func<T, TOutput>)` | `<U>convertAll(Function<? super T, U>)` | &check; |
 | `Exists(Predicate<T>)` | `exists(Predicate<? super T>)` | &check; |
 | `Find(Predicate<T>)` | `find(Predicate<? super T>)` | &check; |
-| `FindAll(Predicate<T>)` | `retainIf(Predicate<? super T>)` | &check; |
 | `FindIndex(Predicate<T>)` | `findIndex(Predicate<? super T>)` | &check; |
 | `FindIndex(int, Predicate<T>)` | `findIndex(int, Predicate<? super T>)` | &check; |
 | `FindIndex(int start, int length, Predicate<T>)` | `findIndex(int fromIndex, int toIndex, Predicate<? super T>)` | &check; 1 |
@@ -348,6 +345,14 @@ These members of `ImmutableList<T>` have no equivalent mapping in the Java progr
 | `BinarySearch<T>(T, IComparer<T>)` | `binarySearch(T, Comparator<? super T>)` | &check; |
 | `BinarySearch<T>(int start, int length, T, IComparer<T>)` | `binarySearch(int fromIndex, int toIndex, T, Comparator<? super T>)` | &check; 1 |
 | `ToImmutable()` | `toImmutable()` | &check; |
+
+#### `ImmutableList<T>.Builder` &rarr; `ImmutableTreeList.Builder<T>.QueriesWrapper` (internal API)
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `GetRange(int start, int length)` | `subList(int fromIndex, int toIndex)` | &check; 1 |
+| `ConvertAll<TOutput>(Func<T, TOutput>)` | `<U>convertAll(Function<? super T, U>)` | &check; |
+| `FindAll(Predicate<T>)` | `retainIf(Predicate<? super T>)` | &check; |
 
 #### `ImmutableList<T>.Builder` &rarr; No mapping
 
