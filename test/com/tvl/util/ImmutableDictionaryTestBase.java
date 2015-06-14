@@ -55,7 +55,7 @@ public abstract class ImmutableDictionaryTestBase extends ImmutablesTestBase {
 
         ArrayList<KeyValuePair<Integer, GenericParameterHelper>> range = new ArrayList<KeyValuePair<Integer, GenericParameterHelper>>();
         for (int n : new Range(1, 100)) {
-            range.add(new KeyValuePair<Integer, GenericParameterHelper>(n, new GenericParameterHelper()));
+            range.add(KeyValuePair.create(n, new GenericParameterHelper()));
         }
 
         map = map.addAll(range);
@@ -127,8 +127,8 @@ public abstract class ImmutableDictionaryTestBase extends ImmutablesTestBase {
 
         map = map.putAll(
             Arrays.asList(
-                new KeyValuePair<String, Integer>("Microsoft", 80),
-                new KeyValuePair<String, Integer>("Microsoft", 70)
+                KeyValuePair.create("Microsoft", 80),
+                KeyValuePair.create("Microsoft", 70)
             ));
         Assert.assertEquals(3, map.size());
         Assert.assertEquals(70, (int)map.get("Microsoft"));
@@ -136,8 +136,7 @@ public abstract class ImmutableDictionaryTestBase extends ImmutablesTestBase {
         Assert.assertEquals(90, (int)map.get("Dogs"));
 
         map = this.<String, Integer>empty().putAll(Arrays.asList(
-            new KeyValuePair<String, Integer>("a", 1), new KeyValuePair<String, Integer>("b", 2),
-            new KeyValuePair<String, Integer>("a", 3)
+            KeyValuePair.create("a", 1), KeyValuePair.create("b", 2), KeyValuePair.create("a", 3)
         ));
         Assert.assertEquals(2, map.size());
         Assert.assertEquals(3, (int)map.get("a"));
@@ -404,8 +403,8 @@ public abstract class ImmutableDictionaryTestBase extends ImmutablesTestBase {
         Assert.assertSame(empty, empty.removeAll(Collections.<Integer>emptyList()));
         Assert.assertSame(empty, empty.addAll(Collections.<KeyValuePair<Integer, Integer>>emptyList()));
         ArrayList<KeyValuePair<Integer, Integer>> list = new ArrayList<KeyValuePair<Integer, Integer>>();
-        list.add(new KeyValuePair<Integer, Integer>(3, 5));
-        list.add(new KeyValuePair<Integer, Integer>(8, 10));
+        list.add(KeyValuePair.create(3, 5));
+        list.add(KeyValuePair.create(8, 10));
         ImmutableMap<Integer, Integer> nonEmpty = empty.addAll(list);
         verifyAvlTreeState(nonEmpty);
         ImmutableMap<Integer, Integer> halfRemoved = nonEmpty.removeAll(new Range(1, 5));
@@ -421,7 +420,7 @@ public abstract class ImmutableDictionaryTestBase extends ImmutablesTestBase {
 
         map = map.add(key, value1);
         Assert.assertSame(map, map.add(key, value2));
-        Assert.assertSame(map, map.addAll(Collections.singletonList(new KeyValuePair<K, V>(key, value2))));
+        Assert.assertSame(map, map.addAll(Collections.singletonList(KeyValuePair.create(key, value2))));
     }
 
     /**
@@ -465,9 +464,9 @@ public abstract class ImmutableDictionaryTestBase extends ImmutablesTestBase {
     }
 
     protected <K, V> void containsTestHelper(ImmutableMap<K, V> map, K key, V value) {
-        Assert.assertFalse(map.contains(new KeyValuePair<K, V>(key, value)));
+        Assert.assertFalse(map.contains(KeyValuePair.create(key, value)));
         //Assert.assertFalse(map.contains(key, value));
-        Assert.assertTrue(map.add(key, value).contains(new KeyValuePair<K, V>(key, value)));
+        Assert.assertTrue(map.add(key, value).contains(KeyValuePair.create(key, value)));
         //Assert.assertTrue(map.add(key, value).contains(key, value));
     }
 
