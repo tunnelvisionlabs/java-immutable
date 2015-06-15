@@ -1023,8 +1023,17 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return root.findIndex(fromIndex, toIndex - fromIndex, match);
         }
 
+        /**
+         * Searches for an element that matches the conditions defined by the specified predicate, and returns the last
+         * occurrence within the entire list.
+         *
+         * @param match The {@link Predicate} that defines the conditions of the elements to search for.
+         * @return The last element that matches the conditions defined by {@code match}, if found; otherwise,
+         * {@code null}.
+         */
         public T findLast(Predicate<? super T> match) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Requires.notNull(match, "match");
+            return root.findLast(match);
         }
 
         /**

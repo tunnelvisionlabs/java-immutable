@@ -321,7 +321,7 @@ These members of `ImmutableList<T>` have no equivalent mapping in the Java progr
 | `FindIndex(Predicate<T>)` | `findIndex(Predicate<? super T>)` | &check; |
 | `FindIndex(int, Predicate<T>)` | `findIndex(int, Predicate<? super T>)` | &check; |
 | `FindIndex(int start, int length, Predicate<T>)` | `findIndex(int fromIndex, int toIndex, Predicate<? super T>)` | &check; 1 |
-| `FindLast(Predicate<T>)` | `findLast(Predicate<? super T>)` | |
+| `FindLast(Predicate<T>)` | `findLast(Predicate<? super T>)` | &check; |
 | `FindLastIndex(Predicate<T>)` | `findLastIndex(Predicate<? super T>)` | &check; |
 | `FindLastIndex(int, Predicate<T>)` | `findLastIndex(int, Predicate<? super T>)` | &check; |
 | `FindLastIndex(int start, int length, Predicate<T>)` | `findLastIndex(int fromIndex, int toIndex, Predicate<? super T>)` | &check; 1 |
