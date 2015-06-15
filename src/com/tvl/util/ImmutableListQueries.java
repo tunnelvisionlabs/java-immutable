@@ -113,9 +113,30 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      */
     int findLastIndex(Predicate<? super T> match);
 
-    int findLastIndex(int startIndex, Predicate<? super T> match);
+    /**
+     * Searches for an element that matches the conditions defined by the specified predicate, and returns the
+     * zero-based index of the last occurrence within the range of elements that extends from the specified index to the
+     * last element.
+     *
+     * @param fromIndex The index of the first element (inclusive) to be searched.
+     * @param match The {@link Predicate} that defines the conditions of the elements to search for.
+     * @return The zero-based index of the last element that matches the conditions defined by {@code match}, if found;
+     * otherwise, -1.
+     */
+    int findLastIndex(int fromIndex, Predicate<? super T> match);
 
-    int findLastIndex(int startIndex, int count, Predicate<? super T> match);
+    /**
+     * Searches for an element that matches the conditions defined by the specified predicate, and returns the
+     * zero-based index of the last occurrence within the range of elements that extends from {@code startIndex} through
+     * (but not including) {@code toIndex}.
+     *
+     * @param fromIndex The index of the first element (inclusive) to be searched.
+     * @param toIndex The index of the last element (exclusive) to be searched.
+     * @param match The {@link Predicate} that defines the conditions of the elements to search for.
+     * @return The zero-based index of the last element that matches the conditions defined by {@code match}, if found;
+     * otherwise, -1.
+     */
+    int findLastIndex(int fromIndex, int toIndex, Predicate<? super T> match);
 
     /**
      * Determines whether every element in the {@link ImmutableList} matches the conditions defined by the specified

@@ -532,24 +532,24 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * {@inheritDoc}
      */
     @Override
-    public int findLastIndex(int startIndex, Predicate<? super T> match) {
+    public int findLastIndex(int fromIndex, Predicate<? super T> match) {
         Requires.notNull(match, "match");
-        Requires.range(startIndex >= 0, "startIndex");
-        Requires.range(startIndex == 0 || startIndex < size(), "startIndex");
-        return root.findLastIndex(startIndex, match);
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+
+        return root.findLastIndex(fromIndex, match);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int findLastIndex(int startIndex, int count, Predicate<? super T> match) {
+    public int findLastIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
         Requires.notNull(match, "match");
-        Requires.range(startIndex >= 0, "startIndex");
-        Requires.range(count <= size(), "count");
-        Requires.range(startIndex - count + 1 >= 0, "startIndex");
+        Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+        Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+        Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
 
-        return root.findLastIndex(startIndex, count, match);
+        return root.findLastIndex(fromIndex, toIndex, match);
     }
 
     /**
@@ -1027,16 +1027,45 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        /**
+         * Searches for an element that matches the conditions defined by the specified predicate, and returns the
+         * zero-based index of the last occurrence within the entire immutable list.
+         *
+         * @param match The {@link Predicate} that defines the conditions of the elements to search for.
+         * @return The zero-based index of the last element that matches the conditions defined by {@code match}, if
+         * found; otherwise, -1.
+         */
         public int findLastIndex(Predicate<? super T> match) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return root.findLastIndex(match);
         }
 
-        public int findLastIndex(int startIndex, Predicate<? super T> match) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * Searches for an element that matches the conditions defined by the specified predicate, and returns the
+         * zero-based index of the last occurrence within the range of elements that extends from the specified index to
+         * the last element.
+         *
+         * @param fromIndex The index of the first element (inclusive) to be searched.
+         * @param match The {@link Predicate} that defines the conditions of the elements to search for.
+         * @return The zero-based index of the last element that matches the conditions defined by {@code match}, if
+         * found; otherwise, -1.
+         */
+        public int findLastIndex(int fromIndex, Predicate<? super T> match) {
+            return root.findLastIndex(fromIndex, match);
         }
 
-        public int findLastIndex(int startIndex, int count, Predicate<? super T> match) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        /**
+         * Searches for an element that matches the conditions defined by the specified predicate, and returns the
+         * zero-based index of the last occurrence within the range of elements that extends from {@code startIndex}
+         * through (but not including) {@code toIndex}.
+         *
+         * @param fromIndex The index of the first element (inclusive) to be searched.
+         * @param toIndex The index of the last element (exclusive) to be searched.
+         * @param match The {@link Predicate} that defines the conditions of the elements to search for.
+         * @return The zero-based index of the last element that matches the conditions defined by {@code match}, if
+         * found; otherwise, -1.
+         */
+        public int findLastIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
+            return root.findLastIndex(fromIndex, toIndex, match);
         }
 
         public int indexOf(T item, int index) {
@@ -1451,16 +1480,16 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public int findLastIndex(int startIndex, Predicate<? super T> match) {
-                return Builder.this.findLastIndex(startIndex, match);
+            public int findLastIndex(int fromIndex, Predicate<? super T> match) {
+                return Builder.this.findLastIndex(fromIndex, match);
             }
 
             /**
              * {@inheritDoc}
              */
             @Override
-            public int findLastIndex(int startIndex, int count, Predicate<? super T> match) {
-                return Builder.this.findLastIndex(startIndex, count, match);
+            public int findLastIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
+                return Builder.this.findLastIndex(fromIndex, toIndex, match);
             }
 
             /**
@@ -2118,34 +2147,28 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
 
         int findLastIndex(Predicate<? super T> match) {
             Requires.notNull(match, "match");
+            return findLastIndex(0, size(), match);
+        }
 
-            if (isEmpty()) {
+        int findLastIndex(int fromIndex, Predicate<? super T> match) {
+            Requires.notNull(match, "match");
+            Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+
+            return findLastIndex(fromIndex, size(), match);
+        }
+
+        int findLastIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
+            Requires.notNull(match, "match");
+            Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
+            Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
+            Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
+
+            if (fromIndex == toIndex) {
                 return -1;
             }
 
-            return findLastIndex(size() - 1, size(), match);
-        }
-
-        int findLastIndex(int startIndex, Predicate<? super T> match) {
-            Requires.notNull(match, "match");
-            Requires.range(startIndex >= 0, "startIndex");
-            Requires.range(startIndex == 0 || startIndex < size(), "startIndex");
-
-            if (isEmpty()) {
-                return -1;
-            }
-
-            return findLastIndex(startIndex, startIndex + 1, match);
-        }
-
-        int findLastIndex(int startIndex, int count, Predicate<? super T> match) {
-            Requires.notNull(match, "match");
-            Requires.range(startIndex >= 0, "startIndex");
-            Requires.range(count <= size(), "count");
-            Requires.argument(startIndex - count + 1 >= 0);
-
-            Iterator<T> iterator = new Itr<T>(this, null, startIndex, count, true);
-            int index = startIndex;
+            Iterator<T> iterator = new Itr<T>(this, null, toIndex - 1, toIndex - fromIndex, true);
+            int index = toIndex - 1;
             while (iterator.hasNext()) {
                 if (match.test(iterator.next())) {
                     return index;
