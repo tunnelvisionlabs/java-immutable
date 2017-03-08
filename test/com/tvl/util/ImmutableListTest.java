@@ -2,18 +2,17 @@
 package com.tvl.util;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.tvl.util.function.BiFunction;
 import com.tvl.util.function.Function;
 import com.tvl.util.function.Predicate;
-import org.junit.Assert;
-import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.ListIterator;
 import java.util.Random;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class ImmutableListTest extends ImmutableListTestBase {
     private enum Operation
