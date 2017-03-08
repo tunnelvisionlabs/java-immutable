@@ -11,15 +11,15 @@ import java.util.List;
 import org.junit.Assert;
 
 public class IndexOfTests {
-    interface TriFunction<T, U, V, R> {
+    public interface TriFunction<T, U, V, R> {
         R apply(T t, U u, V v);
     }
 
-    interface QuadFunction<T, U, V, W, R> {
+    public interface QuadFunction<T, U, V, W, R> {
         R apply(T t, U u, V v, W w);
     }
 
-    interface PentFunction<T, U, V, W, X, R> {
+    public interface PentFunction<T, U, V, W, X, R> {
         R apply(T t, U u, V v, W w, X x);
     }
 
