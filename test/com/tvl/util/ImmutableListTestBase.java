@@ -4,14 +4,14 @@ package com.tvl.util;
 import com.google.common.collect.Iterables;
 import com.tvl.util.function.Function;
 import com.tvl.util.function.Predicate;
-import org.junit.Assert;
-import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.junit.Assert;
+import org.junit.Test;
 
 public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestBase {
     abstract <T> ImmutableListQueries<T> getListQuery(ImmutableTreeList<T> list);
