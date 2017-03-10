@@ -16,3 +16,11 @@ coverage:
       default:
         # only report patch commit status for pull requests
         only_pulls: true
+
+flags:
+  production:
+    paths:
+      - src/
+  test:
+    paths:
+      - test/
