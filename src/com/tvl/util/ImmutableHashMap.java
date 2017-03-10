@@ -267,6 +267,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return size() == 0;
     }
 
+    @Override
     public EqualityComparator<? super K> getKeyComparator() {
         return comparators.getKeyComparator();
     }
@@ -1146,6 +1147,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         /**
          * {@inheritDoc}
          */
+        @Override
         public Iterator<Map.Entry<K, V>> iterator() {
             return new Itr();
         }

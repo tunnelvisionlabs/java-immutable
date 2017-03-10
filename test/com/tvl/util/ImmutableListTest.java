@@ -1002,10 +1002,12 @@ public class ImmutableListTest extends ImmutableListTestBase {
     }
 
     private static class NameOnlyEqualityComparator implements EqualityComparator<Person> {
+        @Override
         public boolean equals(Person x, Person y) {
             return EqualityComparators.defaultComparator().equals(x.getName(), y.getName());
         }
 
+        @Override
         public int hashCode(Person obj) {
             return obj.getName().hashCode();
         }
