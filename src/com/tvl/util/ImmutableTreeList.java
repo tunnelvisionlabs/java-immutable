@@ -1151,8 +1151,6 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
 
         /**
          * Reverses the order of the elements in the list.
-         *
-         * @return The reversed list.
          */
         public void reverse() {
             reverse(0, size());
@@ -1163,7 +1161,6 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          *
          * @param fromIndex The index of the first element (inclusive) to be reversed.
          * @param toIndex The index of the last element (exclusive) to be reversed.
-         * @return The reversed list.
          */
         public void reverse(int fromIndex, int toIndex) {
             Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
