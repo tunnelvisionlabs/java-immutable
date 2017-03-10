@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.org/tunnelvisionlabs/java-immutable.svg?branch=master)](https://travis-ci.org/tunnelvisionlabs/java-immutable)
 
+[![codecov](https://codecov.io/gh/tunnelvisionlabs/java-immutable/branch/master/graph/badge.svg)](https://codecov.io/gh/tunnelvisionlabs/java-immutable)
+
 This project is a complete port¹ of the [System.Collections.Immutable][1] assembly to support Java 6 and newer. An
 overview of the API mapping from .NET to Java is available in [API.md][2].
 
