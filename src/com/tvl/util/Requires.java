@@ -6,13 +6,8 @@ package com.tvl.util;
  *
  * These methods are used for argument validation throughout the immutable collections library.
  */
-final class Requires {
-
-    /**
-     * Prevents an instance of {@link Requires} from being created.
-     */
-    private Requires() {
-    }
+enum Requires {
+    ;
 
     /**
      * Throws an exception if an argument is {@code null}.

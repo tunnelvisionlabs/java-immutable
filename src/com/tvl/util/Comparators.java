@@ -3,7 +3,8 @@ package com.tvl.util;
 
 import java.util.Comparator;
 
-final class Comparators {
+enum Comparators {
+    ;
 
     static <T extends Comparable<T>> Comparator<T> defaultComparator() {
         @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
