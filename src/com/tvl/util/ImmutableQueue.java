@@ -38,7 +38,7 @@ public interface ImmutableQueue<T> extends Iterable<T> {
      * @param value The element to add to the queue.
      * @return The new queue.
      */
-    ImmutableQueue<T> enqueue(T value);
+    ImmutableQueue<T> add(T value);
 
     /**
      * Returns a queue that is missing the front element.
@@ -46,6 +46,6 @@ public interface ImmutableQueue<T> extends Iterable<T> {
      * @return The new queue; never {@code null}.
      * @throws EmptyStackException if the queue is empty.
      */
-    ImmutableQueue<T> dequeue();
+    ImmutableQueue<T> poll();
 
 }

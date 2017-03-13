@@ -13,15 +13,15 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 
 public class ImmutableLinkedQueueTest extends SimpleElementImmutablesTestBase {
 
-    private <T> void enqueueDequeueTestHelper(T... items) {
+    private <T> void addPollTestHelper(T... items) {
         assert items != null;
 
         ImmutableLinkedQueue<T> queue = ImmutableLinkedQueue.<T>empty();
         int i = 0;
         for (T item : items) {
-            ImmutableLinkedQueue<T> nextQueue = queue.enqueue(item);
-            Assert.assertNotSame(queue, nextQueue); //, "Enqueue returned this instead of a new instance.");
-            Assert.assertEquals(i, Iterables.size(queue)); //, "Enqueue mutated the queue.");
+            ImmutableLinkedQueue<T> nextQueue = queue.add(item);
+            Assert.assertNotSame(queue, nextQueue); //, "Add returned this instead of a new instance.");
+            Assert.assertEquals(i, Iterables.size(queue)); //, "Add mutated the queue.");
             Assert.assertEquals(++i, Iterables.size(nextQueue));
             queue = nextQueue;
         }
@@ -40,8 +40,8 @@ public class ImmutableLinkedQueueTest extends SimpleElementImmutablesTestBase {
         for (T expectedItem : items) {
             T actualItem = queue.peek();
             Assert.assertSame(expectedItem, actualItem);
-            ImmutableLinkedQueue<T> nextQueue = queue.dequeue();
-            Assert.assertNotSame(queue, nextQueue); //, "Dequeue returned this instead of a new instance.");
+            ImmutableLinkedQueue<T> nextQueue = queue.poll();
+            Assert.assertNotSame(queue, nextQueue); //, "Poll returned this instead of a new instance.");
             Assert.assertEquals(i, Iterables.size(queue));
             Assert.assertEquals(--i, Iterables.size(nextQueue));
             queue = nextQueue;
@@ -53,24 +53,24 @@ public class ImmutableLinkedQueueTest extends SimpleElementImmutablesTestBase {
         ImmutableLinkedQueue<Integer> queue = ImmutableLinkedQueue.<Integer>empty();
 
         // Push elements onto the backwards stack.
-        queue = queue.enqueue(1).enqueue(2).enqueue(3);
+        queue = queue.add(1).add(2).add(3);
         Assert.assertEquals(1, (int)queue.peek());
 
         // Force the backwards stack to be reversed and put into forwards.
-        queue = queue.dequeue();
+        queue = queue.poll();
 
         // Push elements onto the backwards stack again.
-        queue = queue.enqueue(4).enqueue(5);
+        queue = queue.add(4).add(5);
 
             // Now that we have some elements on the forwards and backwards stack,
         // 1. enumerate all elements to verify order.
         assertEqualSequences(Arrays.asList(2, 3, 4, 5), queue);
 
-        // 2. dequeue all elements to verify order
+        // 2. poll all elements to verify order
         int[] actual = new int[Iterables.size(queue)];
         for (int i = 0; i < actual.length; i++) {
             actual[i] = queue.peek();
-            queue = queue.dequeue();
+            queue = queue.poll();
         }
     }
 
@@ -86,31 +86,31 @@ public class ImmutableLinkedQueueTest extends SimpleElementImmutablesTestBase {
     }
 
     @Test
-    public void enqueueDequeueTest() {
-        this.enqueueDequeueTestHelper(new GenericParameterHelper(1), new GenericParameterHelper(2), new GenericParameterHelper(3));
-        this.<GenericParameterHelper>enqueueDequeueTestHelper();
+    public void addPollTest() {
+        this.addPollTestHelper(new GenericParameterHelper(1), new GenericParameterHelper(2), new GenericParameterHelper(3));
+        this.<GenericParameterHelper>addPollTestHelper();
 
         // interface test
         ImmutableQueue<GenericParameterHelper> queueInterface = ImmutableLinkedQueue.<GenericParameterHelper>create();
-        ImmutableQueue<GenericParameterHelper> populatedQueueInterface = queueInterface.enqueue(new GenericParameterHelper(5));
+        ImmutableQueue<GenericParameterHelper> populatedQueueInterface = queueInterface.add(new GenericParameterHelper(5));
         Assert.assertEquals(new GenericParameterHelper(5), populatedQueueInterface.peek());
     }
 
     @Test
-    public void dequeueOutValue() {
-        ImmutableLinkedQueue<Integer> queue = ImmutableLinkedQueue.<Integer>empty().enqueue(5).enqueue(6);
+    public void pollOutValue() {
+        ImmutableLinkedQueue<Integer> queue = ImmutableLinkedQueue.<Integer>empty().add(5).add(6);
         int head = queue.peek();
-        queue = queue.dequeue();
+        queue = queue.poll();
         Assert.assertEquals(5, head);
         head = queue.peek();
-        ImmutableLinkedQueue<Integer> emptyQueue = queue.dequeue();
+        ImmutableLinkedQueue<Integer> emptyQueue = queue.poll();
         Assert.assertEquals(6, head);
         Assert.assertTrue(emptyQueue.isEmpty());
 
         // Also check that the interface extension method works.
         ImmutableQueue<Integer> interfaceQueue = queue;
         head = interfaceQueue.peek();
-        Assert.assertSame(emptyQueue, interfaceQueue.dequeue());
+        Assert.assertSame(emptyQueue, interfaceQueue.poll());
         Assert.assertEquals(6, head);
     }
 
@@ -118,7 +118,7 @@ public class ImmutableLinkedQueueTest extends SimpleElementImmutablesTestBase {
     public void clearTest() {
         ImmutableLinkedQueue<GenericParameterHelper> emptyQueue = ImmutableLinkedQueue.<GenericParameterHelper>create();
         Assert.assertSame(emptyQueue, emptyQueue.clear());
-        ImmutableLinkedQueue<GenericParameterHelper> nonEmptyQueue = emptyQueue.enqueue(new GenericParameterHelper(3));
+        ImmutableLinkedQueue<GenericParameterHelper> nonEmptyQueue = emptyQueue.add(new GenericParameterHelper(3));
         Assert.assertSame(emptyQueue, nonEmptyQueue.clear());
 
         // Interface test
@@ -132,13 +132,13 @@ public class ImmutableLinkedQueueTest extends SimpleElementImmutablesTestBase {
         Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().equals(null));
         Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().equals("hi"));
         Assert.assertTrue(ImmutableLinkedQueue.<Integer>empty().equals(ImmutableLinkedQueue.<Integer>empty()));
-        Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().enqueue(3).equals(ImmutableLinkedQueue.<Integer>empty().enqueue(3)));
-        Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().enqueue(5).equals(ImmutableLinkedQueue.<Integer>empty().enqueue(3)));
-        Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().enqueue(3).enqueue(5).equals(ImmutableLinkedQueue.<Integer>empty().enqueue(3)));
-        Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().enqueue(3).equals(ImmutableLinkedQueue.<Integer>empty().enqueue(3).enqueue(5)));
+        Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().add(3).equals(ImmutableLinkedQueue.<Integer>empty().add(3)));
+        Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().add(5).equals(ImmutableLinkedQueue.<Integer>empty().add(3)));
+        Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().add(3).add(5).equals(ImmutableLinkedQueue.<Integer>empty().add(3)));
+        Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().add(3).equals(ImmutableLinkedQueue.<Integer>empty().add(3).add(5)));
 
-        // Also be sure to compare equality of partially dequeued queues since that moves data to different fields.
-        Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().enqueue(3).enqueue(1).enqueue(2).dequeue().equals(ImmutableLinkedQueue.<Integer>empty().enqueue(1).enqueue(2)));
+        // Also be sure to compare equality of partially polled queues since that moves data to different fields.
+        Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().add(3).add(1).add(2).poll().equals(ImmutableLinkedQueue.<Integer>empty().add(1).add(2)));
     }
 
     @Test
@@ -148,9 +148,9 @@ public class ImmutableLinkedQueueTest extends SimpleElementImmutablesTestBase {
     }
 
     @Test
-    public void dequeueEmptyThrows() {
+    public void pollEmptyThrows() {
         thrown.expect(instanceOf(EmptyStackException.class));
-        ImmutableLinkedQueue.<GenericParameterHelper>empty().dequeue();
+        ImmutableLinkedQueue.<GenericParameterHelper>empty().poll();
     }
 
     @Test
@@ -193,7 +193,7 @@ public class ImmutableLinkedQueueTest extends SimpleElementImmutablesTestBase {
     protected <T> Iterable<T> getIterableOf(T... contents) {
         ImmutableLinkedQueue<T> queue = ImmutableLinkedQueue.<T>empty();
         for (T item : contents) {
-            queue = queue.enqueue(item);
+            queue = queue.add(item);
         }
 
         return queue;
