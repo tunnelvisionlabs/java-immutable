@@ -15,8 +15,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class ImmutableListTest extends ImmutableListTestBase {
-    private enum Operation
-    {
+    private enum Operation {
         ADD,
         ADD_RANGE,
         INSERT,
@@ -297,7 +296,6 @@ public class ImmutableListTest extends ImmutableListTestBase {
         list = list.addAll(2, Arrays.asList(new Integer[0]));
         assertEqualSequences(new Range(1, 5), list);
 
-
         try {
             list.addAll(6, Collections.singletonList(1));
             Assert.fail();
@@ -547,8 +545,7 @@ public class ImmutableListTest extends ImmutableListTestBase {
                 public Integer apply(ImmutableTreeList<Integer> b, Integer v, Integer i, Integer c, EqualityComparator<? super Integer> eq) {
                     return b.indexOf(v, i, i + c, eq);
                 }
-            }
-        );
+            });
         IndexOfTests.indexOfTest(
             new Function<Iterable<Integer>, AbstractImmutableList<Integer>>() {
                 @Override
@@ -579,8 +576,7 @@ public class ImmutableListTest extends ImmutableListTestBase {
                 public Integer apply(AbstractImmutableList<Integer> b, Integer v, Integer i, Integer c, EqualityComparator<? super Integer> eq) {
                     return b.indexOf(v, i, i + c, eq);
                 }
-            }
-        );
+            });
     }
 
     @Test
@@ -621,8 +617,7 @@ public class ImmutableListTest extends ImmutableListTestBase {
                 public Integer apply(ImmutableTreeList<Integer> b, Integer v, Integer f, Integer t, EqualityComparator<? super Integer> eq) {
                     return b.lastIndexOf(v, f, t, eq);
                 }
-            }
-        );
+            });
         IndexOfTests.lastIndexOfTest(
             new Function<Iterable<Integer>, AbstractImmutableList<Integer>>() {
                 @Override
@@ -659,8 +654,7 @@ public class ImmutableListTest extends ImmutableListTestBase {
                 public Integer apply(AbstractImmutableList<Integer> b, Integer v, Integer f, Integer t, EqualityComparator<? super Integer> eq) {
                     return b.lastIndexOf(v, f, t, eq);
                 }
-            }
-        );
+            });
     }
 
     @Test

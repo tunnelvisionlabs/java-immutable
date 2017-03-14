@@ -82,8 +82,7 @@ public abstract class ImmutablesTestBase {
             double input;
             do {
                 input = random.nextDouble();
-            }
-            while (!ensureUniqueness.add(input));
+            } while (!ensureUniqueness.add(input));
             inputs[i] = input;
         }
 
