@@ -30,5 +30,6 @@ Any value defined here will override the pom.xml file value but is only applicab
         <org-netbeans-modules-editor-indent.CodeStyle.usedProfile>project</org-netbeans-modules-editor-indent.CodeStyle.usedProfile>
         <org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.importGroupsOrder>*;static *</org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.importGroupsOrder>
         <org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.separateStaticImports>true</org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.separateStaticImports>
+        <org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.spaceAfterTypeCast>false</org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.spaceAfterTypeCast>
     </properties>
 </project-shared-configuration>
