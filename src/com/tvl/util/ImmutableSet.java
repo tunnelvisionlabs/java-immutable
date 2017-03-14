@@ -44,6 +44,19 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
     ImmutableSet<T> remove(T value);
 
     /**
+     * Searches the set for a given value and returns the equal value it finds, if any.
+     *
+     * <p>
+     * This can be useful when you want to reuse a previously stored reference instead of a newly constructed one (so
+     * that more sharing of references can occur) or to look up a value that has more complete data than the value you
+     * currently have, although their comparator functions indicate they are equal.</p>
+     *
+     * @param equalValue The value to search for.
+     * @return The value from the set that the search found, or {@code null} if the search yielded no match.
+     */
+    T tryGetValue(T equalValue);
+
+    /**
      * Produces a set that contains elements that exist in both this set and the specified sequence.
      *
      * @param other The set to intersect with this one.
@@ -81,7 +94,7 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      * @param other The sequence of items to check against this set.
      * @return {@code true} if the sets are equal; otherwise, {@code false}.
      */
-    ImmutableSet<T> setEquals(Iterable<? extends T> other);
+    boolean setEquals(Iterable<? extends T> other);
 
     /**
      * Determines whether the current set is a proper subset of a specified collection.

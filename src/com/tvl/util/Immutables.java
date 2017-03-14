@@ -2,6 +2,7 @@
 package com.tvl.util;
 
 import java.util.Collection;
+import java.util.Comparator;
 
 /**
  * Provides static utility methods for working with immutable collection instances.
@@ -29,6 +30,39 @@ public enum Immutables {
      */
     public static <T> ImmutableTreeList<T> toImmutableTreeList(Iterable<T> source) {
         return ImmutableTreeList.createAll(source);
+    }
+
+    /**
+     * Iterates a sequence exactly once and produces an immutable set of its contents.
+     *
+     * @param <T> The type of element in the sequence.
+     * @param source The sequence to iterate.
+     * @param comparator The comparator to use for initializing and adding members to the sorted set.
+     * @return An immutable set.
+     */
+    public static <T> ImmutableTreeSet<T> toImmutableTreeSet(Iterable<? extends T> source, Comparator<? super T> comparator) {
+        if (source instanceof ImmutableTreeSet<?>) {
+            ImmutableTreeSet<? extends T> existingSet = (ImmutableTreeSet<? extends T>)source;
+
+            // This cast is safe because we know the new comparator will accept T as an argument.
+            @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
+            ImmutableTreeSet<T> upcastSet = (ImmutableTreeSet<T>)existingSet;
+
+            return upcastSet.withComparator(comparator);
+        }
+
+        return ImmutableTreeSet.<T>empty().withComparator(comparator).union(source);
+    }
+
+    /**
+     * Iterates a sequence exactly once and produces an immutable set of its contents.
+     *
+     * @param <T> The type of element in the sequence.
+     * @param source The sequence to iterate.
+     * @return An immutable set.
+     */
+    public static <T> ImmutableTreeSet<T> toImmutableTreeSet(Iterable<? extends T> source) {
+        return toImmutableTreeSet(source, null);
     }
 
     static <T> ImmutableArrayList<T> asImmutableArrayList(Iterable<T> source) {
