@@ -363,6 +363,49 @@ These members of `ImmutableList<T>.Builder` have no equivalent mapping in the Ja
 | `Sort(Comparison<T>)` | Use `sort(Comparator<? super T>` instead. |
 | `ForEach(Action<T>)` | Use enhanced `for` loop instead. |
 
+## `ImmutableQueue<T>` &rarr; `ImmutableLinkedQueue<T>`
+
+### Factory
+
+#### `ImmutableQueue` &rarr; `ImmutableLinkedQueue<T>`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `Create<T>()` | `<T>create()` | &check; |
+| `Create<T>(T)` | `<T>create(T)` | &check; |
+| `CreateRange<T>(IEnumerable<T>)` | `<T>createAll(Iterable<? extends T>)` | &check; |
+| `Create<T>(params T[])` | `<T>create(T...)` | &check; |
+
+#### `ImmutableQueue` &rarr; No mapping
+
+These members of `ImmutableQueue` have no equivalent mapping in the Java programming language.
+
+| .NET Member | Notes |
+| --- | --- |
+| `Dequeue<T>(IImmutableQueue<T>, out T)` | Java does not support `out` parameters |
+
+### Collection
+
+#### `ImmutableQueue<T>` &rarr; `ImmutableLinkedQueue<T>`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `Clear()` | `clear()` | &check; |
+| `IsEmpty` | `isEmpty()` | &check; |
+| `Empty` | `<T>empty()` | &check; |
+| `Peek()` | `peek()` | &check; |
+| `Enqueue(T)` | `add(T)` | &check; |
+| `Dequeue()` | `poll()` | &check; |
+| `GetEnumerator()` | `iterator()` | &check; |
+
+#### `ImmutableQueue<T>` &rarr; No mapping
+
+These members of `ImmutableQueue<T>` have no equivalent mapping in the Java programming language.
+
+| .NET Member | Notes |
+| --- | --- |
+| `Dequeue(out T)` | Java does not support `out` parameters |
+
 ## Footnotes
 
 &check; The API is implemented and documented as described.
