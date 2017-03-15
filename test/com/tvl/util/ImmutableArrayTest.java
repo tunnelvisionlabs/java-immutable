@@ -432,7 +432,7 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
 
     @Test
     public void createFromArray() {
-        Integer[] source = {1, 2, 3};
+        Integer[] source = { 1, 2, 3 };
         ImmutableArrayList<Integer> immutable = ImmutableArrayList.create(source);
         assertEqualSequences(Arrays.asList(source), immutable);
     }
@@ -529,7 +529,7 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
 
     @Test
     public void castUpArrayToObject() {
-        ImmutableArrayList<int[]> arrayArray = ImmutableArrayList.create(new int[]{1, 2}, new int[]{3, 4});
+        ImmutableArrayList<int[]> arrayArray = ImmutableArrayList.create(new int[] { 1, 2 }, new int[] { 3, 4 });
         ImmutableArrayList<Object> sysArray = ImmutableArrayList.<Object>castUp(arrayArray);
         Assert.assertEquals(2, sysArray.size());
         Assert.assertSame(arrayArray, sysArray.as(int[].class));
@@ -769,7 +769,7 @@ public class ImmutableArrayTest extends SimpleElementImmutablesTestBase {
 
     @Test
     public void add() {
-        Integer[] source = {1, 2};
+        Integer[] source = { 1, 2 };
         ImmutableArrayList<Integer> array1 = ImmutableArrayList.create(source);
         ImmutableArrayList<Integer> array2 = array1.add(3);
         assertEqualSequences(Arrays.asList(source), array1);

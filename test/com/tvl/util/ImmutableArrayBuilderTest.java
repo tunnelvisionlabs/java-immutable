@@ -192,8 +192,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
                 public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer i, Integer c, EqualityComparator<? super Integer> eq) {
                     return b.indexOf(v, i, c, eq);
                 }
-            }
-        );
+            });
     }
 
     @Test
@@ -235,8 +234,7 @@ public class ImmutableArrayBuilderTest extends SimpleElementImmutablesTestBase {
                 public Integer apply(ImmutableArrayList.Builder<Integer> b, Integer v, Integer f, Integer t, EqualityComparator<? super Integer> eq) {
                     return b.lastIndexOf(v, f, t, eq);
                 }
-            }
-        );
+            });
     }
 
     @Test

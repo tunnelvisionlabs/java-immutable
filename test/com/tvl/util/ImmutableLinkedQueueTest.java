@@ -62,7 +62,7 @@ public class ImmutableLinkedQueueTest extends SimpleElementImmutablesTestBase {
         // Push elements onto the backwards stack again.
         queue = queue.add(4).add(5);
 
-            // Now that we have some elements on the forwards and backwards stack,
+        // Now that we have some elements on the forwards and backwards stack,
         // 1. enumerate all elements to verify order.
         assertEqualSequences(Arrays.asList(2, 3, 4, 5), queue);
 
@@ -127,7 +127,7 @@ public class ImmutableLinkedQueueTest extends SimpleElementImmutablesTestBase {
     }
 
     @Test
-    @SuppressWarnings({"ObjectEqualsNull", "IncompatibleEquals"})
+    @SuppressWarnings({ "ObjectEqualsNull", "IncompatibleEquals" })
     public void equalsTest() {
         Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().equals(null));
         Assert.assertFalse(ImmutableLinkedQueue.<Integer>empty().equals("hi"));

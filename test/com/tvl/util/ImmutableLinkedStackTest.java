@@ -170,7 +170,7 @@ public class ImmutableLinkedStackTest extends SimpleElementImmutablesTestBase {
     }
 
     @Test
-    @SuppressWarnings({"ObjectEqualsNull", "IncompatibleEquals"})
+    @SuppressWarnings({ "ObjectEqualsNull", "IncompatibleEquals" })
     public void equalityTest() {
         Assert.assertFalse(ImmutableLinkedStack.<Integer>empty().equals(null));
         Assert.assertFalse(ImmutableLinkedStack.<Integer>empty().equals("hi"));

@@ -896,11 +896,9 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
         Requires.notNull(equalityComparator, "equalityComparator");
 
         SortedSet<Integer> indexesToRemove = new TreeSet<Integer>();
-        for (T item : items)
-        {
+        for (T item : items) {
             int index = indexOf(item, 0, equalityComparator);
-            while (index >= 0 && !indexesToRemove.add(index) && index + 1 < size())
-            {
+            while (index >= 0 && !indexesToRemove.add(index) && index + 1 < size()) {
                 // This is a duplicate of one we've found. Try hard to find another instance in the list to remove.
                 index = indexOf(item, index + 1, equalityComparator);
             }

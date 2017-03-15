@@ -188,8 +188,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         }
 
         KeyValuePair<HashBucket<K, V>, OperationResult> newBucket = bucket.add(key, value, origin.getKeyOnlyComparator(), origin.getValueComparator(), behavior);
-        if (newBucket.getValue() == OperationResult.NO_CHANGE_REQUIRED)
-        {
+        if (newBucket.getValue() == OperationResult.NO_CHANGE_REQUIRED) {
             return new MutationResult<K, V>(origin);
         }
 
