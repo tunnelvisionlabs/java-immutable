@@ -2,6 +2,7 @@
 package com.tvl.util;
 
 import java.util.Map;
+import javax.annotation.Nonnull;
 
 /**
  * This class provides a general-purpose, read-only implementation of {@link Map.Entry}.
@@ -32,6 +33,7 @@ final class KeyValuePair<K, V> implements Map.Entry<K, V> {
      * @param key The key for the pair.
      * @param value The value for the pair.
      */
+    @Nonnull
     public static <K, V> KeyValuePair<K, V> create(K key, V value) {
         return new KeyValuePair<K, V>(key, value);
     }

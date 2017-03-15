@@ -4,6 +4,9 @@ package com.tvl.util;
 import com.tvl.util.function.Function;
 import com.tvl.util.function.Predicate;
 import java.util.Comparator;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 interface ImmutableListQueries<T> extends ReadOnlyList<T> {
     /**
@@ -13,7 +16,9 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @param converter The conversion function to apply to each element of the list.
      * @return The transformed immutable list.
      */
-    <U> ImmutableList<U> convertAll(Function<? super T, U> converter);
+    @Nonnull
+    @CheckReturnValue
+    <U> ImmutableList<U> convertAll(@Nonnull Function<? super T, U> converter);
 
     /**
      * Creates a new immutable list containing the specified range of elements from the current list.
@@ -22,13 +27,14 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @param toIndex The index of the last element (exclusive) to be included in the sub-list.
      * @return The immutable list.
      */
+    @Nonnull
     ImmutableList<T> subList(int fromIndex, int toIndex);
 
-    void copyTo(T[] array);
+    void copyTo(@Nonnull T[] array);
 
-    void copyTo(T[] array, int arrayIndex);
+    void copyTo(@Nonnull T[] array, int arrayIndex);
 
-    void copyTo(int index, T[] array, int arrayIndex, int count);
+    void copyTo(int index, @Nonnull T[] array, int arrayIndex, int count);
 
     /**
      * Determines whether the {@link ImmutableList} contains elements that match the conditions defined by the specified
@@ -38,7 +44,7 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @return {@code true} if the immutable list contains one or more elements that match the conditions defined by
      * {@code match}; otherwise, {@code false}.
      */
-    boolean exists(Predicate<? super T> match);
+    boolean exists(@Nonnull Predicate<? super T> match);
 
     /**
      * Searches for an element that matches the conditions defined by the specified predicate, and returns the first
@@ -48,7 +54,8 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @return The first element that matches the conditions defined by {@code match}, if found; otherwise,
      * {@code null}.
      */
-    T find(Predicate<? super T> match);
+    @Nullable
+    T find(@Nonnull Predicate<? super T> match);
 
     /**
      * Retrieves all the elements that match the conditions defined by the specified predicate.
@@ -57,7 +64,9 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @return An immutable list containing all the elements that match the conditions defined by {@code match}, if
      * found; otherwise, an empty immutable list.
      */
-    ImmutableList<T> retainIf(Predicate<? super T> match);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableList<T> retainIf(@Nonnull Predicate<? super T> match);
 
     /**
      * Searches for an element that matches the conditions defined by the specified predicate, and returns the
@@ -67,7 +76,7 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @return The zero-based index of the first element that matches the conditions defined by {@code match}, if found;
      * otherwise, -1.
      */
-    int findIndex(Predicate<? super T> match);
+    int findIndex(@Nonnull Predicate<? super T> match);
 
     /**
      * Searches for an element that matches the conditions defined by the specified predicate, and returns the
@@ -79,7 +88,7 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @return The zero-based index of the first element that matches the conditions defined by {@code match}, if found;
      * otherwise, -1.
      */
-    int findIndex(int fromIndex, Predicate<? super T> match);
+    int findIndex(int fromIndex, @Nonnull Predicate<? super T> match);
 
     /**
      * Searches for an element that matches the conditions defined by the specified predicate, and returns the
@@ -92,7 +101,7 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @return The zero-based index of the first element that matches the conditions defined by {@code match}, if found;
      * otherwise, -1.
      */
-    int findIndex(int fromIndex, int toIndex, Predicate<? super T> match);
+    int findIndex(int fromIndex, int toIndex, @Nonnull Predicate<? super T> match);
 
     /**
      * Searches for an element that matches the conditions defined by the specified predicate, and returns the last
@@ -101,7 +110,8 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @param match The {@link Predicate} that defines the conditions of the elements to search for.
      * @return The last element that matches the conditions defined by {@code match}, if found; otherwise, {@code null}.
      */
-    T findLast(Predicate<? super T> match);
+    @Nullable
+    T findLast(@Nonnull Predicate<? super T> match);
 
     /**
      * Searches for an element that matches the conditions defined by the specified predicate, and returns the
@@ -111,7 +121,7 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @return The zero-based index of the last element that matches the conditions defined by {@code match}, if found;
      * otherwise, -1.
      */
-    int findLastIndex(Predicate<? super T> match);
+    int findLastIndex(@Nonnull Predicate<? super T> match);
 
     /**
      * Searches for an element that matches the conditions defined by the specified predicate, and returns the
@@ -123,7 +133,7 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @return The zero-based index of the last element that matches the conditions defined by {@code match}, if found;
      * otherwise, -1.
      */
-    int findLastIndex(int fromIndex, Predicate<? super T> match);
+    int findLastIndex(int fromIndex, @Nonnull Predicate<? super T> match);
 
     /**
      * Searches for an element that matches the conditions defined by the specified predicate, and returns the
@@ -136,7 +146,7 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @return The zero-based index of the last element that matches the conditions defined by {@code match}, if found;
      * otherwise, -1.
      */
-    int findLastIndex(int fromIndex, int toIndex, Predicate<? super T> match);
+    int findLastIndex(int fromIndex, int toIndex, @Nonnull Predicate<? super T> match);
 
     /**
      * Determines whether every element in the {@link ImmutableList} matches the conditions defined by the specified
@@ -146,7 +156,7 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @return {@code true} if every element in the immutable list matches the conditions defined by {@code match};
      * otherwise, {@code false}. If the list is empty, this method returns {@code true}.
      */
-    boolean trueForAll(Predicate<? super T> match);
+    boolean trueForAll(@Nonnull Predicate<? super T> match);
 
     /**
      * Searches an entire one-dimensional sorted immutable list for a specific element, using the default comparator for
@@ -173,7 +183,7 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * {@code item} is greater than all of the elements in the list, a negative number which is the bitwise complement
      * of (the index of the last element plus 1).
      */
-    int binarySearch(T item, Comparator<? super T> comparator);
+    int binarySearch(T item, @Nullable Comparator<? super T> comparator);
 
     /**
      * Searches a range of the specified immutable list for the specified object using the binary search algorithm. The
@@ -198,5 +208,5 @@ interface ImmutableListQueries<T> extends ReadOnlyList<T> {
      * @throws IllegalArgumentException if {@code fromIndex > toIndex}
      * @throws IndexOutOfBoundsException if {@code fromIndex < 0 or toIndex > array.size()}.
      */
-    int binarySearch(int fromIndex, int toIndex, T item, Comparator<? super T> comparator);
+    int binarySearch(int fromIndex, int toIndex, T item, @Nullable Comparator<? super T> comparator);
 }

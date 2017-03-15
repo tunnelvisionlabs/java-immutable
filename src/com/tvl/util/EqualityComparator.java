@@ -1,6 +1,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 package com.tvl.util;
 
+import javax.annotation.Nullable;
+
 /**
  * A comparison interface, which is capable of calculating hash codes for objects and comparing object instances for
  * equality.
@@ -16,7 +18,7 @@ public interface EqualityComparator<T> {
      * @param b The second object, which may be {@code null}.
      * @return {@code true} if {@code a} and {@code b} are equal; otherwise, {@code false}.
      */
-    boolean equals(T a, T b);
+    boolean equals(@Nullable T a, @Nullable T b);
 
     /**
      * Gets the hash code for an object.

@@ -4,6 +4,9 @@ package com.tvl.util;
 import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * An immutable stack backed by a singly-linked list.
@@ -15,6 +18,7 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
     /**
      * The singleton empty stack.
      */
+    @Nonnull
     private static final ImmutableLinkedStack<?> EMPTY_STACK = new ImmutableLinkedStack<Object>();
 
     /**
@@ -25,6 +29,7 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
     /**
      * A stack that contains the rest of the elements (under the top element);
      */
+    @Nullable
     private final ImmutableLinkedStack<T> tail;
 
     /**
@@ -41,7 +46,7 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
      * @param head The head element on the stack.
      * @param tail The rest of the elements on the stack.
      */
-    private ImmutableLinkedStack(T head, ImmutableLinkedStack<T> tail) {
+    private ImmutableLinkedStack(T head, @Nonnull ImmutableLinkedStack<T> tail) {
         Requires.notNull(tail, "tail");
 
         this.head = head;
@@ -54,6 +59,7 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
      * @param <T> The type of items stored by the collection.
      * @return The immutable collection.
      */
+    @Nonnull
     public static <T> ImmutableLinkedStack<T> create() {
         return empty();
     }
@@ -65,6 +71,7 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
      * @param item The item to pre-populate.
      * @return The immutable collection.
      */
+    @Nonnull
     public static <T> ImmutableLinkedStack<T> create(T item) {
         return ImmutableLinkedStack.<T>empty().push(item);
     }
@@ -76,7 +83,8 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
      * @param items The items to pre-populate.
      * @return The immutable collection.
      */
-    public static <T> ImmutableLinkedStack<T> create(T... items) {
+    @Nonnull
+    public static <T> ImmutableLinkedStack<T> create(@Nonnull T... items) {
         Requires.notNull(items, "items");
 
         ImmutableLinkedStack<T> stack = empty();
@@ -94,7 +102,8 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
      * @param items The items to pre-populate.
      * @return The immutable collection.
      */
-    public static <T> ImmutableLinkedStack<T> createAll(Iterable<? extends T> items) {
+    @Nonnull
+    public static <T> ImmutableLinkedStack<T> createAll(@Nonnull Iterable<? extends T> items) {
         Requires.notNull(items, "items");
 
         ImmutableLinkedStack<T> stack = empty();
@@ -111,6 +120,7 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
      * @param <T> The type of element stored by the stack.
      * @return The empty stack.
      */
+    @Nonnull
     public static <T> ImmutableLinkedStack<T> empty() {
         @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableLinkedStack<T> result = (ImmutableLinkedStack<T>)EMPTY_STACK;
@@ -128,6 +138,8 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableLinkedStack<T> clear() {
         return empty();
@@ -136,6 +148,8 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableLinkedStack<T> push(T value) {
         return new ImmutableLinkedStack<T>(value, this);
@@ -144,6 +158,8 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableLinkedStack<T> pop() {
         if (isEmpty()) {
@@ -168,6 +184,7 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public Iterator<T> iterator() {
         return new Itr<T>(this);
@@ -178,6 +195,8 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
      *
      * @return The reversed stack.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableLinkedStack<T> reverse() {
         ImmutableLinkedStack<T> result = clear();
         for (ImmutableLinkedStack<T> f = this; !f.isEmpty(); f = f.pop()) {
@@ -192,6 +211,7 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
         /**
          * The original stack being enumerated.
          */
+        @Nonnull
         private final ImmutableLinkedStack<T> originalStack;
         /**
          * The remaining stack not yet enumerated.
@@ -203,7 +223,7 @@ public final class ImmutableLinkedStack<T> implements ImmutableStack<T> {
          *
          * @param originalStack The stack to enumerate.
          */
-        public Itr(ImmutableLinkedStack<T> originalStack) {
+        public Itr(@Nonnull ImmutableLinkedStack<T> originalStack) {
             this.originalStack = originalStack;
         }
 

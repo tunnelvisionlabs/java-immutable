@@ -1,6 +1,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 package com.tvl.util;
 
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+
 public abstract class AbstractImmutableList<T> implements ImmutableList<T> {
 
     /**
@@ -11,6 +14,8 @@ public abstract class AbstractImmutableList<T> implements ImmutableList<T> {
      * @return The new list, even if the value being replaced is equal to the new value for that position.
      * @throws IllegalArgumentException if the old value does not exist in the list.
      */
+    @Nonnull
+    @CheckReturnValue
     public ImmutableList<T> replace(T oldValue, T newValue) {
         return replace(oldValue, newValue, EqualityComparators.defaultComparator());
     }
@@ -23,6 +28,8 @@ public abstract class AbstractImmutableList<T> implements ImmutableList<T> {
      * @param value The item to remove.
      * @return The new immutable list.
      */
+    @Nonnull
+    @CheckReturnValue
     public ImmutableList<T> remove(T value) {
         return remove(value, EqualityComparators.defaultComparator());
     }
@@ -33,7 +40,9 @@ public abstract class AbstractImmutableList<T> implements ImmutableList<T> {
      * @param items The items to remove if matches are found in this list.
      * @return A new list with the elements removed.
      */
-    public ImmutableList<T> removeAll(Iterable<? extends T> items) {
+    @Nonnull
+    @CheckReturnValue
+    public ImmutableList<T> removeAll(@Nonnull Iterable<? extends T> items) {
         return removeAll(items, EqualityComparators.defaultComparator());
     }
 
@@ -56,7 +65,7 @@ public abstract class AbstractImmutableList<T> implements ImmutableList<T> {
      * @return The zero-based index of the first occurrence of {@code item} within the immutable list, if found;
      * otherwise, -1.
      */
-    public int indexOf(T item, EqualityComparator<? super T> comparator) {
+    public int indexOf(T item, @Nonnull EqualityComparator<? super T> comparator) {
         return indexOf(item, 0, size(), comparator);
     }
 
@@ -111,7 +120,7 @@ public abstract class AbstractImmutableList<T> implements ImmutableList<T> {
      * @return The zero-based index of the last occurrence of {@code item} within the immutable list, if found;
      * otherwise, -1.
      */
-    public int lastIndexOf(T item, EqualityComparator<? super T> comparator) {
+    public int lastIndexOf(T item, @Nonnull EqualityComparator<? super T> comparator) {
         if (isEmpty()) {
             return -1;
         }

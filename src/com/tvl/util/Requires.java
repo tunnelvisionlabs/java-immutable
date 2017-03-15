@@ -1,6 +1,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 package com.tvl.util;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class defines common runtime checks which throw exceptions upon failure.
  *
@@ -17,7 +19,7 @@ enum Requires {
      * @param <T> The type of the parameter.
      * @exception NullPointerException if {@code value} is {@code null}.
      */
-    public static <T> void notNull(T value, String parameterName) {
+    public static <T> void notNull(@Nonnull T value, String parameterName) {
         if (value == null) {
             failNullPointer(parameterName);
         }
@@ -34,7 +36,8 @@ enum Requires {
      * @return This method returns {@code value}.
      * @exception NullPointerException if {@code value} is {@code null}.
      */
-    public static <T> T notNullPassThrough(T value, String parameterName) {
+    @Nonnull
+    public static <T> T notNullPassThrough(@Nonnull T value, String parameterName) {
         notNull(value, parameterName);
         return value;
     }

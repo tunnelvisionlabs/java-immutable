@@ -5,6 +5,8 @@ import com.tvl.util.function.BiFunction;
 import com.tvl.util.function.Function;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Contains atomic exchange mechanisms for immutable collections.
@@ -24,7 +26,7 @@ public enum ImmutableAtomic {
      * function; {@code false} if the location's value remained the same because the last invocation of
      * {@code transformer} returned the existing value.
      */
-    public static <T> boolean update(AtomicReference<T> location, Function<? super T, ? extends T> transformer) {
+    public static <T> boolean update(@Nonnull AtomicReference<T> location, @Nonnull Function<? super T, ? extends T> transformer) {
         Requires.notNull(location, "location");
         Requires.notNull(transformer, "transformer");
 
@@ -57,7 +59,7 @@ public enum ImmutableAtomic {
      * function; {@code false} if the location's value remained the same because the last invocation of
      * {@code transformer} returned the existing value.
      */
-    public static <C, T> boolean update(AtomicReferenceFieldUpdater<? super C, T> updater, C obj, Function<? super T, ? extends T> transformer) {
+    public static <C, T> boolean update(@Nonnull AtomicReferenceFieldUpdater<? super C, T> updater, @Nonnull C obj, @Nonnull Function<? super T, ? extends T> transformer) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
         Requires.notNull(transformer, "transformer");
@@ -91,7 +93,7 @@ public enum ImmutableAtomic {
      * function; {@code false} if the location's value remained the same because the last invocation of
      * {@code transformer} returned the existing value.
      */
-    public static <T, State> boolean update(AtomicReference<T> location, BiFunction<? super T, ? super State, ? extends T> transformer, State transformerArgument) {
+    public static <T, State> boolean update(@Nonnull AtomicReference<T> location, @Nonnull BiFunction<? super T, ? super State, ? extends T> transformer, State transformerArgument) {
         Requires.notNull(transformer, "transformer");
 
         boolean successful;
@@ -125,7 +127,7 @@ public enum ImmutableAtomic {
      * function; {@code false} if the location's value remained the same because the last invocation of
      * {@code transformer} returned the existing value.
      */
-    public static <C, T, State> boolean update(AtomicReferenceFieldUpdater<? super C, T> updater, C obj, BiFunction<? super T, ? super State, ? extends T> transformer, State transformerArgument) {
+    public static <C, T, State> boolean update(@Nonnull AtomicReferenceFieldUpdater<? super C, T> updater, @Nonnull C obj, @Nonnull BiFunction<? super T, ? super State, ? extends T> transformer, State transformerArgument) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
         Requires.notNull(transformer, "transformer");
@@ -159,7 +161,7 @@ public enum ImmutableAtomic {
      * @param factoryArgument The argument to pass to the value factory.
      * @return The value obtained from the dictionary or {@code valueFactory} if it was not present.
      */
-    public static <K, V, State> V getOrAdd(AtomicReference<ImmutableHashMap<K, V>> location, K key, BiFunction<? super K, ? super State, ? extends V> valueFactory, State factoryArgument) {
+    public static <K, V, State> V getOrAdd(@Nonnull AtomicReference<ImmutableHashMap<K, V>> location, K key, @Nonnull BiFunction<? super K, ? super State, ? extends V> valueFactory, State factoryArgument) {
         Requires.notNull(valueFactory, "valueFactory");
 
         ImmutableHashMap<K, V> map = location.get();
@@ -191,7 +193,7 @@ public enum ImmutableAtomic {
      * @param factoryArgument The argument to pass to the value factory.
      * @return The value obtained from the dictionary or {@code valueFactory} if it was not present.
      */
-    public static <C, K, V, State> V getOrAdd(AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, C obj, K key, BiFunction<? super K, ? super State, ? extends V> valueFactory, State factoryArgument) {
+    public static <C, K, V, State> V getOrAdd(@Nonnull AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, @Nonnull C obj, K key, @Nonnull BiFunction<? super K, ? super State, ? extends V> valueFactory, State factoryArgument) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
         Requires.notNull(valueFactory, "valueFactory");
@@ -220,7 +222,7 @@ public enum ImmutableAtomic {
      * found. This delegate will not be invoked more than once.
      * @return The value obtained from the dictionary or {@code valueFactory} if it was not present.
      */
-    public static <K, V> V getOrAdd(AtomicReference<ImmutableHashMap<K, V>> location, K key, Function<? super K, ? extends V> valueFactory) {
+    public static <K, V> V getOrAdd(@Nonnull AtomicReference<ImmutableHashMap<K, V>> location, K key, @Nonnull Function<? super K, ? extends V> valueFactory) {
         Requires.notNull(valueFactory, "valueFactory");
 
         ImmutableHashMap<K, V> map = location.get();
@@ -249,7 +251,7 @@ public enum ImmutableAtomic {
      * found. This delegate will not be invoked more than once.
      * @return The value obtained from the dictionary or {@code valueFactory} if it was not present.
      */
-    public static <C, K, V> V getOrAdd(AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, C obj, K key, Function<? super K, ? extends V> valueFactory) {
+    public static <C, K, V> V getOrAdd(@Nonnull AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, @Nonnull C obj, K key, @Nonnull Function<? super K, ? extends V> valueFactory) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
         Requires.notNull(valueFactory, "valueFactory");
@@ -277,7 +279,7 @@ public enum ImmutableAtomic {
      * @param value The value to add to the dictionary if one is not already present.
      * @return The value obtained from the dictionary or {@code value} if it was not present.
      */
-    public static <K, V> V getOrAdd(AtomicReference<ImmutableHashMap<K, V>> location, K key, V value) {
+    public static <K, V> V getOrAdd(@Nonnull AtomicReference<ImmutableHashMap<K, V>> location, K key, V value) {
         boolean successful;
         do {
             ImmutableHashMap<K, V> priorCollection = location.get();
@@ -311,7 +313,7 @@ public enum ImmutableAtomic {
      * @param value The value to add to the dictionary if one is not already present.
      * @return The value obtained from the dictionary or {@code value} if it was not present.
      */
-    public static <C, K, V> V getOrAdd(AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, C obj, K key, V value) {
+    public static <C, K, V> V getOrAdd(@Nonnull AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, @Nonnull C obj, K key, V value) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
 
@@ -347,7 +349,7 @@ public enum ImmutableAtomic {
      * to update the dictionary.
      * @return The added or updated value.
      */
-    public static <K, V> V addOrUpdate(AtomicReference<ImmutableHashMap<K, V>> location, K key, Function<? super K, ? extends V> addValueFactory, BiFunction<? super K, ? super V, ? extends V> updateValueFactory) {
+    public static <K, V> V addOrUpdate(@Nonnull AtomicReference<ImmutableHashMap<K, V>> location, K key, @Nonnull Function<? super K, ? extends V> addValueFactory, @Nonnull BiFunction<? super K, ? super V, ? extends V> updateValueFactory) {
         Requires.notNull(addValueFactory, "addValueFactory");
         Requires.notNull(updateValueFactory, "updateValueFactory");
 
@@ -388,7 +390,7 @@ public enum ImmutableAtomic {
      * to update the dictionary.
      * @return The added or updated value.
      */
-    public static <C, K, V> V addOrUpdate(AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, C obj, K key, Function<? super K, ? extends V> addValueFactory, BiFunction<? super K, ? super V, ? extends V> updateValueFactory) {
+    public static <C, K, V> V addOrUpdate(@Nonnull AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, @Nonnull C obj, K key, @Nonnull Function<? super K, ? extends V> addValueFactory, @Nonnull BiFunction<? super K, ? super V, ? extends V> updateValueFactory) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
         Requires.notNull(addValueFactory, "addValueFactory");
@@ -427,7 +429,7 @@ public enum ImmutableAtomic {
      * to update the dictionary.
      * @return The added or updated value.
      */
-    public static <K, V> V addOrUpdate(AtomicReference<ImmutableHashMap<K, V>> location, K key, V addValue, BiFunction<? super K, ? super V, ? extends V> updateValueFactory) {
+    public static <K, V> V addOrUpdate(@Nonnull AtomicReference<ImmutableHashMap<K, V>> location, K key, V addValue, @Nonnull BiFunction<? super K, ? super V, ? extends V> updateValueFactory) {
         Requires.notNull(updateValueFactory, "updateValueFactory");
 
         V newValue;
@@ -466,7 +468,7 @@ public enum ImmutableAtomic {
      * to update the dictionary.
      * @return The added or updated value.
      */
-    public static <C, K, V> V addOrUpdate(AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, C obj, K key, V addValue, BiFunction<? super K, ? super V, ? extends V> updateValueFactory) {
+    public static <C, K, V> V addOrUpdate(@Nonnull AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, @Nonnull C obj, K key, V addValue, @Nonnull BiFunction<? super K, ? super V, ? extends V> updateValueFactory) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
         Requires.notNull(updateValueFactory, "updateValueFactory");
@@ -503,7 +505,7 @@ public enum ImmutableAtomic {
      * @return {@code true} if the key was not previously set in the dictionary and the value was set; {@code false}
      * otherwise.
      */
-    public static <K, V> boolean tryAdd(AtomicReference<ImmutableHashMap<K, V>> location, K key, V value) {
+    public static <K, V> boolean tryAdd(@Nonnull AtomicReference<ImmutableHashMap<K, V>> location, K key, V value) {
         boolean successful;
         do {
             ImmutableHashMap<K, V> priorCollection = location.get();
@@ -534,7 +536,7 @@ public enum ImmutableAtomic {
      * @return {@code true} if the key was not previously set in the dictionary and the value was set; {@code false}
      * otherwise.
      */
-    public static <C, K, V> boolean tryAdd(AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, C obj, K key, V value) {
+    public static <C, K, V> boolean tryAdd(@Nonnull AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, @Nonnull C obj, K key, V value) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
 
@@ -566,7 +568,7 @@ public enum ImmutableAtomic {
      * @return {@code true} if the key and comparison value were present in the dictionary and the update was made;
      * {@code false} otherwise.
      */
-    public static <K, V> boolean tryUpdate(AtomicReference<ImmutableHashMap<K, V>> location, K key, V expectValue, V updateValue) {
+    public static <K, V> boolean tryUpdate(@Nonnull AtomicReference<ImmutableHashMap<K, V>> location, K key, V expectValue, V updateValue) {
         boolean successful;
         do {
             ImmutableHashMap<K, V> priorCollection = location.get();
@@ -605,7 +607,7 @@ public enum ImmutableAtomic {
      * @return {@code true} if the key and comparison value were present in the dictionary and the update was made;
      * {@code false} otherwise.
      */
-    public static <C, K, V> boolean tryUpdate(AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, C obj, K key, V expectValue, V updateValue) {
+    public static <C, K, V> boolean tryUpdate(@Nonnull AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, @Nonnull C obj, K key, V expectValue, V updateValue) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
 
@@ -641,7 +643,8 @@ public enum ImmutableAtomic {
      * @param key The key to remove.
      * @return The value from the pre-existing entry, if one exists; otherwise, {@code null}.
      */
-    public static <K, V> V tryRemove(AtomicReference<ImmutableHashMap<K, V>> location, K key) {
+    @Nullable
+    public static <K, V> V tryRemove(@Nonnull AtomicReference<ImmutableHashMap<K, V>> location, K key) {
         while (true) {
             ImmutableHashMap<K, V> priorCollection = location.get();
             Requires.notNull(priorCollection, "location");
@@ -667,7 +670,8 @@ public enum ImmutableAtomic {
      * @param key The key to remove.
      * @return The value from the pre-existing entry, if one exists; otherwise, {@code null}.
      */
-    public static <C, K, V> V tryRemove(AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, C obj, K key) {
+    @Nullable
+    public static <C, K, V> V tryRemove(@Nonnull AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, @Nonnull C obj, K key) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
 
@@ -692,7 +696,8 @@ public enum ImmutableAtomic {
      * @param location The variable or field to atomically update.
      * @return The value popped from the stack, if it was non-empty; otherwise {@code null} if the stack was empty.
      */
-    public static <T> T tryPop(AtomicReference<ImmutableLinkedStack<T>> location) {
+    @Nullable
+    public static <T> T tryPop(@Nonnull AtomicReference<ImmutableLinkedStack<T>> location) {
         while (true) {
             ImmutableLinkedStack<T> priorCollection = location.get();
             Requires.notNull(priorCollection, "location");
@@ -716,7 +721,8 @@ public enum ImmutableAtomic {
      * @param obj The object whose field to update.
      * @return The value popped from the stack, if it was non-empty; otherwise {@code null} if the stack was empty.
      */
-    public static <C, T> T tryPop(AtomicReferenceFieldUpdater<? super C, ImmutableLinkedStack<T>> updater, C obj) {
+    @Nullable
+    public static <C, T> T tryPop(@Nonnull AtomicReferenceFieldUpdater<? super C, ImmutableLinkedStack<T>> updater, @Nonnull C obj) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
 
@@ -741,7 +747,7 @@ public enum ImmutableAtomic {
      * @param location The variable or field to atomically update.
      * @param value The value to push.
      */
-    public static <T> void push(AtomicReference<ImmutableLinkedStack<T>> location, T value) {
+    public static <T> void push(@Nonnull AtomicReference<ImmutableLinkedStack<T>> location, T value) {
         boolean successful;
         do {
             ImmutableLinkedStack<T> priorCollection = location.get();
@@ -760,7 +766,7 @@ public enum ImmutableAtomic {
      * @param obj The object whose field to update.
      * @param value The value to push.
      */
-    public static <C, T> void push(AtomicReferenceFieldUpdater<? super C, ImmutableLinkedStack<T>> updater, C obj, T value) {
+    public static <C, T> void push(@Nonnull AtomicReferenceFieldUpdater<? super C, ImmutableLinkedStack<T>> updater, @Nonnull C obj, T value) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
 
@@ -780,7 +786,8 @@ public enum ImmutableAtomic {
      * @param location The variable or field to atomically update.
      * @return The value from the head of the queue, if the queue is non-empty; otherwise, {@code null}.
      */
-    public static <T> T tryPoll(AtomicReference<ImmutableLinkedQueue<T>> location) {
+    @Nullable
+    public static <T> T tryPoll(@Nonnull AtomicReference<ImmutableLinkedQueue<T>> location) {
         while (true) {
             ImmutableLinkedQueue<T> priorCollection = location.get();
             Requires.notNull(priorCollection, "location");
@@ -804,7 +811,8 @@ public enum ImmutableAtomic {
      * @param obj The object whose field to update.
      * @return The value from the head of the queue, if the queue is non-empty; otherwise, {@code null}.
      */
-    public static <C, T> T tryPoll(AtomicReferenceFieldUpdater<? super C, ImmutableLinkedQueue<T>> updater, C obj) {
+    @Nullable
+    public static <C, T> T tryPoll(@Nonnull AtomicReferenceFieldUpdater<? super C, ImmutableLinkedQueue<T>> updater, @Nonnull C obj) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
 
@@ -829,7 +837,7 @@ public enum ImmutableAtomic {
      * @param location The variable or field to atomically update.
      * @param value The value to add.
      */
-    public static <T> void add(AtomicReference<ImmutableLinkedQueue<T>> location, T value) {
+    public static <T> void add(@Nonnull AtomicReference<ImmutableLinkedQueue<T>> location, T value) {
         boolean successful;
         do {
             ImmutableLinkedQueue<T> priorCollection = location.get();
@@ -848,7 +856,7 @@ public enum ImmutableAtomic {
      * @param obj The object whose field to update.
      * @param value The value to add.
      */
-    public static <C, T> void add(AtomicReferenceFieldUpdater<? super C, ImmutableLinkedQueue<T>> updater, C obj, T value) {
+    public static <C, T> void add(@Nonnull AtomicReferenceFieldUpdater<? super C, ImmutableLinkedQueue<T>> updater, @Nonnull C obj, T value) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
 

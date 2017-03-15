@@ -1,6 +1,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 package com.tvl.util;
 
+import javax.annotation.Nullable;
+
 /**
  * An interface for binary tree nodes that allow a common iterator to walk the graph.
  *
@@ -34,6 +36,7 @@ interface BinaryTree<T> {
      *
      * @return The left branch of this node, or {@code null} if this node is empty.
      */
+    @Nullable
     BinaryTree<T> getLeft();
 
     /**
@@ -41,6 +44,7 @@ interface BinaryTree<T> {
      *
      * @return The right branch of this node, or {@code null} if this node is empty.
      */
+    @Nullable
     BinaryTree<T> getRight();
 
     /**

@@ -2,6 +2,8 @@
 package com.tvl.util;
 
 import java.util.EmptyStackException;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 
 /**
  * An immutable stack.
@@ -22,6 +24,8 @@ public interface ImmutableStack<T> extends Iterable<T> {
      *
      * @return The empty stack.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableStack<T> clear();
 
     /**
@@ -30,6 +34,8 @@ public interface ImmutableStack<T> extends Iterable<T> {
      * @param value The element to push onto the stack.
      * @return The new stack.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableStack<T> push(T value);
 
     /**
@@ -38,6 +44,8 @@ public interface ImmutableStack<T> extends Iterable<T> {
      * @return The new stack; never {@code null}.
      * @throws EmptyStackException if the stack is empty.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableStack<T> pop();
 
     /**

@@ -15,23 +15,28 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public final class ImmutableTreeList<T> extends AbstractImmutableList<T> implements ImmutableList<T>, ImmutableListQueries<T>, OrderedCollection<T> {
     /**
      * An empty immutable list.
      */
+    @Nonnull
     private static final ImmutableTreeList<?> EMPTY_LIST = new ImmutableTreeList<Object>();
 
     /**
      * The root node of the AVL tree that stores this set.
      */
+    @Nonnull
     private final Node<T> root;
 
     private ImmutableTreeList() {
         root = Node.empty();
     }
 
-    private ImmutableTreeList(Node<T> root) {
+    private ImmutableTreeList(@Nonnull Node<T> root) {
         Requires.notNull(root, "root");
         root.freeze();
         this.root = root;
@@ -43,6 +48,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * @param <T> The type of elements stored in the list.
      * @return An empty immutable list.
      */
+    @Nonnull
     public static <T> ImmutableTreeList<T> create() {
         return empty();
     }
@@ -54,6 +60,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * @param item The element to store in the list.
      * @return A one-element list.
      */
+    @Nonnull
     public static <T> ImmutableTreeList<T> create(T item) {
         return ImmutableTreeList.<T>empty().add(item);
     }
@@ -65,7 +72,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * @param items The elements to store in the list.
      * @return An immutable list.
      */
-    public static <T> ImmutableTreeList<T> create(T... items) {
+    @Nonnull
+    public static <T> ImmutableTreeList<T> create(@Nonnull T... items) {
         return createAll(Arrays.asList(items));
     }
 
@@ -76,7 +84,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * @param items The elements to store in the list.
      * @return An immutable list.
      */
-    public static <T> ImmutableTreeList<T> createAll(Iterable<? extends T> items) {
+    @Nonnull
+    public static <T> ImmutableTreeList<T> createAll(@Nonnull Iterable<? extends T> items) {
         return ImmutableTreeList.<T>empty().addAll(items);
     }
 
@@ -86,6 +95,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * @param <T> The type of elements stored in the list.
      * @return A new builder.
      */
+    @Nonnull
     public static <T> ImmutableTreeList.Builder<T> createBuilder() {
         return ImmutableTreeList.<T>empty().toBuilder();
     }
@@ -96,6 +106,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * @param <T> The type of elements stored in the list.
      * @return An empty immutable list.
      */
+    @Nonnull
     public static <T> ImmutableTreeList<T> empty() {
         @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableTreeList<T> result = (ImmutableTreeList<T>)EMPTY_LIST;
@@ -107,6 +118,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      *
      * @return An empty immutable list.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableTreeList<T> clear() {
         return empty();
@@ -124,7 +137,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * {@inheritDoc}
      */
     @Override
-    public int binarySearch(T item, Comparator<? super T> comparator) {
+    public int binarySearch(T item, @Nullable Comparator<? super T> comparator) {
         return binarySearch(0, size(), item, comparator);
     }
 
@@ -132,7 +145,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * {@inheritDoc}
      */
     @Override
-    public int binarySearch(int fromIndex, int toIndex, T item, Comparator<? super T> comparator) {
+    public int binarySearch(int fromIndex, int toIndex, T item, @Nullable Comparator<? super T> comparator) {
         return root.binarySearch(fromIndex, toIndex - fromIndex, item, comparator);
     }
 
@@ -176,6 +189,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      *
      * @return A {@link Builder} instance initialized with the contents of this immutable list.
      */
+    @Nonnull
     public Builder<T> toBuilder() {
         // We must not cache the instance created here and return it to various callers. Those who request a mutable
         // collection must get references to the collection that version independently of each other.
@@ -185,6 +199,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableTreeList<T> add(T value) {
         ImmutableTreeList.Node<T> result = root.add(value);
@@ -194,8 +210,10 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableTreeList<T> addAll(Iterable<? extends T> items) {
+    public ImmutableTreeList<T> addAll(@Nonnull Iterable<? extends T> items) {
         Requires.notNull(items, "items");
 
         // Some optimizations may apply if we're an empty list.
@@ -210,6 +228,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableTreeList<T> add(int index, T element) {
         Requires.range(index >= 0 && index <= size(), "index");
@@ -219,8 +239,10 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableTreeList<T> addAll(int index, Iterable<? extends T> items) {
+    public ImmutableTreeList<T> addAll(int index, @Nonnull Iterable<? extends T> items) {
         Requires.range(index >= 0 && index <= size(), "index");
         Requires.notNull(items, "items");
 
@@ -231,6 +253,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableTreeList<T> remove(T value) {
         return remove(value, EqualityComparators.defaultComparator());
@@ -239,8 +263,10 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableTreeList<T> remove(T value, EqualityComparator<? super T> equalityComparator) {
+    public ImmutableTreeList<T> remove(T value, @Nonnull EqualityComparator<? super T> equalityComparator) {
         int index = indexOf(value, 0, size(), equalityComparator);
         return index < 0 ? this : remove(index);
     }
@@ -248,6 +274,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableTreeList<T> removeAll(int fromIndex, int toIndex) {
         Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
@@ -266,16 +294,20 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableTreeList<T> removeAll(Iterable<? extends T> items) {
+    public ImmutableTreeList<T> removeAll(@Nonnull Iterable<? extends T> items) {
         return removeAll(items, EqualityComparators.defaultComparator());
     }
 
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableTreeList<T> removeAll(Iterable<? extends T> items, EqualityComparator<? super T> equalityComparator) {
+    public ImmutableTreeList<T> removeAll(@Nonnull Iterable<? extends T> items, @Nonnull EqualityComparator<? super T> equalityComparator) {
         Requires.notNull(items, "items");
         Requires.notNull(equalityComparator, "equalityComparator");
 
@@ -300,6 +332,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableTreeList<T> remove(int index) {
         Requires.range(index >= 0 && index < size(), "index");
@@ -310,8 +344,10 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableTreeList<T> removeIf(Predicate<? super T> predicate) {
+    public ImmutableTreeList<T> removeIf(@Nonnull Predicate<? super T> predicate) {
         Requires.notNull(predicate, "predicate");
         return wrap(root.removeIf(predicate));
     }
@@ -319,6 +355,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableTreeList<T> set(int index, T value) {
         return wrap(root.replace(index, value));
@@ -327,6 +365,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableTreeList<T> replace(T oldValue, T newValue) {
         return replace(oldValue, newValue, EqualityComparators.defaultComparator());
@@ -335,8 +375,10 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableTreeList<T> replace(T oldValue, T newValue, EqualityComparator<? super T> equalityComparator) {
+    public ImmutableTreeList<T> replace(T oldValue, T newValue, @Nonnull EqualityComparator<? super T> equalityComparator) {
         Requires.notNull(equalityComparator, "equalityComparator");
 
         int index = indexOf(oldValue, 0, size(), equalityComparator);
@@ -349,6 +391,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      *
      * @return The reversed list.
      */
+    @Nonnull
+    @CheckReturnValue
     public ImmutableTreeList<T> reverse() {
         return wrap(root.reverse());
     }
@@ -360,6 +404,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * @param toIndex The index of the last element (exclusive) to be reversed.
      * @return The reversed list.
      */
+    @Nonnull
+    @CheckReturnValue
     public ImmutableTreeList<T> reverse(int fromIndex, int toIndex) {
         return wrap(root.reverse(fromIndex, toIndex - fromIndex));
     }
@@ -369,6 +415,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      *
      * @return A sorted instance of this list.
      */
+    @Nonnull
+    @CheckReturnValue
     public ImmutableTreeList<T> sort() {
         return wrap(root.sort());
     }
@@ -376,10 +424,12 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * Returns a sorted instance of this list.
      *
-     * @param comparator The comparator to use in sorting. If {@code null}, a default comparator is used.
+     * @param comparator The comparator to use in sorting.
      * @return A sorted instance of this list.
      */
-    public ImmutableTreeList<T> sort(Comparator<? super T> comparator) {
+    @Nonnull
+    @CheckReturnValue
+    public ImmutableTreeList<T> sort(@Nonnull Comparator<? super T> comparator) {
         Requires.notNull(comparator, "comparator");
         return wrap(root.sort(comparator));
     }
@@ -395,7 +445,9 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      *
      * @see Arrays#sort(Object[], int, int, Comparator)
      */
-    public ImmutableTreeList<T> sort(int fromIndex, int toIndex, Comparator<? super T> comparator) {
+    @Nonnull
+    @CheckReturnValue
+    public ImmutableTreeList<T> sort(int fromIndex, int toIndex, @Nullable Comparator<? super T> comparator) {
         Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
         Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
         Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
@@ -408,7 +460,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     }
 
     @Override
-    public void copyTo(T[] array) {
+    public void copyTo(@Nonnull T[] array) {
         Requires.notNull(array, "array");
         Requires.range(array.length >= size(), "array");
 
@@ -416,7 +468,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     }
 
     @Override
-    public void copyTo(T[] array, int startIndex) {
+    public void copyTo(@Nonnull T[] array, int startIndex) {
         Requires.notNull(array, "array");
         Requires.range(startIndex >= 0, "startIndex");
         Requires.range(array.length >= startIndex + size(), "startIndex");
@@ -425,13 +477,15 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     }
 
     @Override
-    public void copyTo(int index, T[] array, int startIndex, int count) {
+    public void copyTo(int index, @Nonnull T[] array, int startIndex, int count) {
         root.copyTo(index, array, startIndex, count);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableTreeList<T> subList(int fromIndex, int toIndex) {
         Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
@@ -444,8 +498,10 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public <U> ImmutableTreeList<U> convertAll(Function<? super T, U> converter) {
+    public <U> ImmutableTreeList<U> convertAll(@Nonnull Function<? super T, U> converter) {
         Requires.notNull(converter, "converter");
         return ImmutableTreeList.wrapNode(root.convertAll(converter));
     }
@@ -454,7 +510,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * {@inheritDoc}
      */
     @Override
-    public boolean exists(Predicate<? super T> match) {
+    public boolean exists(@Nonnull Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.exists(match);
     }
@@ -462,8 +518,9 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nullable
     @Override
-    public T find(Predicate<? super T> match) {
+    public T find(@Nonnull Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.find(match);
     }
@@ -471,8 +528,10 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableTreeList<T> retainIf(Predicate<? super T> match) {
+    public ImmutableTreeList<T> retainIf(@Nonnull Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.findIf(match);
     }
@@ -481,7 +540,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * {@inheritDoc}
      */
     @Override
-    public int findIndex(Predicate<? super T> match) {
+    public int findIndex(@Nonnull Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.findIndex(match);
     }
@@ -490,7 +549,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * {@inheritDoc}
      */
     @Override
-    public int findIndex(int fromIndex, Predicate<? super T> match) {
+    public int findIndex(int fromIndex, @Nonnull Predicate<? super T> match) {
         Requires.notNull(match, "match");
         Requires.range(fromIndex >= 0, "fromIndex");
         Requires.range(fromIndex <= size(), "fromIndex");
@@ -501,7 +560,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * {@inheritDoc}
      */
     @Override
-    public int findIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
+    public int findIndex(int fromIndex, int toIndex, @Nonnull Predicate<? super T> match) {
         Requires.notNull(match, "match");
         Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
         Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
@@ -513,8 +572,9 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nullable
     @Override
-    public T findLast(Predicate<? super T> match) {
+    public T findLast(@Nonnull Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.findLast(match);
     }
@@ -523,7 +583,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * {@inheritDoc}
      */
     @Override
-    public int findLastIndex(Predicate<? super T> match) {
+    public int findLastIndex(@Nonnull Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.findLastIndex(match);
     }
@@ -532,7 +592,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * {@inheritDoc}
      */
     @Override
-    public int findLastIndex(int fromIndex, Predicate<? super T> match) {
+    public int findLastIndex(int fromIndex, @Nonnull Predicate<? super T> match) {
         Requires.notNull(match, "match");
         Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
 
@@ -543,7 +603,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * {@inheritDoc}
      */
     @Override
-    public int findLastIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
+    public int findLastIndex(int fromIndex, int toIndex, @Nonnull Predicate<? super T> match) {
         Requires.notNull(match, "match");
         Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
         Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
@@ -556,7 +616,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * {@inheritDoc}
      */
     @Override
-    public int indexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
+    public int indexOf(T item, int fromIndex, int toIndex, @Nonnull EqualityComparator<? super T> equalityComparator) {
         return root.indexOf(item, fromIndex, toIndex - fromIndex, equalityComparator);
     }
 
@@ -564,7 +624,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * {@inheritDoc}
      */
     @Override
-    public int lastIndexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
+    public int lastIndexOf(T item, int fromIndex, int toIndex, @Nonnull EqualityComparator<? super T> equalityComparator) {
         Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
         Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
         Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
@@ -580,7 +640,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
      * {@inheritDoc}
      */
     @Override
-    public boolean trueForAll(Predicate<? super T> match) {
+    public boolean trueForAll(@Nonnull Predicate<? super T> match) {
         Requires.notNull(match, "match");
         return root.trueForAll(match);
     }
@@ -598,20 +658,24 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public Itr<T> iterator() {
         return new Itr<T>(root);
     }
 
+    @Nonnull
     Node<T> getRoot() {
         return root;
     }
 
-    private static <T> ImmutableTreeList<T> wrapNode(Node<T> root) {
+    @Nonnull
+    private static <T> ImmutableTreeList<T> wrapNode(@Nonnull Node<T> root) {
         return root.isEmpty() ? ImmutableTreeList.<T>empty() : new ImmutableTreeList<T>(root);
     }
 
-    private static <T> ImmutableTreeList<T> tryCastToImmutableList(Iterable<T> sequence) {
+    @Nullable
+    private static <T> ImmutableTreeList<T> tryCastToImmutableList(@Nonnull Iterable<T> sequence) {
         if (sequence instanceof ImmutableTreeList<?>) {
             return (ImmutableTreeList<T>)sequence;
         }
@@ -623,7 +687,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
         return null;
     }
 
-    static <T> OrderedCollection<T> asOrderedCollection(Iterable<T> sequence) {
+    @Nonnull
+    static <T> OrderedCollection<T> asOrderedCollection(@Nonnull Iterable<T> sequence) {
         Requires.notNull(sequence, "sequence");
 
         if (sequence instanceof OrderedCollection<?>) {
@@ -639,7 +704,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
         return new FallbackWrapper<T>(sequence);
     }
 
-    private ImmutableTreeList<T> wrap(Node<T> root) {
+    @Nonnull
+    private ImmutableTreeList<T> wrap(@Nonnull Node<T> root) {
         if (root != this.root) {
             return root.isEmpty() ? clear() : new ImmutableTreeList<T>(root);
         } else {
@@ -647,7 +713,9 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
         }
     }
 
-    private ImmutableTreeList<T> fillFromEmpty(Iterable<? extends T> items) {
+    @Nonnull
+    @CheckReturnValue
+    private ImmutableTreeList<T> fillFromEmpty(@Nonnull Iterable<? extends T> items) {
         assert isEmpty();
 
         // If the items being added actually come from an ImmutableList<T> then there is no value in reconstructing it.
@@ -672,6 +740,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     }
 
     public static final class Itr<T> implements Iterator<T> {
+        @Nullable
         private final Builder<T> builder;
 
         private final int startIndex;
@@ -682,19 +751,21 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
 
         private boolean reversed;
 
+        @Nonnull
         private Node<T> root;
 
         private Deque<Node<T>> stack;
 
+        @Nullable
         private Node<T> current;
 
         private int iteratingBuilderVersion;
 
-        Itr(Node<T> root) {
+        Itr(@Nonnull Node<T> root) {
             this(root, null, -1, -1, false);
         }
 
-        Itr(Node<T> root, Builder<T> builder, int startIndex, int count, boolean reversed) {
+        Itr(@Nonnull Node<T> root, @Nullable Builder<T> builder, int startIndex, int count, boolean reversed) {
             Requires.notNull(root, "root");
             Requires.range(startIndex >= -1, "startIndex");
             Requires.range(count >= -1, "count");
@@ -789,13 +860,15 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     }
 
     public static final class Builder<T> implements List<T>, ReadOnlyList<T> {
+        @Nonnull
         private Node<T> root;
 
+        @Nullable
         private ImmutableTreeList<T> immutable;
 
         private int version;
 
-        Builder(ImmutableTreeList<T> list) {
+        Builder(@Nonnull ImmutableTreeList<T> list) {
             Requires.notNull(list, "list");
             this.root = list.root;
             this.immutable = list;
@@ -821,11 +894,12 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return version;
         }
 
+        @Nonnull
         Node<T> getRoot() {
             return root;
         }
 
-        void setRoot(Node<T> value) {
+        void setRoot(@Nonnull Node<T> value) {
             // We *always* increment the version number because some mutations may not create a new value of root,
             // although the existing root instance may have mutated.
             version++;
@@ -927,24 +1001,25 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
         /**
          * {@inheritDoc}
          */
+        @Nonnull
         @Override
         public Itr<T> iterator() {
             return new Itr<T>(root, this, 0, size(), false);
         }
 
-        public void copyTo(T[] array) {
+        public void copyTo(@Nonnull T[] array) {
             Requires.notNull(array, "array");
             Requires.range(array.length >= size(), "array");
             root.copyTo(array);
         }
 
-        public void copyTo(T[] array, int arrayIndex) {
+        public void copyTo(@Nonnull T[] array, int arrayIndex) {
             Requires.notNull(array, "array");
             Requires.range(array.length >= arrayIndex + size(), "arrayIndex");
             root.copyTo(array, arrayIndex);
         }
 
-        public void copyTo(int index, T[] array, int arrayIndex, int count) {
+        public void copyTo(int index, @Nonnull T[] array, int arrayIndex, int count) {
             root.copyTo(index, array, arrayIndex, count);
         }
 
@@ -955,7 +1030,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @return {@code true} if the list contains one or more elements that match the conditions defined by
          * {@code match}; otherwise, {@code false}.
          */
-        public boolean exists(Predicate<? super T> match) {
+        public boolean exists(@Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
             return root.exists(match);
         }
@@ -968,7 +1043,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @return The first element that matches the conditions defined by {@code match}, if found; otherwise,
          * {@code null}.
          */
-        public T find(Predicate<? super T> match) {
+        @Nullable
+        public T find(@Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
             return root.find(match);
         }
@@ -981,7 +1057,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @return The zero-based index of the first element that matches the conditions defined by {@code match}, if
          * found; otherwise, -1.
          */
-        public int findIndex(Predicate<? super T> match) {
+        public int findIndex(@Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
             return root.findIndex(match);
         }
@@ -996,7 +1072,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @return The zero-based index of the first element that matches the conditions defined by {@code match}, if
          * found; otherwise, -1.
          */
-        public int findIndex(int fromIndex, Predicate<? super T> match) {
+        public int findIndex(int fromIndex, @Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
             Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
 
@@ -1014,7 +1090,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @return The zero-based index of the first element that matches the conditions defined by {@code match}, if
          * found; otherwise, -1.
          */
-        public int findIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
+        public int findIndex(int fromIndex, int toIndex, @Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
             Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
             Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
@@ -1031,7 +1107,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @return The last element that matches the conditions defined by {@code match}, if found; otherwise,
          * {@code null}.
          */
-        public T findLast(Predicate<? super T> match) {
+        @Nullable
+        public T findLast(@Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
             return root.findLast(match);
         }
@@ -1044,7 +1121,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @return The zero-based index of the last element that matches the conditions defined by {@code match}, if
          * found; otherwise, -1.
          */
-        public int findLastIndex(Predicate<? super T> match) {
+        public int findLastIndex(@Nonnull Predicate<? super T> match) {
             return root.findLastIndex(match);
         }
 
@@ -1058,7 +1135,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @return The zero-based index of the last element that matches the conditions defined by {@code match}, if
          * found; otherwise, -1.
          */
-        public int findLastIndex(int fromIndex, Predicate<? super T> match) {
+        public int findLastIndex(int fromIndex, @Nonnull Predicate<? super T> match) {
             return root.findLastIndex(fromIndex, match);
         }
 
@@ -1073,7 +1150,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @return The zero-based index of the last element that matches the conditions defined by {@code match}, if
          * found; otherwise, -1.
          */
-        public int findLastIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
+        public int findLastIndex(int fromIndex, int toIndex, @Nonnull Predicate<? super T> match) {
             return root.findLastIndex(fromIndex, toIndex, match);
         }
 
@@ -1121,7 +1198,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @return {@code true} if every element in the immutable list matches the conditions defined by {@code match};
          * otherwise, {@code false}. If the list is empty, this method returns {@code true}.
          */
-        public boolean trueForAll(Predicate<? super T> match) {
+        public boolean trueForAll(@Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
             return root.trueForAll(match);
         }
@@ -1130,7 +1207,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * {@inheritDoc}
          */
         @Override
-        public boolean addAll(Collection<? extends T> c) {
+        public boolean addAll(@Nonnull Collection<? extends T> c) {
             return addAll(size(), c);
         }
 
@@ -1140,7 +1217,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @param items The items to add.
          * @return {@code true} if the collection changed as a result of the operation; otherwise, {@code false}.
          */
-        public boolean addAll(Iterable<? extends T> items) {
+        public boolean addAll(@Nonnull Iterable<? extends T> items) {
             return addAll(size(), items);
         }
 
@@ -1148,7 +1225,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * {@inheritDoc}
          */
         @Override
-        public boolean addAll(int index, Collection<? extends T> c) {
+        public boolean addAll(int index, @Nonnull Collection<? extends T> c) {
             Requires.range(index >= 0 && index <= size(), "index");
             Requires.notNull(c, "c");
 
@@ -1164,7 +1241,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @param items The elements to insert.
          * @return {@code true} if the collection changed as a result of the operation; otherwise, {@code false}.
          */
-        public boolean addAll(int index, Iterable<? extends T> items) {
+        public boolean addAll(int index, @Nonnull Iterable<? extends T> items) {
             Requires.range(index >= 0 && index <= size(), "index");
             Requires.notNull(items, "items");
 
@@ -1179,7 +1256,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @param match The {@link Predicate} that defines the conditions of the elements to remove.
          * @return The number of elements removed from the list.
          */
-        public int removeIf(Predicate<? super T> match) {
+        public int removeIf(@Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
 
             int previousSize = size();
@@ -1225,8 +1302,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          *
          * @see Arrays#sort(Object[], Comparator)
          */
-        public void sort(Comparator<? super T> comparator) {
-            Requires.notNull(comparator, "comparator");
+        public void sort(@Nullable Comparator<? super T> comparator) {
             root = root.sort(comparator);
         }
 
@@ -1241,8 +1317,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          *
          * @see Arrays#sort(Object[], int, int, Comparator)
          */
-        public void sort(int fromIndex, int toIndex, Comparator<? super T> comparator) {
-            Requires.notNull(comparator, "comparator");
+        public void sort(int fromIndex, int toIndex, @Nullable Comparator<? super T> comparator) {
             Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
             Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
             Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
@@ -1277,7 +1352,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * {@code value} is not found and {@code value} is greater than all of the elements in {@code array}, a negative
          * number which is the bitwise complement of (the index of the last element plus 1).
          */
-        public int binarySearch(T value, Comparator<? super T> comparator) {
+        public int binarySearch(T value, @Nullable Comparator<? super T> comparator) {
             return binarySearch(0, size(), value, comparator);
         }
 
@@ -1304,7 +1379,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @throws IllegalArgumentException if {@code fromIndex > toIndex}
          * @throws IndexOutOfBoundsException if {@code fromIndex < 0 or toIndex > array.size()}.
          */
-        public int binarySearch(int fromIndex, int toIndex, T value, Comparator<? super T> comparator) {
+        public int binarySearch(int fromIndex, int toIndex, T value, @Nullable Comparator<? super T> comparator) {
             return root.binarySearch(fromIndex, toIndex - fromIndex, value, comparator);
         }
 
@@ -1316,6 +1391,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          *
          * @return An immutable list.
          */
+        @Nonnull
         public ImmutableTreeList<T> toImmutable() {
             // Creating an instance of ImmutableList<T> with our root node automatically freezes our tree, ensuring that
             // the returned instance is immutable.  Any further mutations made to this builder will clone (and unfreeze)
@@ -1375,6 +1451,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          *
          * @return An {@link ImmutableListQueries} wrapper for the current {@link Builder}.
          */
+        @Nonnull
         ImmutableListQueries<T> asImmutableListQueries() {
             return new QueriesWrapper();
         }
@@ -1383,8 +1460,10 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             /**
              * {@inheritDoc}
              */
+            @Nonnull
+            @CheckReturnValue
             @Override
-            public <U> ImmutableList<U> convertAll(Function<? super T, U> converter) {
+            public <U> ImmutableList<U> convertAll(@Nonnull Function<? super T, U> converter) {
                 Requires.notNull(converter, "converter");
                 return wrapNode(root.convertAll(converter));
             }
@@ -1392,6 +1471,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             /**
              * {@inheritDoc}
              */
+            @Nonnull
             @Override
             public ImmutableList<T> subList(int fromIndex, int toIndex) {
                 return toImmutable().subList(fromIndex, toIndex);
@@ -1401,7 +1481,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public void copyTo(T[] array) {
+            public void copyTo(@Nonnull T[] array) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
@@ -1409,7 +1489,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public void copyTo(T[] array, int arrayIndex) {
+            public void copyTo(@Nonnull T[] array, int arrayIndex) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
@@ -1417,7 +1497,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public void copyTo(int index, T[] array, int arrayIndex, int count) {
+            public void copyTo(int index, @Nonnull T[] array, int arrayIndex, int count) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
@@ -1425,23 +1505,26 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public boolean exists(Predicate<? super T> match) {
+            public boolean exists(@Nonnull Predicate<? super T> match) {
                 return Builder.this.exists(match);
             }
 
             /**
              * {@inheritDoc}
              */
+            @Nullable
             @Override
-            public T find(Predicate<? super T> match) {
+            public T find(@Nonnull Predicate<? super T> match) {
                 return Builder.this.find(match);
             }
 
             /**
              * {@inheritDoc}
              */
+            @Nonnull
+            @CheckReturnValue
             @Override
-            public ImmutableList<T> retainIf(Predicate<? super T> match) {
+            public ImmutableList<T> retainIf(@Nonnull Predicate<? super T> match) {
                 return toImmutable().retainIf(match);
             }
 
@@ -1449,7 +1532,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public int findIndex(Predicate<? super T> match) {
+            public int findIndex(@Nonnull Predicate<? super T> match) {
                 return Builder.this.findIndex(match);
             }
 
@@ -1457,7 +1540,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public int findIndex(int fromIndex, Predicate<? super T> match) {
+            public int findIndex(int fromIndex, @Nonnull Predicate<? super T> match) {
                 return Builder.this.findIndex(fromIndex, match);
             }
 
@@ -1465,15 +1548,16 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public int findIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
+            public int findIndex(int fromIndex, int toIndex, @Nonnull Predicate<? super T> match) {
                 return Builder.this.findIndex(fromIndex, toIndex, match);
             }
 
             /**
              * {@inheritDoc}
              */
+            @Nullable
             @Override
-            public T findLast(Predicate<? super T> match) {
+            public T findLast(@Nonnull Predicate<? super T> match) {
                 return Builder.this.findLast(match);
             }
 
@@ -1481,7 +1565,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public int findLastIndex(Predicate<? super T> match) {
+            public int findLastIndex(@Nonnull Predicate<? super T> match) {
                 return Builder.this.findLastIndex(match);
             }
 
@@ -1489,7 +1573,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public int findLastIndex(int fromIndex, Predicate<? super T> match) {
+            public int findLastIndex(int fromIndex, @Nonnull Predicate<? super T> match) {
                 return Builder.this.findLastIndex(fromIndex, match);
             }
 
@@ -1497,7 +1581,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public int findLastIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
+            public int findLastIndex(int fromIndex, int toIndex, @Nonnull Predicate<? super T> match) {
                 return Builder.this.findLastIndex(fromIndex, toIndex, match);
             }
 
@@ -1505,7 +1589,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public boolean trueForAll(Predicate<? super T> match) {
+            public boolean trueForAll(@Nonnull Predicate<? super T> match) {
                 return Builder.this.trueForAll(match);
             }
 
@@ -1521,7 +1605,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public int binarySearch(T item, Comparator<? super T> comparator) {
+            public int binarySearch(T item, @Nullable Comparator<? super T> comparator) {
                 return Builder.this.binarySearch(item, comparator);
             }
 
@@ -1529,7 +1613,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
              * {@inheritDoc}
              */
             @Override
-            public int binarySearch(int fromIndex, int toIndex, T item, Comparator<? super T> comparator) {
+            public int binarySearch(int fromIndex, int toIndex, T item, @Nullable Comparator<? super T> comparator) {
                 return Builder.this.binarySearch(fromIndex, toIndex, item, comparator);
             }
 
@@ -1560,6 +1644,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             /**
              * {@inheritDoc}
              */
+            @Nonnull
             @Override
             public Iterator<T> iterator() {
                 return Builder.this.iterator();
@@ -1576,6 +1661,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
         /**
          * The default empty node.
          */
+        @Nonnull
         private static final Node<?> EMPTY_NODE = new Node<Object>();
 
         /**
@@ -1626,7 +1712,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @param left The left branch.
          * @param right The right branch.
          */
-        private Node(T key, Node<T> left, Node<T> right) {
+        private Node(T key, @Nonnull Node<T> left, @Nonnull Node<T> right) {
             this(key, left, right, false);
         }
 
@@ -1638,7 +1724,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @param right The right branch.
          * @param frozen {@code true} if the node should be pre-frozen; otherwise, {@code false}.
          */
-        private Node(T key, Node<T> left, Node<T> right, boolean frozen) {
+        private Node(T key, @Nonnull Node<T> left, @Nonnull Node<T> right, boolean frozen) {
             Requires.notNull(left, "left");
             Requires.notNull(right, "right");
             assert !frozen || (left.frozen && right.frozen);
@@ -1657,6 +1743,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @param <T> The type of elements stored in the list.
          * @return An empty node.
          */
+        @Nonnull
         public static <T> Node<T> empty() {
             @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
             Node<T> result = (Node<T>)EMPTY_NODE;
@@ -1722,6 +1809,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return key;
         }
 
+        @Nonnull
         @Override
         public Itr<T> iterator() {
             return new Itr<T>(this);
@@ -1731,7 +1819,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             throw new UnsupportedOperationException("Not supported yet");
         }
 
-        static <T> Node<T> nodeTreeFromList(OrderedCollection<? extends T> items, int start, int length) {
+        @Nonnull
+        static <T> Node<T> nodeTreeFromList(@Nonnull OrderedCollection<? extends T> items, int start, int length) {
             Requires.notNull(items, "items");
             Requires.range(start >= 0, "start");
             Requires.range(length >= 0, "length");
@@ -1747,10 +1836,13 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return new Node<T>(items.get(start + leftCount), left, right, true);
         }
 
+        @Nonnull
+        @CheckReturnValue
         Node<T> add(T key) {
             return insert(count, key);
         }
 
+        @Nonnull
         Node<T> insert(int index, T key) {
             Requires.range(index >= 0 && index <= size(), "index");
 
@@ -1770,11 +1862,15 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             }
         }
 
-        Node<T> addAll(Iterable<? extends T> keys) {
+        @Nonnull
+        @CheckReturnValue
+        Node<T> addAll(@Nonnull Iterable<? extends T> keys) {
             return addAll(size(), keys);
         }
 
-        Node<T> addAll(int index, Iterable<? extends T> keys) {
+        @Nonnull
+        @CheckReturnValue
+        Node<T> addAll(int index, @Nonnull Iterable<? extends T> keys) {
             Requires.range(index >= 0 && index <= size(), "index");
             Requires.notNull(keys, "keys");
 
@@ -1802,6 +1898,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             }
         }
 
+        @Nonnull
+        @CheckReturnValue
         Node<T> remove(int index) {
             Requires.range(index >= 0 && index < size(), "index");
 
@@ -1836,7 +1934,9 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return result.isEmpty() ? result : makeBalanced(result);
         }
 
-        Node<T> removeIf(Predicate<? super T> match) {
+        @Nonnull
+        @CheckReturnValue
+        Node<T> removeIf(@Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
 
             Node<T> result = this;
@@ -1852,6 +1952,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return result;
         }
 
+        @Nonnull
+        @CheckReturnValue
         Node<T> replace(int index, T value) {
             Requires.range(index >= 0 && index <= size(), "index");
 
@@ -1870,10 +1972,14 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return result;
         }
 
+        @Nonnull
+        @CheckReturnValue
         Node<T> reverse() {
             return reverse(0, size());
         }
 
+        @Nonnull
+        @CheckReturnValue
         Node<T> reverse(int index, int count) {
             Requires.range(index >= 0, "index");
             Requires.range(count >= 0, "count");
@@ -1893,21 +1999,25 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return result;
         }
 
+        @Nonnull
+        @CheckReturnValue
         Node<T> sort() {
             Comparator<? super T> comparator = Comparators.anyComparator();
             return sort(comparator);
         }
 
-        Node<T> sort(Comparator<? super T> comparator) {
-            Requires.notNull(comparator, "comparator");
+        @Nonnull
+        @CheckReturnValue
+        Node<T> sort(@Nullable Comparator<? super T> comparator) {
             return sort(0, size(), comparator);
         }
 
-        Node<T> sort(int index, int count, Comparator<? super T> comparator) {
+        @Nonnull
+        @CheckReturnValue
+        Node<T> sort(int index, int count, @Nullable Comparator<? super T> comparator) {
             Requires.range(index >= 0, "index");
             Requires.range(count >= 0, "count");
             Requires.argument(index + count <= size());
-            Requires.notNull(comparator, "comparator");
 
             // PERF: Eventually this might be reimplemented in a way that does not require allocating an array.
             ArrayList<T> arrayList = new ArrayList<T>(ImmutableTreeList.wrapNode(this).toBuilder());
@@ -1916,7 +2026,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return nodeTreeFromList(asOrderedCollection(arrayList), 0, size());
         }
 
-        int binarySearch(int index, int count, T item, Comparator<? super T> comparator) {
+        int binarySearch(int index, int count, T item, @Nullable Comparator<? super T> comparator) {
             Requires.range(index >= 0, "index");
             Requires.range(count >= 0, "count");
             if (comparator == null) {
@@ -1961,11 +2071,11 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             }
         }
 
-        int indexOf(T item, EqualityComparator<? super T> equalityComparator) {
+        int indexOf(T item, @Nonnull EqualityComparator<? super T> equalityComparator) {
             return indexOf(item, 0, size(), equalityComparator);
         }
 
-        int indexOf(T item, int index, int count, EqualityComparator<? super T> equalityComparator) {
+        int indexOf(T item, int index, int count, @Nonnull EqualityComparator<? super T> equalityComparator) {
             Requires.range(index >= 0, "index");
             Requires.range(count >= 0, "count");
             Requires.range(count <= size(), "count");
@@ -1984,7 +2094,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return -1;
         }
 
-        int lastIndexOf(T item, int index, int count, EqualityComparator<? super T> equalityComparator) {
+        int lastIndexOf(T item, int index, int count, @Nonnull EqualityComparator<? super T> equalityComparator) {
             Requires.notNull(equalityComparator, "equalityComparator");
             Requires.range(index >= 0, "index");
             Requires.range(count >= 0 && count <= size(), "count");
@@ -2002,7 +2112,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return -1;
         }
 
-        void copyTo(T[] array) {
+        void copyTo(@Nonnull T[] array) {
             Requires.notNull(array, "array");
             Requires.argument(array.length >= size());
 
@@ -2012,7 +2122,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             }
         }
 
-        void copyTo(T[] array, int arrayIndex) {
+        void copyTo(@Nonnull T[] array, int arrayIndex) {
             Requires.notNull(array, "array");
             Requires.range(arrayIndex >= 0, "arrayIndex");
             Requires.range(arrayIndex <= array.length, "arrayIndex");
@@ -2023,7 +2133,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             }
         }
 
-        void copyTo(int index, T[] array, int arrayIndex, int count) {
+        void copyTo(int index, @Nonnull T[] array, int arrayIndex, int count) {
             Requires.notNull(array, "array");
             Requires.range(index >= 0, "index");
             Requires.range(count >= 0, "count");
@@ -2037,7 +2147,9 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             }
         }
 
-        <U> Node<U> convertAll(Function<? super T, ? extends U> converter) {
+        @Nonnull
+        @CheckReturnValue
+        <U> Node<U> convertAll(@Nonnull Function<? super T, ? extends U> converter) {
             Node<U> root = ImmutableTreeList.Node.empty();
             if (isEmpty()) {
                 return root;
@@ -2050,7 +2162,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return root;
         }
 
-        boolean trueForAll(Predicate<? super T> match) {
+        boolean trueForAll(@Nonnull Predicate<? super T> match) {
             for (T item : this) {
                 if (!match.test(item)) {
                     return false;
@@ -2060,7 +2172,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return true;
         }
 
-        boolean exists(Predicate<? super T> match) {
+        boolean exists(@Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
 
             for (T item : this) {
@@ -2072,7 +2184,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return false;
         }
 
-        T find(Predicate<? super T> match) {
+        @Nullable
+        T find(@Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
 
             for (T item : this) {
@@ -2084,7 +2197,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return null;
         }
 
-        ImmutableTreeList<T> findIf(Predicate<? super T> match) {
+        @Nonnull
+        ImmutableTreeList<T> findIf(@Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
 
             if (isEmpty()) {
@@ -2107,13 +2221,13 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
                 : ImmutableTreeList.<T>empty();
         }
 
-        int findIndex(Predicate<? super T> match) {
+        int findIndex(@Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
 
             return this.findIndex(0, count, match);
         }
 
-        int findIndex(int startIndex, Predicate<? super T> match) {
+        int findIndex(int startIndex, @Nonnull Predicate<? super T> match) {
             Requires.range(startIndex >= 0, "startIndex");
             Requires.range(startIndex <= size(), "startIndex");
             Requires.notNull(match, "match");
@@ -2121,7 +2235,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return findIndex(startIndex, size() - startIndex, match);
         }
 
-        int findIndex(int startIndex, int count, Predicate<? super T> match) {
+        int findIndex(int startIndex, int count, @Nonnull Predicate<? super T> match) {
             Requires.range(startIndex >= 0, "startIndex");
             Requires.range(count >= 0, "count");
             Requires.argument(startIndex + count <= size());
@@ -2140,7 +2254,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return -1;
         }
 
-        T findLast(Predicate<? super T> match) {
+        @Nullable
+        T findLast(@Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
 
             Itr<T> iterator = new Itr<T>(this, null, -1, -1, true);
@@ -2154,19 +2269,19 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return null;
         }
 
-        int findLastIndex(Predicate<? super T> match) {
+        int findLastIndex(@Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
             return findLastIndex(0, size(), match);
         }
 
-        int findLastIndex(int fromIndex, Predicate<? super T> match) {
+        int findLastIndex(int fromIndex, @Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
             Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
 
             return findLastIndex(fromIndex, size(), match);
         }
 
-        int findLastIndex(int fromIndex, int toIndex, Predicate<? super T> match) {
+        int findLastIndex(int fromIndex, int toIndex, @Nonnull Predicate<? super T> match) {
             Requires.notNull(match, "match");
             Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
             Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
@@ -2201,7 +2316,9 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             }
         }
 
-        private static <T> Node<T> rotateLeft(Node<T> tree) {
+        @Nonnull
+        @CheckReturnValue
+        private static <T> Node<T> rotateLeft(@Nonnull Node<T> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
 
@@ -2213,7 +2330,9 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return right.mutateLeft(tree.mutateRight(right.left));
         }
 
-        private static <T> Node<T> rotateRight(Node<T> tree) {
+        @Nonnull
+        @CheckReturnValue
+        private static <T> Node<T> rotateRight(@Nonnull Node<T> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
 
@@ -2225,7 +2344,9 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return left.mutateRight(tree.mutateLeft(left.right));
         }
 
-        private static <T> Node<T> doubleLeft(Node<T> tree) {
+        @Nonnull
+        @CheckReturnValue
+        private static <T> Node<T> doubleLeft(@Nonnull Node<T> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
 
@@ -2237,7 +2358,9 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return rotateLeft(rotatedRightChild);
         }
 
-        private static <T> Node<T> doubleRight(Node<T> tree) {
+        @Nonnull
+        @CheckReturnValue
+        private static <T> Node<T> doubleRight(@Nonnull Node<T> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
 
@@ -2249,26 +2372,28 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return rotateRight(rotatedLeftChild);
         }
 
-        private static int balance(Node<?> tree) {
+        private static int balance(@Nonnull Node<?> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
 
             return tree.right.height - tree.left.height;
         }
 
-        private static boolean isRightHeavy(Node<?> tree) {
+        private static boolean isRightHeavy(@Nonnull Node<?> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
             return balance(tree) >= 2;
         }
 
-        private static boolean isLeftHeavy(Node<?> tree) {
+        private static boolean isLeftHeavy(@Nonnull Node<?> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
             return balance(tree) <= -2;
         }
 
-        private static <T> Node<T> makeBalanced(Node<T> tree) {
+        @Nonnull
+        @CheckReturnValue
+        private static <T> Node<T> makeBalanced(@Nonnull Node<T> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
 
@@ -2283,7 +2408,9 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return tree;
         }
 
-        private static <T> Node<T> balanceNode(Node<T> node) {
+        @Nonnull
+        @CheckReturnValue
+        private static <T> Node<T> balanceNode(@Nonnull Node<T> node) {
             while (isRightHeavy(node) || isLeftHeavy(node)) {
                 if (isRightHeavy(node)) {
                     node = balance(node.right) < 0 ? doubleLeft(node) : rotateLeft(node);
@@ -2297,15 +2424,21 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return node;
         }
 
-        private Node<T> mutateLeft(Node<T> left) {
+        @Nonnull
+        @CheckReturnValue
+        private Node<T> mutateLeft(@Nullable Node<T> left) {
             return mutate(left, null);
         }
 
-        private Node<T> mutateRight(Node<T> right) {
+        @Nonnull
+        @CheckReturnValue
+        private Node<T> mutateRight(@Nullable Node<T> right) {
             return mutate(null, right);
         }
 
-        private Node<T> mutate(Node<T> left, Node<T> right) {
+        @Nonnull
+        @CheckReturnValue
+        private Node<T> mutate(@Nullable Node<T> left, @Nullable Node<T> right) {
             if (frozen) {
                 return new Node<T>(key, left != null ? left : this.left, right != null ? right : this.right);
             } else {
@@ -2330,6 +2463,8 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
          * @param value The new value for this node.
          * @return The mutated (or created) node.
          */
+        @Nonnull
+        @CheckReturnValue
         private Node<T> mutate(T value) {
             if (frozen) {
                 return new Node<T>(value, left, right);
@@ -2341,9 +2476,10 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     }
 
     private static final class ListOfTWrapper<T> implements OrderedCollection<T> {
+        @Nonnull
         private final List<T> collection;
 
-        ListOfTWrapper(List<T> collection) {
+        ListOfTWrapper(@Nonnull List<T> collection) {
             Requires.notNull(collection, "collection");
             this.collection = collection;
         }
@@ -2358,6 +2494,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return collection.get(index);
         }
 
+        @Nonnull
         @Override
         public Iterator<T> iterator() {
             return collection.iterator();
@@ -2365,11 +2502,12 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
     }
 
     private static final class FallbackWrapper<T> implements OrderedCollection<T> {
+        @Nonnull
         private final Iterable<T> sequence;
 
         private List<T> collection;
 
-        FallbackWrapper(Iterable<T> sequence) {
+        FallbackWrapper(@Nonnull Iterable<T> sequence) {
             Requires.notNull(sequence, "sequence");
             this.sequence = sequence;
         }
@@ -2407,6 +2545,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
             return collection.get(index);
         }
 
+        @Nonnull
         @Override
         public Iterator<T> iterator() {
             return sequence.iterator();
