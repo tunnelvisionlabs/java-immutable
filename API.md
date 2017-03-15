@@ -416,9 +416,6 @@ These members of `ImmutableQueue<T>` have no equivalent mapping in the Java prog
 | --- | --- | --- |
 | `Update<T>(ref T, Func<T, T>)` | `<T>update(AtomicReference<T>, Function<? super T, ? extends T>)` | &check; |
 | `Update<T, TArg>(ref T, Func<T, TArg, T>, TArg)` | `<T, State>update(AtomicReference<T>, BiFunction<? super T, ? super State, ? extends T>, State)` | &check; |
-| `InterlockedExchange<T>(ref ImmutableArray<T>, ImmutableArray<T>)` | `<T>getAndSet(AtomicReference<ImmutableArrayList<T>>, ImmutableArrayList<T>)` | &check; |
-| `InterlockedCompareExchange<T>(ref ImmutableArray<T>, ImmutableArray<T>, ImmutableArray<T>)` | `<T>interlockedCompareExchange(AtomicReference<ImmutableArrayList<T>>, ImmutableArrayList<T>, ImmutableArrayList<T>)` | &check; |
-| `InterlockedInitialize<T>(ref ImmutableArray<T>, ImmutableArray<T>)` | `<T>interlockedInitialize(AtomicReference<ImmutableArrayList<T>>, ImmutableArrayList<T>)` | &check; |
 | `GetOrAdd<TKey, TValue, TArg>(ref ImmutableDictionary<TKey, TValue>, TKey, Func<TKey, TArg, TValue>, TArg)` | `<K, V, State>getOrAdd(AtomicReference<ImmutableHashMap<K, V>>, K, BiFunction<? super K, ? super State, ? extends V>, State)` | &check; |
 | `GetOrAdd<TKey, TValue>(ref ImmutableDictionary<TKey, TValue>, TKey, Func<TKey, TValue>)` | `<K, V>getOrAdd(AtomicReference<ImmutableHashMap<K, V>>, K, Function<? super K, ? extends V>)` | &check; |
 | `GetOrAdd<TKey, TValue>(ref ImmutableDictionary<TKey, TValue>, TKey, TValue)` | `<K, V>getOrAdd(AtomicReference<ImmutableHashMap<K, V>>, K, V)` | &check; |
@@ -431,6 +428,16 @@ These members of `ImmutableQueue<T>` have no equivalent mapping in the Java prog
 | `Push<T>(ref ImmutableStack<T>, T)` | `<T>push(AtomicReference<ImmutableLinkedStack<T>>, T)` | &check; |
 | `TryDequeue<T>(ref ImmutableQueue<T>, out T)` | `<T>tryPoll(AtomicReference<ImmutableLinkedQueue<T>>)` | &check; |
 | `Enqueue<T>(ref ImmutableQueue<T>, T)` | `<T>add(AtomicReference<ImmutableLinkedQueue<T>>, T)` | &check; |
+
+#### `ImmutableInterlocked` &rarr; No mapping
+
+These members of `ImmutableInterlocked` have no equivalent mapping in the Java programming language.
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `InterlockedExchange<T>(ref ImmutableArray<T>, ImmutableArray<T>)` | Unnecessary since `ImmutableArrayList<T>` is a reference type |
+| `InterlockedCompareExchange<T>(ref ImmutableArray<T>, ImmutableArray<T>, ImmutableArray<T>)` | Unnecessary since `ImmutableArrayList<T>` is a reference type |
+| `InterlockedInitialize<T>(ref ImmutableArray<T>, ImmutableArray<T>)` | Unnecessary since `ImmutableArrayList<T>` is a reference type |
 
 ## Footnotes
 

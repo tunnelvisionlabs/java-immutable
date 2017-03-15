@@ -74,51 +74,6 @@ public enum ImmutableAtomic {
     }
 
     /**
-     * Assigns a field or variable containing an immutable array to the specified value and returns the previous value.
-     *
-     * @param <T> The type of element stored by the array.
-     * @param location The field or local variable to change.
-     * @param value The new value to assign.
-     * @return The prior value at the specified {@code location}.
-     */
-    public static <T> ImmutableArrayList<T> getAndSet(AtomicReference<ImmutableArrayList<T>> location, ImmutableArrayList<T> value) {
-        return location.getAndSet(value);
-    }
-
-    /**
-     * Assigns a field or variable containing an immutable array to the specified value if it is currently equal to
-     * another specified value. Returns the previous value.
-     *
-     * @param <T> The type of element stored by the array.
-     * @param location The field or local variable to change.
-     * @param value The new value to assign.
-     * @param comparand The value to check equality for before assigning.
-     * @return The prior value at the specified {@code location}.
-     */
-    public static <T> ImmutableArrayList<T> interlockedCompareExchange(AtomicReference<ImmutableArrayList<T>> location, ImmutableArrayList<T> value, ImmutableArrayList<T> comparand) {
-        ImmutableArrayList<T> priorValue = location.get();
-        if (!location.compareAndSet(comparand, value)) {
-            return priorValue;
-        }
-
-        return comparand;
-    }
-
-    /**
-     * Assigns a field or variable containing an immutable array to the specified value if it is has not yet been
-     * initialized.
-     *
-     * @param <T> The type of element stored by the array.
-     * @param location The field or local variable to change.
-     * @param value The new value to assign.
-     * @return {@code true} if the field was assigned the specified value; {@code false} if it was previously
-     * initialized.
-     */
-    public static <T> boolean interlockedInitialize(AtomicReference<ImmutableArrayList<T>> location, ImmutableArrayList<T> value) {
-        return location.compareAndSet(null, value);
-    }
-
-    /**
      * Obtains the value for the specified key from a dictionary, or adds a new value to the dictionary where the key
      * did not previously exist.
      *

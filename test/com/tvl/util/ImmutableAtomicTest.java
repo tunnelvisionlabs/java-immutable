@@ -239,49 +239,6 @@ public class ImmutableAtomicTest {
 //        }
 
     @Test
-    public void interlockedExchangeArrayDefault() {
-        AtomicReference<ImmutableArrayList<Integer>> array = new AtomicReference<ImmutableArrayList<Integer>>();
-        ImmutableArrayList<Integer> oldValue = ImmutableAtomic.getAndSet(array, ImmutableArrayList.<Integer>create());
-        assertNull(oldValue);
-        assertNotNull(array.get());
-    }
-
-    @Test
-    public void interlockedExchangeArrayNonDefault() {
-        AtomicReference<ImmutableArrayList<Integer>> array = new AtomicReference<ImmutableArrayList<Integer>>(ImmutableArrayList.create(1, 2, 3));
-        ImmutableArrayList<Integer> oldValue = ImmutableAtomic.getAndSet(array, ImmutableArrayList.create(4, 5, 6));
-        assertThat(oldValue, contains(1, 2, 3));
-        assertThat(array.get(), contains(4, 5, 6));
-    }
-
-    @Test
-    public void interlockedCompareExchangeArrayDefault() {
-        AtomicReference<ImmutableArrayList<Integer>> array = new AtomicReference<ImmutableArrayList<Integer>>(null);
-        ImmutableArrayList<Integer> oldValue = ImmutableAtomic.interlockedCompareExchange(array, ImmutableArrayList.create(4, 5, 6), null);
-    }
-
-    @Test
-    public void interlockedCompareExchangeArray() {
-        AtomicReference<ImmutableArrayList<Integer>> array = new AtomicReference<ImmutableArrayList<Integer>>(ImmutableArrayList.create(1, 2, 3));
-        ImmutableArrayList<Integer> oldValue = ImmutableAtomic.interlockedCompareExchange(array, ImmutableArrayList.create(4, 5, 6), null);
-        assertSame(array.get(), oldValue);
-
-        ImmutableArrayList<Integer> arrayBefore = array.get();
-        oldValue = ImmutableAtomic.interlockedCompareExchange(array, ImmutableArrayList.create(4, 5, 6), array.get());
-        assertSame(oldValue, arrayBefore);
-        assertThat(array.get(), contains(4, 5, 6));
-    }
-
-    @Test
-    public void interlockedInitializeArray() {
-        AtomicReference<ImmutableArrayList<Integer>> array = new AtomicReference<ImmutableArrayList<Integer>>(null);
-        assertTrue(ImmutableAtomic.interlockedInitialize(array, ImmutableArrayList.<Integer>create()));
-        assertNotNull(array.get());
-        assertFalse(ImmutableAtomic.interlockedInitialize(array, ImmutableArrayList.create(1, 2, 3)));
-        assertTrue(array.get().isEmpty());
-    }
-
-    @Test
     public void getOrAddMapValue() {
         AtomicReference<ImmutableHashMap<Integer, String>> map = new AtomicReference<ImmutableHashMap<Integer, String>>(ImmutableHashMap.<Integer, String>create());
         String value = ImmutableAtomic.getOrAdd(map, 1, "a");
