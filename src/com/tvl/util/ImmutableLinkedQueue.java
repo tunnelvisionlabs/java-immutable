@@ -18,12 +18,12 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
     private static final ImmutableLinkedQueue<?> EMPTY_QUEUE = new ImmutableLinkedQueue<Object>(ImmutableLinkedStack.empty(), ImmutableLinkedStack.empty());
 
     /**
-     * The end of the queue that enqueued elements are pushed onto.
+     * The end of the queue that added elements are pushed onto.
      */
     private final ImmutableLinkedStack<T> backwards;
 
     /**
-     * The end of the queue from which elements are dequeued.
+     * The end of the queue from which elements are polled.
      */
     private final ImmutableLinkedStack<T> forwards;
 
@@ -65,7 +65,7 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
      * @return The immutable collection.
      */
     public static <T> ImmutableLinkedQueue<T> create(T item) {
-        return ImmutableLinkedQueue.<T>empty().enqueue(item);
+        return ImmutableLinkedQueue.<T>empty().add(item);
     }
 
     /**
@@ -80,7 +80,7 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
 
         ImmutableLinkedQueue<T> queue = empty();
         for (T item : items) {
-            queue = queue.enqueue(item);
+            queue = queue.add(item);
         }
 
         return queue;
@@ -98,7 +98,7 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
 
         ImmutableLinkedQueue<T> queue = empty();
         for (T item : items) {
-            queue = queue.enqueue(item);
+            queue = queue.add(item);
         }
 
         return queue;
@@ -142,7 +142,7 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
      * {@inheritDoc}
      */
     @Override
-    public ImmutableLinkedQueue<T> enqueue(T value) {
+    public ImmutableLinkedQueue<T> add(T value) {
         if (isEmpty()) {
             return new ImmutableLinkedQueue<T>(ImmutableLinkedStack.<T>empty().push(value), ImmutableLinkedStack.<T>empty());
         } else {
@@ -154,7 +154,7 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
      * {@inheritDoc}
      */
     @Override
-    public ImmutableLinkedQueue<T> dequeue() {
+    public ImmutableLinkedQueue<T> poll() {
         if (isEmpty()) {
             throw new EmptyStackException();
         }
