@@ -623,7 +623,7 @@ public final class ImmutableTreeList<T> extends AbstractImmutableList<T> impleme
         return null;
     }
 
-    private static <T> OrderedCollection<T> asOrderedCollection(Iterable<T> sequence) {
+    static <T> OrderedCollection<T> asOrderedCollection(Iterable<T> sequence) {
         Requires.notNull(sequence, "sequence");
 
         if (sequence instanceof OrderedCollection<?>) {

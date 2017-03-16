@@ -363,6 +363,95 @@ These members of `ImmutableList<T>.Builder` have no equivalent mapping in the Ja
 | `Sort(Comparison<T>)` | Use `sort(Comparator<? super T>` instead. |
 | `ForEach(Action<T>)` | Use enhanced `for` loop instead. |
 
+## `ImmutableSortedSet<T>` &rarr; `ImmutableTreeSet<T>`
+
+### Factory
+
+#### `ImmutableSortedSet` &rarr; `ImmutableTreeSet<T>`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `Create<T>()` | `<T>create()` | &check; |
+| `Create<T>(IComparer<T>)` | `<T>create(Comparator<? super T>)` | &check; |
+| `Create<T>(T)` | `<T>create(T)` | &check; |
+| `Create<T>(IComparer<T>, T)` | `<T>create(Comparator<? super T>, T)` | &check; |
+| `CreateRange<T>(IEnumerable<T>)` | `<T>createAll(Iterable<? extends T>)` | &check; |
+| `CreateRange<T>(IComparer<T>, IEnumerable<T>)` | `<T>createAll(Comparator<? super T>, Iterable<? extends T>)` | &check; |
+| `Create<T>(params T[])` | `<T>create(T...)` | &check; |
+| `Create<T>(IComparer<T>, params T[])` | `<T>create(Comparator<? super T>, T...)` | &check; |
+| `CreateBuilder<T>()` | `<T>createBuilder()` | &check; |
+| `CreateBuilder<T>(IComparer<T>)` | `<T>createBuilder(Comparator<? super T>)` | &check; |
+
+#### `ImmutableSortedSet` &rarr; `Immutables`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `ToImmutableSortedSet<TSource>(this IEnumerable<TSource>, IComparer<TSource>)` | `<T>toImmutableTreeSet(Iterable<? extends T>, Comparator<? super T>)` | &check; |
+| `ToImmutableSortedSet<TSource>(this IEnumerable<TSource>)` | `<T>toImmutableTreeSet(Iterable<? extends T>)` | &check; |
+
+### Collection
+
+#### `ImmutableSortedSet<T>` &rarr; `ImmutableTreeSet<T>`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `Empty` | `<T>empty()` | &check; |
+| `Clear()` | `clear()` | &check; |
+| `Max` | `getMax()` | &check; |
+| `Min` | `getMin()` | &check; |
+| `IsEmpty` | `isEmpty()` | &check; |
+| `Count` | `size()` | &check; |
+| `KeyComparer` | `getKeyComparator()` | &check; |
+| `this[int]` | `get(int)` | &check; |
+| `ToBuilder()` | `toBuilder()` | &check; |
+| `Add(T)` | `add(T)` | &check; |
+| `Remove(T)` | `remove(T)` | &check; |
+| `TryGetValue(T, out T)` | `tryGetValue(T)` | &check; |
+| `Intersect(IEnumerable<T>)` | `intersect(Iterable<? extends T>)` | &check; |
+| `Except(IEnumerable<T>)` | `except(Iterable<? extends T>)` | &check; |
+| `SymmetricExcept(IEnumerable<T>)` | `symmetricExcept(Iterable<? extends T>)` | &check; |
+| `Union(IEnumerable<T>)` | `union(Iterable<? extends T>)` | &check; |
+| `WithComparer(IComparer<T>)` | `withComparator(Comparator<? super T>)` | &check; |
+| `SetEquals(IEnumerable<T>)` | `setEquals(Iterable<? extends T>)` | &check; |
+| `IsProperSubsetOf(IEnumerable<T>)` | `isProperSubsetOf(Iterable<? extends T>)` | &check; |
+| `IsProperSupersetOf(IEnumerable<T>)` | `isProperSupersetOf(Iterable<? extends T>)` | &check; |
+| `IsSubsetOf(IEnumerable<T>)` | `isSubsetOf(Iterable<? extends T>)` | &check; |
+| `IsSupersetOf(IEnumerable<T>` | `isSupersetOf(Iterable<? extends T>)` | &check; |
+| `Overlaps(IEnumerable<T>)` | `overlaps(Iterable<? extends T>)` | &check; |
+| `Reverse()` | `reverse()` | &check; |
+| `IndexOf(T)` | `indexOf(T)` | &check; |
+| `Contains(T)` | `contains(T)` | &check; |
+| `GetEnumerator()` | `iterator()` | &check; |
+
+### Builder
+
+#### `ImmutableSortedSet<T>.Builder` &rarr; `ImmutableTreeSet.Builder<T>`
+
+| .NET Member | Java Member | Notes |
+| --- | --- | --- |
+| `Count` | `size()` | &check; |
+| `this[int]` | `get(int)` | &check; |
+| `Max` | `getMax()` | &check; |
+| `Min` | `getMin()` | &check; |
+| `KeyComparer` | `getKeyComparator()` | &check; |
+| `Add(T)` | `add(Object)` | &check; |
+| `ExceptWith(IEnumerable<T>)` | `exceptWith(Iterable<? extends T>)` | &check; |
+| `IntersectWith(IEnumerable<T>)` | `intersectWith(Iterable<? extends T>)` | &check; |
+| `IsProperSubsetOf(IEnumerable<T>)` | `isProperSubsetOf(Iterable<? extends T>)` | &check; |
+| `IsProperSupersetOf(IEnumerable<T>)` | `isProperSupersetOf(Iterable<? extends T>)` | &check; |
+| `IsSubsetOf(IEnumerable<T>)` | `isSubsetOf(Iterable<? extends T>)` | &check; |
+| `IsSupersetOf(IEnumerable<T>)` | `isSupersetOf(Iterable<? extends T>)` | &check; |
+| `Overlaps(IEnumerable<T>)` | `overlaps(Iterable<? extends T>)` | &check; |
+| `SetEquals(IEnumerable<T>)` | `setEquals(Iterable<? extends T>)` | &check; |
+| `SymmetricExceptWith(IEnumerable<T>)` | `symmetricExceptWith(Iterable<? extends T>)` | &check; |
+| `UnionWith(IEnumerable<T>)` | `unionWith(Iterable<? extends T>)` | &check; |
+| `Clear()` | `clear()` | &check; |
+| `Contains(T)` | `contains(Object)` | &check; |
+| `Remove(T)` | `remove(Object)` | &check; |
+| `GetEnumerator()` | `iterator()` | &check; |
+| `Reverse()` | `reverse()` | &check; |
+| `ToImmutable()` | `toImmutable()` | &check; |
+
 ## `ImmutableQueue<T>` &rarr; `ImmutableLinkedQueue<T>`
 
 ### Factory
