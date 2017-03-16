@@ -248,8 +248,8 @@ public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestB
             }
         }));
 
-        for (int idx = 0; idx < list.size(); idx++) {
-            for (int count = 0; count <= idx + 1; count++) {
+        for (int fromIndex = 0; fromIndex < list.size(); fromIndex++) {
+            for (int toIndex = fromIndex; toIndex <= list.size(); toIndex++) {
                 for (final int c : list) {
                     final AtomicInteger predicateInvocationCount = new AtomicInteger();
                     Predicate<Integer> match = new Predicate<Integer>() {
@@ -260,26 +260,26 @@ public abstract class ImmutableListTestBase extends SimpleElementImmutablesTestB
                         }
                     };
 
-                    int expected = bclList.subList(idx - count + 1, idx + 1).lastIndexOf(c);
-                    int expectedInvocationCount = expected >= 0 ? count - expected : count;
+                    int expected = bclList.subList(fromIndex, toIndex).lastIndexOf(c);
+                    int expectedInvocationCount = expected >= 0 ? toIndex - fromIndex - expected : toIndex - fromIndex;
                     if (expected >= 0) {
-                        expected += idx - count + 1;
+                        expected += fromIndex;
                     }
 
-                    int actual = getListQuery(list).findLastIndex(idx, count, match);
+                    int actual = getListQuery(list).findLastIndex(fromIndex, toIndex, match);
                     int actualInvocationCount = predicateInvocationCount.get();
                     Assert.assertEquals(expected, actual);
                     Assert.assertEquals(expectedInvocationCount, actualInvocationCount);
 
-                    if (count == list.size()) {
-                        // Also test the FindIndex overload that takes no count parameter.
+                    if (toIndex == list.size()) {
+                        // Also test the FindIndex overload that takes no toIndex parameter.
                         predicateInvocationCount.set(0);
-                        actual = getListQuery(list).findLastIndex(idx, match);
+                        actual = getListQuery(list).findLastIndex(fromIndex, match);
                         Assert.assertEquals(expected, actual);
                         Assert.assertEquals(expectedInvocationCount, actualInvocationCount);
 
-                        if (idx == list.size() - 1) {
-                            // Also test the FindIndex overload that takes no index parameter.
+                        if (fromIndex == 0) {
+                            // Also test the FindIndex overload that takes no fromIndex parameter.
                             predicateInvocationCount.set(0);
                             actual = getListQuery(list).findLastIndex(match);
                             Assert.assertEquals(expected, actual);

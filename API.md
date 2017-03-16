@@ -279,8 +279,8 @@ These members of `ImmutableArray<T>` have no equivalent mapping in the Java prog
 | `FindIndex(int start, int length, Predicate<T>)` | `findIndex(int fromIndex, int toIndex, Predicate<? super T>)` | &check; 1 |
 | `FindLast(Predicate<T>)` | `findLast(Predicate<? super T>)` | &check; |
 | `FindLastIndex(Predicate<T>)` | `findLastIndex(Predicate<? super T>)` | &check; |
-| `FindLastIndex(int, Predicate<T>)` | `findLastIndex(int, Predicate<? super T>)` | |
-| `FindLastIndex(int start, int length, Predicate<T>)` | `findLastIndex(int fromIndex, int toIndex, Predicate<? super T>)` | 1 |
+| `FindLastIndex(int, Predicate<T>)` | `findLastIndex(int, Predicate<? super T>)` | &check; |
+| `FindLastIndex(int start, int length, Predicate<T>)` | `findLastIndex(int fromIndex, int toIndex, Predicate<? super T>)` | &check; 1 |
 | `IndexOf(T, int start, int length, IEqualityComparer<T>)` | `indexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | &check; 1 |
 | `LastIndexOf(T, int start, int length, IEqualityComparer<T>)` | `lastIndexOf(T, int fromIndex, int toIndex, EqualityComparator<? super T>)` | &check; 1 |
 | `TrueForAll(Predicate<T>)` | `trueForAll(Predicate<? super T>)` | &check; |
@@ -321,10 +321,10 @@ These members of `ImmutableList<T>` have no equivalent mapping in the Java progr
 | `FindIndex(Predicate<T>)` | `findIndex(Predicate<? super T>)` | &check; |
 | `FindIndex(int, Predicate<T>)` | `findIndex(int, Predicate<? super T>)` | &check; |
 | `FindIndex(int start, int length, Predicate<T>)` | `findIndex(int fromIndex, int toIndex, Predicate<? super T>)` | &check; 1 |
-| `FindLast(Predicate<T>)` | `findLast(Predicate<? super T>)` | |
-| `FindLastIndex(Predicate<T>)` | `findLastIndex(Predicate<? super T>)` | |
-| `FindLastIndex(int, Predicate<T>)` | `findLastIndex(int, Predicate<? super T>)` | |
-| `FindLastIndex(int start, int length, Predicate<T>)` | `findLastIndex(int fromIndex, int toIndex, Predicate<? super T>)` | 1 |
+| `FindLast(Predicate<T>)` | `findLast(Predicate<? super T>)` | &check; |
+| `FindLastIndex(Predicate<T>)` | `findLastIndex(Predicate<? super T>)` | &check; |
+| `FindLastIndex(int, Predicate<T>)` | `findLastIndex(int, Predicate<? super T>)` | &check; |
+| `FindLastIndex(int start, int length, Predicate<T>)` | `findLastIndex(int fromIndex, int toIndex, Predicate<? super T>)` | &check; 1 |
 | `IndexOf(T, int)` | `indexOf(?, int)` | |
 | `IndexOf(T, int start, int length)` | `indexOf(?, int fromIndex, int toIndex)` | 1 |
 | `IndexOf(T, int start, int length, IEqualityComparer<? super T>)` | `indexOf(?, int fromIndex, int toIndex, ?)` | 1 |
