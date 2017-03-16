@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * An immutable unordered map implementation.
@@ -36,11 +39,13 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
     /**
      * The root node of the tree that stores this map.
      */
+    @Nonnull
     private final SortedIntegerKeyNode<HashBucket<K, V>> root;
 
     /**
      * The comparer used when comparing hash buckets.
      */
+    @Nonnull
     private final Comparators<K, V> comparators;
 
     private ImmutableHashMap() {
@@ -66,49 +71,60 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
     /**
      * Gets an empty immutable map with default equality comparators.
      */
+    @Nonnull
     public static <K, V> ImmutableHashMap<K, V> empty() {
         @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableHashMap<K, V> result = (ImmutableHashMap<K, V>)EMPTY_MAP;
         return result;
     }
 
+    @Nonnull
     public static <K, V> ImmutableHashMap<K, V> create() {
         return empty();
     }
 
-    public static <K, V> ImmutableHashMap<K, V> create(EqualityComparator<? super K> keyComparator) {
+    @Nonnull
+    public static <K, V> ImmutableHashMap<K, V> create(@Nullable EqualityComparator<? super K> keyComparator) {
         return ImmutableHashMap.<K, V>empty().withComparators(keyComparator);
     }
 
-    public static <K, V> ImmutableHashMap<K, V> create(EqualityComparator<? super K> keyComparator, EqualityComparator<? super V> valueComparator) {
+    @Nonnull
+    public static <K, V> ImmutableHashMap<K, V> create(@Nullable EqualityComparator<? super K> keyComparator, @Nullable EqualityComparator<? super V> valueComparator) {
         return ImmutableHashMap.<K, V>empty().withComparators(keyComparator, valueComparator);
     }
 
-    public static <K, V> ImmutableHashMap<K, V> createAll(Iterable<Map.Entry<K, V>> items) {
+    @Nonnull
+    public static <K, V> ImmutableHashMap<K, V> createAll(@Nonnull Iterable<Map.Entry<K, V>> items) {
         return ImmutableHashMap.<K, V>empty().addAll(items);
     }
 
-    public static <K, V> ImmutableHashMap<K, V> createAll(EqualityComparator<? super K> keyComparator, Iterable<Map.Entry<K, V>> items) {
+    @Nonnull
+    public static <K, V> ImmutableHashMap<K, V> createAll(@Nullable EqualityComparator<? super K> keyComparator, @Nonnull Iterable<Map.Entry<K, V>> items) {
         return ImmutableHashMap.<K, V>create(keyComparator).addAll(items);
     }
 
-    public static <K, V> ImmutableHashMap<K, V> createAll(EqualityComparator<? super K> keyComparator, EqualityComparator<? super V> valueComparator, Iterable<Map.Entry<K, V>> items) {
+    @Nonnull
+    public static <K, V> ImmutableHashMap<K, V> createAll(@Nullable EqualityComparator<? super K> keyComparator, @Nullable EqualityComparator<? super V> valueComparator, @Nonnull Iterable<Map.Entry<K, V>> items) {
         return ImmutableHashMap.<K, V>create(keyComparator, valueComparator).addAll(items);
     }
 
+    @Nonnull
     public static <K, V> ImmutableHashMap.Builder<K, V> createBuilder() {
         return ImmutableHashMap.<K, V>create().toBuilder();
     }
 
-    public static <K, V> ImmutableHashMap.Builder<K, V> createBuilder(EqualityComparator<? super K> keyComparator) {
+    @Nonnull
+    public static <K, V> ImmutableHashMap.Builder<K, V> createBuilder(@Nullable EqualityComparator<? super K> keyComparator) {
         return ImmutableHashMap.<K, V>create(keyComparator).toBuilder();
     }
 
-    public static <K, V> ImmutableHashMap.Builder<K, V> createBuilder(EqualityComparator<? super K> keyComparator, EqualityComparator<? super V> valueComparator) {
+    @Nonnull
+    public static <K, V> ImmutableHashMap.Builder<K, V> createBuilder(@Nullable EqualityComparator<? super K> keyComparator, @Nullable EqualityComparator<? super V> valueComparator) {
         return ImmutableHashMap.<K, V>create(keyComparator, valueComparator).toBuilder();
     }
 
-    private static <K, V> ImmutableHashMap<K, V> emptyWithComparators(Comparators<K, V> comparators) {
+    @Nonnull
+    private static <K, V> ImmutableHashMap<K, V> emptyWithComparators(@Nonnull Comparators<K, V> comparators) {
         Requires.notNull(comparators, "comparators");
 
         if (empty().comparators == comparators) {
@@ -118,7 +134,8 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return new ImmutableHashMap<K, V>(comparators);
     }
 
-    private static <K, V> ImmutableHashMap<K, V> tryCastToImmutableMap(Iterable<? extends Map.Entry<K, V>> sequence) {
+    @Nullable
+    private static <K, V> ImmutableHashMap<K, V> tryCastToImmutableMap(@Nonnull Iterable<? extends Map.Entry<K, V>> sequence) {
         if (sequence instanceof ImmutableHashMap.EntrySet) {
             return ((ImmutableHashMap.EntrySet<K, V>)(ImmutableHashMap.EntrySet)sequence).getMap();
         }
@@ -136,7 +153,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return null;
     }
 
-    private static <K, V> boolean containsKey(K key, MutationInput<K, V> origin) {
+    private static <K, V> boolean containsKey(@Nonnull K key, @Nonnull MutationInput<K, V> origin) {
         int hashCode = origin.getKeyComparator().hashCode(key);
         HashBucket<K, V> bucket = origin.getRoot().getValueOrDefault(hashCode);
         if (bucket != null) {
@@ -147,7 +164,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return false;
     }
 
-    private static <K, V> boolean contains(Map.Entry<K, V> keyValuePair, MutationInput<K, V> origin) {
+    private static <K, V> boolean contains(@Nonnull Map.Entry<K, V> keyValuePair, @Nonnull MutationInput<K, V> origin) {
         int hashCode = origin.getKeyComparator().hashCode(keyValuePair.getKey());
         HashBucket<K, V> bucket = origin.getRoot().getValueOrDefault(hashCode);
         if (bucket != null) {
@@ -158,7 +175,8 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return false;
     }
 
-    private static <K, V> V getValue(K key, MutationInput<K, V> origin) {
+    @Nullable
+    private static <K, V> V getValue(@Nonnull K key, @Nonnull MutationInput<K, V> origin) {
         int hashCode = origin.getKeyComparator().hashCode(key);
         HashBucket<K, V> bucket = origin.getRoot().getValueOrDefault(hashCode);
         if (bucket != null) {
@@ -168,7 +186,8 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return null;
     }
 
-    private static <K, V> K getKey(K equalKey, MutationInput<K, V> origin) {
+    @Nullable
+    private static <K, V> K getKey(@Nonnull K equalKey, @Nonnull MutationInput<K, V> origin) {
         int hashCode = origin.getKeyComparator().hashCode(equalKey);
         HashBucket<K, V> bucket = origin.getRoot().getValueOrDefault(hashCode);
         if (bucket != null) {
@@ -178,7 +197,8 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return null;
     }
 
-    private static <K, V> MutationResult<K, V> add(K key, V value, KeyCollisionBehavior behavior, MutationInput<K, V> origin) {
+    @Nonnull
+    private static <K, V> MutationResult<K, V> add(@Nonnull K key, V value, @Nonnull KeyCollisionBehavior behavior, @Nonnull MutationInput<K, V> origin) {
         Requires.notNull(key, "key");
 
         int hashCode = origin.getKeyComparator().hashCode(key);
@@ -196,11 +216,13 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return new MutationResult<K, V>(newRoot, newBucket.getValue() == OperationResult.SIZE_CHANGED ? +1 : 0);
     }
 
-    private static <K, V> MutationResult<K, V> addAll(Iterable<? extends Map.Entry<? extends K, ? extends V>> items, MutationInput<K, V> origin) {
+    @Nonnull
+    private static <K, V> MutationResult<K, V> addAll(@Nonnull Iterable<? extends Map.Entry<? extends K, ? extends V>> items, @Nonnull MutationInput<K, V> origin) {
         return addAll(items, origin, KeyCollisionBehavior.THROW_IF_VALUE_DIFFERENT);
     }
 
-    private static <K, V> MutationResult<K, V> addAll(Iterable<? extends Map.Entry<? extends K, ? extends V>> items, MutationInput<K, V> origin, KeyCollisionBehavior behavior) {
+    @Nonnull
+    private static <K, V> MutationResult<K, V> addAll(@Nonnull Iterable<? extends Map.Entry<? extends K, ? extends V>> items, @Nonnull MutationInput<K, V> origin, @Nonnull KeyCollisionBehavior behavior) {
         Requires.notNull(items, "items");
 
         int countAdjustment = 0;
@@ -222,7 +244,8 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return new MutationResult<K, V>(newRoot, countAdjustment);
     }
 
-    private static <K, V> MutationResult<K, V> remove(K key, MutationInput<K, V> origin) {
+    @Nonnull
+    private static <K, V> MutationResult<K, V> remove(@Nonnull K key, @Nonnull MutationInput<K, V> origin) {
         int hashCode = origin.getKeyComparator().hashCode(key);
         HashBucket<K, V> bucket = origin.getRoot().getValueOrDefault(hashCode);
         if (bucket != null) {
@@ -234,7 +257,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return new MutationResult<K, V>(origin);
     }
 
-    private static <K, V> SortedIntegerKeyNode<HashBucket<K, V>> updateRoot(SortedIntegerKeyNode<HashBucket<K, V>> root, int hashCode, HashBucket<K, V> newBucket, EqualityComparator<? super HashBucket<K, V>> hashBucketComparator) {
+    private static <K, V> SortedIntegerKeyNode<HashBucket<K, V>> updateRoot(@Nonnull SortedIntegerKeyNode<HashBucket<K, V>> root, int hashCode, @Nonnull HashBucket<K, V> newBucket, @Nonnull EqualityComparator<? super HashBucket<K, V>> hashBucketComparator) {
         if (newBucket.isEmpty()) {
             SortedIntegerKeyNode.MutationResult<HashBucket<K, V>> result = root.remove(hashCode);
             return result.result;
@@ -244,13 +267,16 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         }
     }
 
-    private static <K, V> ImmutableHashMap<K, V> wrap(SortedIntegerKeyNode<HashBucket<K, V>> root, Comparators<K, V> comparators, int count) {
+    @Nonnull
+    private static <K, V> ImmutableHashMap<K, V> wrap(@Nonnull SortedIntegerKeyNode<HashBucket<K, V>> root, @Nonnull Comparators<K, V> comparators, int count) {
         Requires.notNull(root, "root");
         Requires.notNull(comparators, "comparators");
         Requires.range(count >= 0, "count");
         return new ImmutableHashMap<K, V>(root, comparators, count);
     }
 
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableHashMap<K, V> clear() {
         return isEmpty() ? this : emptyWithComparators(comparators);
@@ -266,15 +292,18 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return size() == 0;
     }
 
+    @Nonnull
     @Override
     public EqualityComparator<? super K> getKeyComparator() {
         return comparators.getKeyComparator();
     }
 
+    @Nonnull
     public EqualityComparator<? super V> getValueComparator() {
         return comparators.getValueComparator();
     }
 
+    @Nonnull
     @Override
     public Iterable<K> keySet() {
         return new Iterable<K>() {
@@ -302,6 +331,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         };
     }
 
+    @Nonnull
     @Override
     public Iterable<V> values() {
         return new Iterable<V>() {
@@ -329,55 +359,69 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         };
     }
 
+    @Nonnull
     private MutationInput<K, V> getOrigin() {
         return new MutationInput<K, V>(this);
     }
 
+    @Nonnull
     public Builder<K, V> toBuilder() {
         return new Builder<K, V>(this);
     }
 
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableHashMap<K, V> add(K key, V value) {
+    public ImmutableHashMap<K, V> add(@Nonnull K key, V value) {
         Requires.notNull(key, "key");
 
         ImmutableHashMap.MutationResult<K, V> result = add(key, value, KeyCollisionBehavior.THROW_IF_VALUE_DIFFERENT, new MutationInput<K, V>(this));
         return result.finalize(this);
     }
 
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableHashMap<K, V> addAll(Iterable<? extends Map.Entry<K, V>> entries) {
+    public ImmutableHashMap<K, V> addAll(@Nonnull Iterable<? extends Map.Entry<K, V>> entries) {
         Requires.notNull(entries, "entries");
 
         return addAll(entries, false);
     }
 
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableHashMap<K, V> put(K key, V value) {
+    public ImmutableHashMap<K, V> put(@Nonnull K key, V value) {
         Requires.notNull(key, "key");
 
         MutationResult<K, V> result = add(key, value, KeyCollisionBehavior.SET_VALUE, new MutationInput<K, V>(this));
         return result.finalize(this);
     }
 
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableHashMap<K, V> putAll(Iterable<? extends Map.Entry<K, V>> entries) {
+    public ImmutableHashMap<K, V> putAll(@Nonnull Iterable<? extends Map.Entry<K, V>> entries) {
         Requires.notNull(entries, "entries");
 
         MutationResult<K, V> result = addAll(entries, getOrigin(), KeyCollisionBehavior.SET_VALUE);
         return result.finalize(this);
     }
 
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableHashMap<K, V> remove(K key) {
+    public ImmutableHashMap<K, V> remove(@Nonnull K key) {
         Requires.notNull(key, "key");
 
         MutationResult<K, V> result = remove(key, new MutationInput<K, V>(this));
         return result.finalize(this);
     }
 
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableHashMap<K, V> removeAll(Iterable<? extends K> keys) {
+    public ImmutableHashMap<K, V> removeAll(@Nonnull Iterable<? extends K> keys) {
         Requires.notNull(keys, "keys");
 
         int count = this.count;
@@ -398,33 +442,39 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
     }
 
     @Override
-    public boolean containsKey(K key) {
+    public boolean containsKey(@Nonnull K key) {
         Requires.notNull(key, "key");
         return containsKey(key, new MutationInput<K, V>(this));
     }
 
     @Override
-    public boolean contains(Map.Entry<K, V> pair) {
+    public boolean contains(@Nonnull Map.Entry<K, V> pair) {
         return contains(pair, getOrigin());
     }
 
+    @Nullable
     @Override
-    public V get(K key) {
+    public V get(@Nonnull K key) {
         Requires.notNull(key, "key");
         return getValue(key, getOrigin());
     }
 
+    @Nullable
     @Override
-    public K getKey(K equalKey) {
+    public K getKey(@Nonnull K equalKey) {
         Requires.notNull(equalKey, "equalKey");
         return getKey(equalKey, getOrigin());
     }
 
-    public ImmutableHashMap<K, V> withComparators(EqualityComparator<? super K> keyComparator) {
+    @Nonnull
+    @CheckReturnValue
+    public ImmutableHashMap<K, V> withComparators(@Nullable EqualityComparator<? super K> keyComparator) {
         return withComparators(keyComparator, comparators.getValueComparator());
     }
 
-    public ImmutableHashMap<K, V> withComparators(EqualityComparator<? super K> keyComparator, EqualityComparator<? super V> valueComparator) {
+    @Nonnull
+    @CheckReturnValue
+    public ImmutableHashMap<K, V> withComparators(@Nullable EqualityComparator<? super K> keyComparator, @Nullable EqualityComparator<? super V> valueComparator) {
         if (keyComparator == null) {
             keyComparator = EqualityComparators.defaultComparator();
         }
@@ -461,12 +511,14 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return false;
     }
 
+    @Nonnull
     @Override
     public Iterable<Map.Entry<K, V>> entrySet() {
         return new EntrySet<K, V>(this);
     }
 
-    private ImmutableHashMap<K, V> wrap(SortedIntegerKeyNode<HashBucket<K, V>> root, int adjustedCountIfDifferentRoot) {
+    @Nonnull
+    private ImmutableHashMap<K, V> wrap(@Nullable SortedIntegerKeyNode<HashBucket<K, V>> root, int adjustedCountIfDifferentRoot) {
         if (root == null) {
             return clear();
         }
@@ -478,7 +530,8 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return this;
     }
 
-    private ImmutableHashMap<K, V> addAll(Iterable<? extends Map.Entry<K, V>> pairs, boolean avoidToHashMap) {
+    @Nonnull
+    private ImmutableHashMap<K, V> addAll(@Nonnull Iterable<? extends Map.Entry<K, V>> pairs, boolean avoidToHashMap) {
         Requires.notNull(pairs, "pairs");
 
         // Some optimizations may apply if we're an empty list
@@ -495,6 +548,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         return result.finalize(this);
     }
 
+    @Nonnull
     SortedIntegerKeyNode<HashBucket<K, V>> getRoot() {
         return root;
     }
@@ -542,16 +596,18 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
     private static final class EntrySet<K, V> implements Iterable<Map.Entry<K, V>> {
         private final ImmutableHashMap<K, V> map;
 
-        EntrySet(ImmutableHashMap<K, V> map) {
+        EntrySet(@Nonnull ImmutableHashMap<K, V> map) {
             Requires.notNull(map, "map");
             this.map = map;
         }
 
+        @Nonnull
         @Override
         public Iterator<Map.Entry<K, V>> iterator() {
             return new EntrySetItr<K, V>(map.root);
         }
 
+        @Nonnull
         ImmutableHashMap<K, V> getMap() {
             return map;
         }
@@ -567,7 +623,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
             this(root, null);
         }
 
-        EntrySetItr(SortedIntegerKeyNode<HashBucket<K, V>> root, Builder<K, V> builder) {
+        EntrySetItr(@Nonnull SortedIntegerKeyNode<HashBucket<K, V>> root, @Nullable Builder<K, V> builder) {
             this.builder = builder;
             this.mapIterator = root.iterator();
             this.bucketIterator = null;
@@ -623,7 +679,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         private ImmutableHashMap<K, V> immutable;
         private int version;
 
-        Builder(ImmutableHashMap<K, V> map) {
+        Builder(@Nonnull ImmutableHashMap<K, V> map) {
             Requires.notNull(map, "map");
             this.root = map.root;
             this.comparators = map.comparators;
@@ -631,11 +687,12 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
             this.immutable = map;
         }
 
+        @Nonnull
         public EqualityComparator<? super K> getKeyComparator() {
             return comparators.getKeyComparator();
         }
 
-        public void setKeyComparator(EqualityComparator<? super K> value) {
+        public void setKeyComparator(@Nonnull EqualityComparator<? super K> value) {
             Requires.notNull(value, "value");
             if (value != this.getKeyComparator()) {
                 Comparators<K, V> comparators = Comparators.get(value, getValueComparator());
@@ -649,11 +706,12 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
             }
         }
 
+        @Nonnull
         public EqualityComparator<? super V> getValueComparator() {
             return comparators.getValueComparator();
         }
 
-        public void setValueComparator(EqualityComparator<? super V> value) {
+        public void setValueComparator(@Nonnull EqualityComparator<? super V> value) {
             Requires.notNull(value, "value");
             if (value != getValueComparator()) {
                 // When the key comparator is the same but the value comparator is different, we don't need a whole new
@@ -674,11 +732,13 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
             return count == 0;
         }
 
+        @Nonnull
         @Override
         public Set<K> keySet() {
             return new KeySet();
         }
 
+        @Nonnull
         @Override
         public Collection<V> values() {
             return new ValuesCollection();
@@ -688,15 +748,17 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
             return version;
         }
 
+        @Nonnull
         private MutationInput<K, V> getOrigin() {
             return new MutationInput<K, V>(getRoot(), comparators, count);
         }
 
+        @Nonnull
         private SortedIntegerKeyNode<HashBucket<K, V>> getRoot() {
             return root;
         }
 
-        private void setRoot(SortedIntegerKeyNode<HashBucket<K, V>> value) {
+        private void setRoot(@Nonnull SortedIntegerKeyNode<HashBucket<K, V>> value) {
             // We *always* increment the version number because some mutations may not create a new value of root,
             // although the existing root instance may have mutated.
             version++;
@@ -723,12 +785,12 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         }
 
         @Override
-        public void putAll(Map<? extends K, ? extends V> m) {
+        public void putAll(@Nonnull Map<? extends K, ? extends V> m) {
             MutationResult<K, V> result = ImmutableHashMap.addAll(m.entrySet(), getOrigin());
             apply(result);
         }
 
-        public void removeAll(Iterable<? extends K> keys) {
+        public void removeAll(@Nonnull Iterable<? extends K> keys) {
             Requires.notNull(keys, "keys");
 
             for (K key : keys) {
@@ -736,6 +798,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
             }
         }
 
+        @Nonnull
         @Override
         public Set<Entry<K, V>> entrySet() {
             return new EntrySet<K, V>(this);
@@ -749,6 +812,8 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
             return get(key);
         }
 
+        @Nonnull
+        @CheckReturnValue
         public ImmutableHashMap<K, V> toImmutable() {
             // Creating an instance of ImmutableHashMap<T> with our root node automatically freezes our tree, ensuring
             // that the returned instance is immutable. Any further mutations made to this builder will clone (and
@@ -794,7 +859,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
             count = 0;
         }
 
-        private boolean apply(MutationResult<K, V> result) {
+        private boolean apply(@Nonnull MutationResult<K, V> result) {
             setRoot(result.getRoot());
             count += result.getCountAdjustment();
             return result.getCountAdjustment() != 0;
@@ -803,11 +868,12 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
         private static final class EntrySet<K, V> implements Set<Map.Entry<K, V>> {
             private final Builder<K, V> builder;
 
-            private EntrySet(Builder<K, V> builder) {
+            private EntrySet(@Nonnull Builder<K, V> builder) {
                 Requires.notNull(builder, "builder");
                 this.builder = builder;
             }
 
+            @Nonnull
             Builder<K, V> getBuilder() {
                 return builder;
             }
@@ -938,7 +1004,7 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
             }
 
             @Override
-            public boolean containsAll(Collection<?> c) {
+            public boolean containsAll(@Nonnull Collection<?> c) {
                 Requires.notNull(c, "c");
                 for (Object item : c) {
                     if (!contains(item)) {
@@ -1451,17 +1517,22 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
 
     private static final class Comparators<K, V> {
 
+        @Nonnull
         private static final Comparators<?, ?> DEFAULT = new Comparators<Object, Object>(EqualityComparators.defaultComparator(), EqualityComparators.defaultComparator());
 
+        @Nonnull
         private final EqualityComparator<? super K> keyComparator;
 
+        @Nonnull
         private final EqualityComparator<? super V> valueComparator;
 
+        @Nonnull
         private final EqualityComparator<? super Map.Entry<K, V>> keyOnlyComparator;
 
+        @Nonnull
         private final EqualityComparator<? super HashBucket<K, V>> hashBucketComparator;
 
-        Comparators(EqualityComparator<? super K> keyComparator, EqualityComparator<? super V> valueComparator) {
+        Comparators(@Nonnull EqualityComparator<? super K> keyComparator, @Nonnull EqualityComparator<? super V> valueComparator) {
             Requires.notNull(keyComparator, "keyComparator");
             Requires.notNull(valueComparator, "valueComparator");
 
@@ -1491,13 +1562,15 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
             };
         }
 
+        @Nonnull
         static <K, V> Comparators<K, V> defaultComparators() {
             @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
             Comparators<K, V> result = (Comparators<K, V>)DEFAULT;
             return result;
         }
 
-        static <K, V> Comparators<K, V> get(EqualityComparator<? super K> keyComparator, EqualityComparator<? super V> valueComparator) {
+        @Nonnull
+        static <K, V> Comparators<K, V> get(@Nonnull EqualityComparator<? super K> keyComparator, @Nonnull EqualityComparator<? super V> valueComparator) {
             if (keyComparator == DEFAULT.keyComparator && valueComparator == DEFAULT.valueComparator) {
                 return defaultComparators();
             }
@@ -1505,41 +1578,46 @@ public final class ImmutableHashMap<K, V> implements ImmutableMap<K, V>, HashKey
             return new Comparators<K, V>(keyComparator, valueComparator);
         }
 
+        @Nonnull
         EqualityComparator<? super K> getKeyComparator() {
             return keyComparator;
         }
 
+        @Nonnull
         EqualityComparator<? super Map.Entry<K, V>> getKeyOnlyComparator() {
             return keyOnlyComparator;
         }
 
+        @Nonnull
         EqualityComparator<? super V> getValueComparator() {
             return valueComparator;
         }
 
+        @Nonnull
         EqualityComparator<? super HashBucket<K, V>> getHashBucketComparator() {
             return hashBucketComparator;
         }
 
-        private boolean equals(HashBucket<K, V> x, HashBucket<K, V> y) {
+        private boolean equals(@Nonnull HashBucket<K, V> x, @Nonnull HashBucket<K, V> y) {
             return x.getAdditionalElements() == y.getAdditionalElements()
                 && getKeyComparator().equals(x.getFirstValue().getKey(), y.getFirstValue().getKey())
                 && getValueComparator().equals(x.getFirstValue().getValue(), y.getFirstValue().getValue());
         }
 
-        private int hashCode(HashBucket<K, V> obj) {
+        private int hashCode(@Nonnull HashBucket<K, V> obj) {
             return getKeyComparator().hashCode(obj.getFirstValue().getKey());
         }
 
-        private boolean equalKeys(Map.Entry<K, V> x, Map.Entry<K, V> y) {
+        private boolean equalKeys(@Nonnull Map.Entry<K, V> x, @Nonnull Map.Entry<K, V> y) {
             return getKeyComparator().equals(x.getKey(), y.getKey());
         }
 
-        private int keyHashCode(Map.Entry<K, V> obj) {
+        private int keyHashCode(@Nonnull Map.Entry<K, V> obj) {
             return getKeyComparator().hashCode(obj.getKey());
         }
 
-        Comparators<K, V> withValueComparator(EqualityComparator<? super V> valueComparator) {
+        @Nonnull
+        Comparators<K, V> withValueComparator(@Nonnull EqualityComparator<? super V> valueComparator) {
             Requires.notNull(valueComparator, "valueComparator");
             if (valueComparator == this.valueComparator) {
                 return this;

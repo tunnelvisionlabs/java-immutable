@@ -2,6 +2,7 @@
 package com.tvl.util;
 
 import java.util.Comparator;
+import javax.annotation.Nonnull;
 
 /**
  * Defined on a generic collection that sorts its contents using a {@link Comparator}.
@@ -14,5 +15,6 @@ interface SortKeyCollection<K> {
      *
      * @return The comparator used to sort the keys.
      */
+    @Nonnull
     Comparator<? super K> getKeyComparator();
 }

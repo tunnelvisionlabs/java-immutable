@@ -1,6 +1,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 package com.tvl.util;
 
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+
 /**
  * A set of elements that con only be modified by creating a new instance of the set.
  *
@@ -17,6 +20,8 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      *
      * @return The empty set.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableSet<T> clear();
 
     /**
@@ -33,6 +38,8 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      * @param value The value to add.
      * @return A new set with the element added, or this set if the element is already in this set.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableSet<T> add(T value);
 
     /**
@@ -41,6 +48,8 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      * @param value The value to remove.
      * @return A new set with the element removed, or this set if the element is not in this set.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableSet<T> remove(T value);
 
     /**
@@ -62,7 +71,9 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      * @param other The set to intersect with this one.
      * @return A new set that contains any elements that exist in both sets.
      */
-    ImmutableSet<T> intersect(Iterable<? extends T> other);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableSet<T> intersect(@Nonnull Iterable<? extends T> other);
 
     /**
      * Removes a given set of items from this set.
@@ -70,7 +81,9 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      * @param other The items to remove from this set.
      * @return The new set with the items removed; or the original set if none of the items were in the set.
      */
-    ImmutableSet<T> except(Iterable<? extends T> other);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableSet<T> except(@Nonnull Iterable<? extends T> other);
 
     /**
      * Produces a set that contains elements either in this set or a given sequence, but not both.
@@ -78,7 +91,9 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      * @param other The other sequence of items.
      * @return The new set.
      */
-    ImmutableSet<T> symmetricExcept(Iterable<? extends T> other);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableSet<T> symmetricExcept(@Nonnull Iterable<? extends T> other);
 
     /**
      * Adds a given set of items to this set.
@@ -86,7 +101,9 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      * @param other The items to add.
      * @return The new set with the items added; or the original set if all the items were already in the set.
      */
-    ImmutableSet<T> union(Iterable<? extends T> other);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableSet<T> union(@Nonnull Iterable<? extends T> other);
 
     /**
      * Checks whether a given sequence of items entirely describe the contents of this set.
@@ -94,7 +111,9 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      * @param other The sequence of items to check against this set.
      * @return {@code true} if the sets are equal; otherwise, {@code false}.
      */
-    boolean setEquals(Iterable<? extends T> other);
+    @Nonnull
+    @CheckReturnValue
+    boolean setEquals(@Nonnull Iterable<? extends T> other);
 
     /**
      * Determines whether the current set is a proper subset of a specified collection.
@@ -102,7 +121,7 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      * @param other The collection to compare to the current set.
      * @return {@code true} if the current set is a proper subset of {@code other}; otherwise, {@code false}.
      */
-    boolean isProperSubsetOf(Iterable<? extends T> other);
+    boolean isProperSubsetOf(@Nonnull Iterable<? extends T> other);
 
     /**
      * Determines whether the current set is a proper superset of a specified collection.
@@ -110,7 +129,7 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      * @param other The collection to compare to the current set.
      * @return {@code true} if the current set is a proper superset of {@code other}; otherwise, {@code false}.
      */
-    boolean isProperSupersetOf(Iterable<? extends T> other);
+    boolean isProperSupersetOf(@Nonnull Iterable<? extends T> other);
 
     /**
      * Determines whether the current set is a subset of a specified collection.
@@ -118,7 +137,7 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      * @param other The collection to compare to the current set.
      * @return {@code true} if the current set is a subset of {@code other}; otherwise, {@code false}.
      */
-    boolean isSubsetOf(Iterable<? extends T> other);
+    boolean isSubsetOf(@Nonnull Iterable<? extends T> other);
 
     /**
      * Determines whether the current set is a superset of a specified collection.
@@ -126,7 +145,7 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      * @param other The collection to compare to the current set.
      * @return {@code true} if the current set is a superset of {@code other}; otherwise, {@code false}.
      */
-    boolean isSupersetOf(Iterable<? extends T> other);
+    boolean isSupersetOf(@Nonnull Iterable<? extends T> other);
 
     /**
      * Determines whether the current set overlaps with the specified collection.
@@ -135,6 +154,6 @@ public interface ImmutableSet<T> extends ReadOnlyCollection<T> {
      * @return {@code true} if the current set and {@code other} share at least one common element; otherwise,
      * {@code false}.
      */
-    boolean overlaps(Iterable<? extends T> other);
+    boolean overlaps(@Nonnull Iterable<? extends T> other);
 
 }

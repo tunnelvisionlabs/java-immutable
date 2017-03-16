@@ -14,6 +14,9 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * An immutable array with O(1) indexable lookup time.
@@ -22,11 +25,13 @@ import java.util.TreeSet;
  */
 public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implements ImmutableList<T>, ReadOnlyList<T> {
 
+    @Nonnull
     public static final ImmutableArrayList<?> EMPTY_ARRAY = new ImmutableArrayList<Object>(new Object[0]);
 
+    @Nonnull
     private final T[] array;
 
-    private ImmutableArrayList(T[] items) {
+    private ImmutableArrayList(@Nonnull T[] items) {
         this.array = items;
     }
 
@@ -36,6 +41,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param <T> The type of elements stored in the array.
      * @return An empty immutable array.
      */
+    @Nonnull
     public static <T> ImmutableArrayList<T> empty() {
         @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableArrayList<T> emptyArray = (ImmutableArrayList<T>)EMPTY_ARRAY;
@@ -48,6 +54,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param <T> The type of elements stored in the array.
      * @return An empty immutable array.
      */
+    @Nonnull
     public static <T> ImmutableArrayList<T> create() {
         return empty();
     }
@@ -59,6 +66,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param item The element to store in the array.
      * @return A one-element array.
      */
+    @Nonnull
     public static <T> ImmutableArrayList<T> create(T item) {
         @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[] { item };
@@ -73,6 +81,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param item2 The second element to store in the array.
      * @return A two-element array.
      */
+    @Nonnull
     public static <T> ImmutableArrayList<T> create(T item1, T item2) {
         @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[] { item1, item2 };
@@ -88,6 +97,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param item3 The third element to store in the array.
      * @return A three-element array.
      */
+    @Nonnull
     public static <T> ImmutableArrayList<T> create(T item1, T item2, T item3) {
         @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[] { item1, item2, item3 };
@@ -104,6 +114,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param item4 The fourth element to store in the array.
      * @return A four-element array.
      */
+    @Nonnull
     public static <T> ImmutableArrayList<T> create(T item1, T item2, T item3, T item4) {
         @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         T[] array = (T[])new Object[] { item1, item2, item3, item4 };
@@ -117,7 +128,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param items The elements to store in the array.
      * @return An immutable array.
      */
-    public static <T> ImmutableArrayList<T> create(T... items) {
+    @Nonnull
+    public static <T> ImmutableArrayList<T> create(@Nonnull T... items) {
         // We can't trust that the array passed in will never be mutated by the caller. The caller may have passed in an
         // array explicitly (not relying on compiler 'T...' syntax) and could then change the array after the call,
         // thereby violating the immutable guarantee provided by this class. So we always copy the array to ensure it
@@ -135,7 +147,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param items The elements to store in the array.
      * @return An immutable array.
      */
-    public static <T> ImmutableArrayList<T> createAll(Iterable<? extends T> items) {
+    @Nonnull
+    public static <T> ImmutableArrayList<T> createAll(@Nonnull Iterable<? extends T> items) {
         Requires.notNull(items, "items");
 
         // As an optimization, if the provided iterable is actually an ImmutableArrayList<? extends T> instance, simply
@@ -187,7 +200,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param toIndex The index of the last element (exclusive) to include in the immutable array.
      * @return The new immutable array.
      */
-    public static <T> ImmutableArrayList<T> createAll(T[] items, int fromIndex, int toIndex) {
+    @Nonnull
+    public static <T> ImmutableArrayList<T> createAll(@Nonnull T[] items, int fromIndex, int toIndex) {
         Requires.notNull(items, "items");
         Requires.range(fromIndex >= 0 && fromIndex <= items.length, "fromIndex");
         Requires.range(toIndex >= 0 && toIndex <= items.length, "toIndex");
@@ -214,7 +228,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param toIndex The index of the last element (exclusive) to include in the immutable array.
      * @return The new immutable array.
      */
-    public static <T> ImmutableArrayList<T> createAll(ImmutableArrayList<T> items, int fromIndex, int toIndex) {
+    @Nonnull
+    public static <T> ImmutableArrayList<T> createAll(@Nonnull ImmutableArrayList<T> items, int fromIndex, int toIndex) {
         Requires.notNull(items, "items");
         Requires.range(fromIndex >= 0 && fromIndex <= items.size(), "fromIndex");
         Requires.range(toIndex >= 0 && toIndex <= items.size(), "toIndex");
@@ -244,7 +259,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param <Result> The type of elements stored in the target array.
      * @return A new immutable array containing the transformed elements.
      */
-    public static <Source, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, Function<? super Source, Result> selector) {
+    @Nonnull
+    public static <Source, Result> ImmutableArrayList<Result> createAll(@Nonnull ImmutableArrayList<Source> items, @Nonnull Function<? super Source, Result> selector) {
         Requires.notNull(selector, "selector");
 
         int length = items.size();
@@ -272,7 +288,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param selector The transformation function to apply to each element of {@code items} to obtain the target array.
      * @return A new immutable array containing the transformed elements.
      */
-    public static <Source, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, int fromIndex, int toIndex, Function<? super Source, Result> selector) {
+    @Nonnull
+    public static <Source, Result> ImmutableArrayList<Result> createAll(@Nonnull ImmutableArrayList<Source> items, int fromIndex, int toIndex, @Nonnull Function<? super Source, Result> selector) {
         Requires.notNull(items, "items");
         Requires.range(fromIndex >= 0 && fromIndex <= items.size(), "fromIndex");
         Requires.range(toIndex >= 0 && toIndex <= items.size(), "toIndex");
@@ -304,7 +321,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param <Result> The type of elements stored in the target array.
      * @return A new immutable array containing the transformed elements.
      */
-    public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, BiFunction<? super Source, Arg, Result> selector, Arg arg) {
+    @Nonnull
+    public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(@Nonnull ImmutableArrayList<Source> items, @Nonnull BiFunction<? super Source, Arg, Result> selector, Arg arg) {
         Requires.notNull(selector, "selector");
 
         int length = items.size();
@@ -334,7 +352,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param arg An additional argument to pass to the transformation function.
      * @return A new immutable array containing the transformed elements.
      */
-    public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(ImmutableArrayList<Source> items, int fromIndex, int toIndex, BiFunction<? super Source, Arg, Result> selector, Arg arg) {
+    @Nonnull
+    public static <Source, Arg, Result> ImmutableArrayList<Result> createAll(@Nonnull ImmutableArrayList<Source> items, int fromIndex, int toIndex, @Nonnull BiFunction<? super Source, Arg, Result> selector, Arg arg) {
         Requires.notNull(items, "items");
         Requires.notNull(selector, "selector");
         Requires.range(fromIndex >= 0 && fromIndex <= items.size(), "fromIndex");
@@ -361,6 +380,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param <T> The type of elements stored in the array.
      * @return A new builder.
      */
+    @Nonnull
     public static <T> ImmutableArrayList.Builder<T> createBuilder() {
         return ImmutableArrayList.<T>create().toBuilder();
     }
@@ -372,6 +392,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param initialCapacity The size of the initial array backing the builder.
      * @return A new builder.
      */
+    @Nonnull
     public static <T> ImmutableArrayList.Builder<T> createBuilder(int initialCapacity) {
         return new Builder<T>(initialCapacity);
     }
@@ -389,7 +410,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * {@code value} is not found and {@code value} is greater than all of the elements in {@code array}, a negative
      * number which is the bitwise complement of (the index of the last element plus 1).
      */
-    public static <T> int binarySearch(ImmutableArrayList<T> array, T value) {
+    public static <T> int binarySearch(@Nonnull ImmutableArrayList<T> array, T value) {
         Requires.notNull(array, "array");
         return binarySearch(array, value, 0, array.size(), null);
     }
@@ -409,7 +430,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * {@code value} is not found and {@code value} is greater than all of the elements in {@code array}, a negative
      * number which is the bitwise complement of (the index of the last element plus 1).
      */
-    public static <T> int binarySearch(ImmutableArrayList<T> array, T value, Comparator<? super T> comparator) {
+    public static <T> int binarySearch(@Nonnull ImmutableArrayList<T> array, T value, @Nullable Comparator<? super T> comparator) {
         Requires.notNull(array, "array");
         return binarySearch(array, value, 0, array.size(), comparator);
     }
@@ -436,7 +457,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @throws IllegalArgumentException if {@code fromIndex > toIndex}
      * @throws IndexOutOfBoundsException if {@code fromIndex < 0 or toIndex > array.size()}.
      */
-    public static <T> int binarySearch(ImmutableArrayList<T> array, T value, int fromIndex, int toIndex) {
+    public static <T> int binarySearch(@Nonnull ImmutableArrayList<T> array, T value, int fromIndex, int toIndex) {
         return binarySearch(array, value, fromIndex, toIndex, null);
     }
 
@@ -465,7 +486,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @throws IllegalArgumentException if {@code fromIndex > toIndex}
      * @throws IndexOutOfBoundsException if {@code fromIndex < 0 or toIndex > array.size()}.
      */
-    public static <T> int binarySearch(ImmutableArrayList<T> array, T value, int fromIndex, int toIndex, Comparator<? super T> comparator) {
+    public static <T> int binarySearch(@Nonnull ImmutableArrayList<T> array, T value, int fromIndex, int toIndex, @Nullable Comparator<? super T> comparator) {
         Requires.notNull(array, "array");
         if (comparator == null) {
             comparator = Comparators.anyComparator();
@@ -526,7 +547,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param equalityComparator The equality comparator to use in the search.
      * @return The zero-based index into the array where the item was found; or -1 if it could not be found.
      */
-    public int indexOf(T item, int fromIndex, EqualityComparator<? super T> equalityComparator) {
+    public int indexOf(T item, int fromIndex, @Nonnull EqualityComparator<? super T> equalityComparator) {
         return indexOf(item, fromIndex, size(), equalityComparator);
     }
 
@@ -534,7 +555,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * {@inheritDoc}
      */
     @Override
-    public int indexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
+    public int indexOf(T item, int fromIndex, int toIndex, @Nonnull EqualityComparator<? super T> equalityComparator) {
         Requires.notNull(equalityComparator, "equalityComparator");
         Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
         Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
@@ -553,7 +574,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * {@inheritDoc}
      */
     @Override
-    public int lastIndexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
+    public int lastIndexOf(T item, int fromIndex, int toIndex, @Nonnull EqualityComparator<? super T> equalityComparator) {
         Requires.notNull(equalityComparator, "equalityComparator");
         Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
         Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
@@ -583,7 +604,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      *
      * @param destination The array to copy to.
      */
-    public void copyTo(T[] destination) {
+    public void copyTo(@Nonnull T[] destination) {
         System.arraycopy(array, 0, destination, 0, size());
     }
 
@@ -593,7 +614,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param destination The array to copy to.
      * @param destinationIndex The index into the destination array to which the first copied element is written.
      */
-    public void copyTo(T[] destination, int destinationIndex) {
+    public void copyTo(@Nonnull T[] destination, int destinationIndex) {
         System.arraycopy(array, 0, destination, destinationIndex, size());
     }
 
@@ -605,7 +626,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param destinationIndex The index into the destination array to which the first copied element is written.
      * @param length The number of elements to copy.
      */
-    public void copyTo(int sourceIndex, T[] destination, int destinationIndex, int length) {
+    public void copyTo(int sourceIndex, @Nonnull T[] destination, int destinationIndex, int length) {
         System.arraycopy(array, sourceIndex, destination, destinationIndex, length);
     }
 
@@ -616,6 +637,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param element The item to insert into the array.
      * @return A new {@link ImmutableArrayList}.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableArrayList<T> add(int index, T element) {
         Requires.range(index >= 0 && index <= size(), "index");
@@ -637,8 +660,10 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param items The elements to insert.
      * @return The new immutable collection.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableArrayList<T> addAll(int index, Iterable<? extends T> items) {
+    public ImmutableArrayList<T> addAll(int index, @Nonnull Iterable<? extends T> items) {
         Requires.range(index >= 0 && index <= size(), "index");
         Requires.notNull(items, "items");
 
@@ -683,7 +708,9 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param items The elements to insert.
      * @return The new immutable collection.
      */
-    public ImmutableArrayList<T> addAll(int index, ImmutableArrayList<? extends T> items) {
+    @Nonnull
+    @CheckReturnValue
+    public ImmutableArrayList<T> addAll(int index, @Nonnull ImmutableArrayList<? extends T> items) {
         Requires.notNull(items, "items");
         Requires.range(index >= 0 && index <= size(), "index");
         if (isEmpty()) {
@@ -701,6 +728,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param item The item to insert at the end of the array.
      * @return The new array.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableArrayList<T> add(T item) {
         if (isEmpty()) {
@@ -716,8 +745,10 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param items The values to add.
      * @return A new immutable array with the elements added.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableArrayList<T> addAll(Iterable<? extends T> items) {
+    public ImmutableArrayList<T> addAll(@Nonnull Iterable<? extends T> items) {
         return addAll(size(), items);
     }
 
@@ -727,7 +758,9 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param items The values to add.
      * @return A new immutable array with the elements added.
      */
-    public ImmutableArrayList<T> addAll(ImmutableArrayList<? extends T> items) {
+    @Nonnull
+    @CheckReturnValue
+    public ImmutableArrayList<T> addAll(@Nonnull ImmutableArrayList<? extends T> items) {
         Requires.notNull(items, "items");
         if (isEmpty()) {
             return castUp(items);
@@ -745,6 +778,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param value The new item.
      * @return The new immutable array.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableArrayList<T> set(int index, T value) {
         Requires.range(index >= 0 && index <= size(), "index");
@@ -757,6 +792,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableArrayList<T> replace(T oldValue, T newValue) {
         return replace(oldValue, newValue, EqualityComparators.defaultComparator());
@@ -771,8 +808,10 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @return The new immutable array, even if the value being replaced is equal to the new value for that position.
      * @throws IllegalArgumentException if the old value does not exist in the list.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableArrayList<T> replace(T oldValue, T newValue, EqualityComparator<? super T> equalityComparator) {
+    public ImmutableArrayList<T> replace(T oldValue, T newValue, @Nonnull EqualityComparator<? super T> equalityComparator) {
         int index = indexOf(oldValue, 0, equalityComparator);
         if (index < 0) {
             throw new IllegalArgumentException("Cannot find the old value");
@@ -784,6 +823,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableArrayList<T> remove(T value) {
         return remove(value, EqualityComparators.defaultComparator());
@@ -798,8 +839,10 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param equalityComparator The equality comparator to use in the search.
      * @return The new immutable array.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableArrayList<T> remove(T value, EqualityComparator<? super T> equalityComparator) {
+    public ImmutableArrayList<T> remove(T value, @Nonnull EqualityComparator<? super T> equalityComparator) {
         int index = indexOf(value, 0, equalityComparator);
         if (index < 0) {
             return this;
@@ -814,6 +857,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param index The zero-based index into the array for the element to omit from the returned array.
      * @return The new immutable array.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableArrayList<T> remove(int index) {
         return removeAll(index, index + 1);
@@ -826,6 +871,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param toIndex The index of the last element (exclusive) to be removed.
      * @return The new immutable array.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableArrayList<T> removeAll(int fromIndex, int toIndex) {
         Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
@@ -845,8 +892,10 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableArrayList<T> removeAll(Iterable<? extends T> items) {
+    public ImmutableArrayList<T> removeAll(@Nonnull Iterable<? extends T> items) {
         return removeAll(items, EqualityComparators.defaultComparator());
     }
 
@@ -857,8 +906,10 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param equalityComparator The equality comparator to use in the search.
      * @return A new immutable array with the elements removed.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableArrayList<T> removeAll(Iterable<? extends T> items, EqualityComparator<? super T> equalityComparator) {
+    public ImmutableArrayList<T> removeAll(@Nonnull Iterable<? extends T> items, @Nonnull EqualityComparator<? super T> equalityComparator) {
         Requires.notNull(items, "items");
         Requires.notNull(equalityComparator, "equalityComparator");
 
@@ -880,7 +931,9 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param items The items to remove if matches are found in this array.
      * @return A new immutable array with the elements removed.
      */
-    public ImmutableArrayList<T> removeAll(ImmutableArrayList<? extends T> items) {
+    @Nonnull
+    @CheckReturnValue
+    public ImmutableArrayList<T> removeAll(@Nonnull ImmutableArrayList<? extends T> items) {
         return removeAll(items, EqualityComparators.defaultComparator());
     }
 
@@ -891,7 +944,9 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param equalityComparator The equality comparator to use in the search.
      * @return A new immutable array with the elements removed.
      */
-    public ImmutableArrayList<T> removeAll(ImmutableArrayList<? extends T> items, EqualityComparator<? super T> equalityComparator) {
+    @Nonnull
+    @CheckReturnValue
+    public ImmutableArrayList<T> removeAll(@Nonnull ImmutableArrayList<? extends T> items, @Nonnull EqualityComparator<? super T> equalityComparator) {
         Requires.notNull(items, "items");
         Requires.notNull(equalityComparator, "equalityComparator");
 
@@ -913,8 +968,10 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param predicate The predicate that defines the conditions of the elements to remove.
      * @return The new immutable array.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public ImmutableArrayList<T> removeIf(Predicate<? super T> predicate) {
+    public ImmutableArrayList<T> removeIf(@Nonnull Predicate<? super T> predicate) {
         Requires.notNull(predicate, "predicate");
         if (isEmpty()) {
             return this;
@@ -939,6 +996,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      *
      * @return An empty immutable array.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableArrayList<T> clear() {
         return empty();
@@ -949,6 +1008,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      *
      * @return A sorted instance of this array.
      */
+    @Nonnull
+    @CheckReturnValue
     public ImmutableArrayList<T> sort() {
         return sort(0, size(), null);
     }
@@ -959,7 +1020,9 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param comparator The comparator to use in sorting. If {@code null}, a default comparator is used.
      * @return A sorted instance of this array.
      */
-    public ImmutableArrayList<T> sort(Comparator<? super T> comparator) {
+    @Nonnull
+    @CheckReturnValue
+    public ImmutableArrayList<T> sort(@Nullable Comparator<? super T> comparator) {
         return sort(0, size(), comparator);
     }
 
@@ -971,7 +1034,9 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param comparator The comparator to use in sorting. If {@code null}, a default comparator is used.
      * @return A sorted instance of this array.
      */
-    public ImmutableArrayList<T> sort(int fromIndex, int toIndex, Comparator<? super T> comparator) {
+    @Nonnull
+    @CheckReturnValue
+    public ImmutableArrayList<T> sort(int fromIndex, int toIndex, @Nullable Comparator<? super T> comparator) {
         Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
         Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
         Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
@@ -1008,6 +1073,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      *
      * @return The new builder.
      */
+    @Nonnull
+    @CheckReturnValue
     public ImmutableArrayList.Builder<T> toBuilder() {
         if (isEmpty()) {
             return new Builder<T>();
@@ -1072,7 +1139,9 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param <T> The type of items stored in the array.
      * @return The input {@code items}.
      */
-    public static <T> ImmutableArrayList<T> castUp(ImmutableArrayList<? extends T> items) {
+    @Nonnull
+    @CheckReturnValue
+    public static <T> ImmutableArrayList<T> castUp(@Nonnull ImmutableArrayList<? extends T> items) {
         // Since this class is immutable, we can actually return the same instance
         @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableArrayList<T> result = (ImmutableArrayList<T>)items;
@@ -1091,7 +1160,9 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @return The current array as an instance of an immutable array of {@code Other} objects.
      * @throws ClassCastException if any object in the current instance cannot be cast to an instance of {@code Other}.
      */
-    public <Other> ImmutableArrayList<Other> castArray(Class<Other> clazz) {
+    @Nonnull
+    @CheckReturnValue
+    public <Other> ImmutableArrayList<Other> castArray(@Nonnull Class<Other> clazz) {
         Requires.notNull(clazz, "clazz");
         for (T item : this) {
             clazz.cast(item);
@@ -1115,7 +1186,9 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @return The current array as an instance of an immutable array of {@code Other} objects if all objects in the
      * array can be cast to {@code Other}; otherwise, {@code null}.
      */
-    public <Other> ImmutableArrayList<Other> as(Class<Other> clazz) {
+    @Nullable
+    @CheckReturnValue
+    public <Other> ImmutableArrayList<Other> as(@Nonnull Class<Other> clazz) {
         Requires.notNull(clazz, "clazz");
         for (T item : this) {
             if (item != null && !clazz.isInstance(item)) {
@@ -1136,7 +1209,9 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
      * @param <Result> The desired type of element.
      * @return An iterable that contains the elements from the current array which are instances of type {@code Result}.
      */
-    public <Result> Iterable<Result> ofType(final Class<Result> clazz) {
+    @Nonnull
+    @CheckReturnValue
+    public <Result> Iterable<Result> ofType(@Nonnull final Class<Result> clazz) {
         Requires.notNull(clazz, "clazz");
         return new Iterable<Result>() {
             @Override
@@ -1363,6 +1438,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
          *
          * @return An {@link ImmutableArrayList}.
          */
+        @Nonnull
+        @CheckReturnValue
         public ImmutableArrayList<T> toImmutable() {
             if (isEmpty()) {
                 return empty();
@@ -1377,6 +1454,8 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
          * @return An {@link ImmutableArrayList}.
          * @throws IllegalStateException if {@link #size()} doesn't equal {@link #getCapacity()}.
          */
+        @Nonnull
+        @CheckReturnValue
         public ImmutableArrayList<T> moveToImmutable() {
             if (getCapacity() != size()) {
                 throw new IllegalStateException("moveToImmutable can only be performed when size equals capacity.");
@@ -1431,7 +1510,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
         }
 
         @Override
-        public boolean addAll(Collection<? extends T> c) {
+        public boolean addAll(@Nonnull Collection<? extends T> c) {
             if (c.isEmpty()) {
                 return false;
             }
@@ -1450,7 +1529,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
          * @param items The items to add.
          * @return {@code true} if the collection changed as a result of the operation; otherwise, {@code false}.
          */
-        public boolean addAll(Iterable<? extends T> items) {
+        public boolean addAll(@Nonnull Iterable<? extends T> items) {
             Requires.notNull(items, "items");
 
             Integer addedCount = Immutables.tryGetCount(items);
@@ -1472,7 +1551,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
          *
          * @param items The items to add.
          */
-        public void addAll(T... items) {
+        public void addAll(@Nonnull T... items) {
             Requires.notNull(items, "items");
 
             int offset = size();
@@ -1480,7 +1559,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
             System.arraycopy(items, 0, elements, offset, items.length);
         }
 
-        public void addAll(T[] items, int length) {
+        public void addAll(@Nonnull T[] items, int length) {
             Requires.notNull(items, "items");
             Requires.range(length >= 0, "length");
 
@@ -1495,12 +1574,12 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
          *
          * @param items The items to add.
          */
-        public void addAll(ImmutableArrayList<? extends T> items) {
+        public void addAll(@Nonnull ImmutableArrayList<? extends T> items) {
             Requires.notNull(items, "items");
             addAll(items, items.size());
         }
 
-        public void addAll(ImmutableArrayList<? extends T> items, int length) {
+        public void addAll(@Nonnull ImmutableArrayList<? extends T> items, int length) {
             Requires.range(length >= 0, "length");
             addAll(items.array, length);
         }
@@ -1510,7 +1589,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
          *
          * @param items The items to add.
          */
-        public void addAll(Builder<? extends T> items) {
+        public void addAll(@Nonnull Builder<? extends T> items) {
             Requires.notNull(items, "items");
             addAll(items.elements, items.size());
         }
@@ -1583,7 +1662,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
             return indexOf(o, startIndex, count, EqualityComparators.defaultComparator());
         }
 
-        public int indexOf(T o, int startIndex, int count, EqualityComparator<? super T> equalityComparator) {
+        public int indexOf(T o, int startIndex, int count, @Nonnull EqualityComparator<? super T> equalityComparator) {
             Requires.notNull(equalityComparator, "equalityComparator");
 
             if (count == 0 && startIndex == 0) {
@@ -1617,7 +1696,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
             return lastIndexOf(o, fromIndex, toIndex, EqualityComparators.defaultComparator());
         }
 
-        public int lastIndexOf(T o, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator) {
+        public int lastIndexOf(T o, int fromIndex, int toIndex, @Nonnull EqualityComparator<? super T> equalityComparator) {
             Requires.notNull(equalityComparator, "equalityComparator");
             Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
             Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
@@ -1673,7 +1752,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
          *
          * @see Arrays#sort(Object[], Comparator)
          */
-        public void sort(Comparator<? super T> comparator) {
+        public void sort(@Nullable Comparator<? super T> comparator) {
             sort(0, count, comparator);
         }
 
@@ -1688,7 +1767,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
          *
          * @see Arrays#sort(Object[], int, int, Comparator)
          */
-        public void sort(int fromIndex, int toIndex, Comparator<? super T> comparator) {
+        public void sort(int fromIndex, int toIndex, @Nullable Comparator<? super T> comparator) {
             Requires.range(fromIndex >= 0 && fromIndex <= size(), "fromIndex");
             Requires.range(toIndex >= 0 && toIndex <= size(), "toIndex");
             Requires.argument(fromIndex <= toIndex, "fromIndex", "fromIndex must be less than or equal to toIndex");
@@ -1724,7 +1803,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
          * {@inheritDoc}
          */
         @Override
-        public boolean containsAll(Collection<?> c) {
+        public boolean containsAll(@Nonnull Collection<?> c) {
             Requires.notNull(c, "c");
             for (Object o : c) {
                 if (!contains(o)) {
@@ -1739,7 +1818,7 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
          * {@inheritDoc}
          */
         @Override
-        public boolean addAll(int index, Collection<? extends T> c) {
+        public boolean addAll(int index, @Nonnull Collection<? extends T> c) {
             Requires.notNull(c, "c");
             Requires.range(index >= 0 && index <= size(), "index");
 
@@ -1762,15 +1841,16 @@ public final class ImmutableArrayList<T> extends AbstractImmutableList<T> implem
         }
 
         @Override
-        public boolean removeAll(Collection<?> c) {
+        public boolean removeAll(@Nonnull Collection<?> c) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
-        public boolean retainAll(Collection<?> c) {
+        public boolean retainAll(@Nonnull Collection<?> c) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        @Nonnull
         @Override
         public List<T> subList(int fromIndex, int toIndex) {
             throw new UnsupportedOperationException("Not supported yet.");

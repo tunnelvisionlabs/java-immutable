@@ -11,6 +11,9 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * An immutable sorted set implementation.
@@ -28,16 +31,19 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
     /**
      * An empty sorted set with the default sort comparer.
      */
+    @Nonnull
     private static final ImmutableTreeSet<?> EMPTY = new ImmutableTreeSet<Object>();
 
     /**
      * The root node of the AVL tree that stores this set.
      */
+    @Nonnull
     private final Node<T> _root;
 
     /**
      * The comparator used to sort elements in this set.
      */
+    @Nonnull
     private final Comparator<? super T> _comparator;
 
     /**
@@ -46,6 +52,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param <T> The type of items stored by the collection.
      * @return The immutable collection.
      */
+    @Nonnull
     public static <T> ImmutableTreeSet<T> create() {
         return empty();
     }
@@ -57,7 +64,8 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param comparator The comparator.
      * @return The immutable collection.
      */
-    public static <T> ImmutableTreeSet<T> create(Comparator<? super T> comparator) {
+    @Nonnull
+    public static <T> ImmutableTreeSet<T> create(@Nullable Comparator<? super T> comparator) {
         return ImmutableTreeSet.<T>empty().withComparator(comparator);
     }
 
@@ -68,6 +76,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param item The item to pre-populate.
      * @return The immutable collection.
      */
+    @Nonnull
     public static <T> ImmutableTreeSet<T> create(T item) {
         return ImmutableTreeSet.<T>empty().add(item);
     }
@@ -80,7 +89,8 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param item The item to pre-populate.
      * @return The immutable collection.
      */
-    public static <T> ImmutableTreeSet<T> create(Comparator<? super T> comparator, T item) {
+    @Nonnull
+    public static <T> ImmutableTreeSet<T> create(@Nullable Comparator<? super T> comparator, T item) {
         return ImmutableTreeSet.<T>empty().withComparator(comparator).add(item);
     }
 
@@ -91,7 +101,8 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param items The items to pre-populate.
      * @return The immutable collection.
      */
-    public static <T> ImmutableTreeSet<T> createAll(Iterable<? extends T> items) {
+    @Nonnull
+    public static <T> ImmutableTreeSet<T> createAll(@Nonnull Iterable<? extends T> items) {
         return ImmutableTreeSet.<T>empty().union(items);
     }
 
@@ -103,7 +114,8 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param items The items to pre-populate.
      * @return The immutable collection.
      */
-    public static <T> ImmutableTreeSet<T> createAll(Comparator<? super T> comparator, Iterable<? extends T> items) {
+    @Nonnull
+    public static <T> ImmutableTreeSet<T> createAll(@Nullable Comparator<? super T> comparator, @Nonnull Iterable<? extends T> items) {
         return ImmutableTreeSet.<T>empty().withComparator(comparator).union(items);
     }
 
@@ -114,7 +126,8 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param items The items to pre-populate.
      * @return The immutable collection.
      */
-    public static <T> ImmutableTreeSet<T> create(T... items) {
+    @Nonnull
+    public static <T> ImmutableTreeSet<T> create(@Nonnull T... items) {
         return ImmutableTreeSet.<T>empty().union(Arrays.asList(items));
     }
 
@@ -126,7 +139,8 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param items The items to pre-populate.
      * @return The immutable collection.
      */
-    public static <T> ImmutableTreeSet<T> create(Comparator<? super T> comparator, T... items) {
+    @Nonnull
+    public static <T> ImmutableTreeSet<T> create(@Nullable Comparator<? super T> comparator, @Nonnull T... items) {
         return ImmutableTreeSet.<T>empty().withComparator(comparator).union(Arrays.asList(items));
     }
 
@@ -136,6 +150,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param <T> The type of items stored by the collection.
      * @return The immutable collection.
      */
+    @Nonnull
     public static <T> ImmutableTreeSet.Builder<T> createBuilder() {
         return ImmutableTreeSet.<T>create().toBuilder();
     }
@@ -147,6 +162,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param comparer The comparator.
      * @return The immutable collection.
      */
+    @Nonnull
     public static <T> ImmutableTreeSet.Builder<T> createBuilder(Comparator<? super T> comparator) {
         return ImmutableTreeSet.<T>create(comparator).toBuilder();
     }
@@ -163,7 +179,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      *
      * @param comparator The comparator.
      */
-    ImmutableTreeSet(Comparator<? super T> comparator) {
+    ImmutableTreeSet(@Nullable Comparator<? super T> comparator) {
         _root = Node.<T>emptyNode();
         if (comparator != null) {
             _comparator = comparator;
@@ -178,7 +194,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param root The root of the AVS tree with the contents of this set.
      * @param comparator The comparator.
      */
-    private ImmutableTreeSet(Node<T> root, Comparator<? super T> comparator) {
+    private ImmutableTreeSet(@Nonnull Node<T> root, @Nonnull Comparator<? super T> comparator) {
         Requires.notNull(root, "root");
         Requires.notNull(comparator, "comparator");
 
@@ -187,6 +203,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
         _comparator = comparator;
     }
 
+    @Nonnull
     public static <T> ImmutableTreeSet<T> empty() {
         @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableTreeSet<T> result = (ImmutableTreeSet<T>)EMPTY;
@@ -196,6 +213,8 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public final ImmutableTreeSet<T> clear() {
 //            Contract.Ensures(Contract.Result<ImmutableSortedSet<T>>() != null);
@@ -208,6 +227,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      *
      * @return The maximum value in the set.
      */
+    @Nullable
     public final T getMax() {
         return _root.getMax();
     }
@@ -217,6 +237,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      *
      * @return The minimum value in the set.
      */
+    @Nullable
     public final T getMin() {
         return _root.getMin();
     }
@@ -246,6 +267,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public final Comparator<? super T> getKeyComparator() {
         return _comparator;
@@ -256,6 +278,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
     /**
      * Gets the root node (for testing purposes).
      */
+    @Nonnull
     final BinaryTree<T> getRoot() {
         return _root;
     }
@@ -285,6 +308,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * This is an O(1) operation and results in only a single (small) memory allocation. The mutable collection that is
      * returned is <em>not</em> thread-safe.</p>
      */
+    @Nonnull
     public final Builder<T> toBuilder() {
         // We must not cache the instance created here and return it to various callers.
         // Those who request a mutable collection must get references to the collection
@@ -295,6 +319,8 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public final ImmutableTreeSet<T> add(T value) {
         Requires.notNull(value, "value");
@@ -305,6 +331,8 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public final ImmutableTreeSet<T> remove(T value) {
         Requires.notNull(value, "value");
@@ -323,8 +351,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param equalValue The value to search for.
      * @return The value from the set that the search found, or {@code null} if the search yielded no match.
      */
+    @Nullable
     @Override
-    public final T tryGetValue(T equalValue) {
+    public final T tryGetValue(@Nonnull T equalValue) {
         Requires.notNull(equalValue, "equalValue");
 
         Node<T> searchResult = _root.search(equalValue, _comparator);
@@ -338,8 +367,10 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public final ImmutableTreeSet<T> intersect(Iterable<? extends T> other) {
+    public final ImmutableTreeSet<T> intersect(@Nonnull Iterable<? extends T> other) {
         Requires.notNull(other, "other");
         //Contract.Ensures(Contract.Result<ImmutableSortedSet<T>>() != null);
 
@@ -356,8 +387,10 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public final ImmutableTreeSet<T> except(Iterable<? extends T> other) {
+    public final ImmutableTreeSet<T> except(@Nonnull Iterable<? extends T> other) {
         Requires.notNull(other, "other");
 
         Node<T> result = _root;
@@ -374,8 +407,10 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param other The other sequence of items.
      * @return The new set.
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public final ImmutableTreeSet<T> symmetricExcept(Iterable<? extends T> other) {
+    public final ImmutableTreeSet<T> symmetricExcept(@Nonnull Iterable<? extends T> other) {
         Requires.notNull(other, "other");
 
         ImmutableTreeSet<T> otherAsSet = ImmutableTreeSet.<T>empty().union(other);
@@ -399,8 +434,10 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
-    public final ImmutableTreeSet<T> union(Iterable<? extends T> other) {
+    public final ImmutableTreeSet<T> union(@Nonnull Iterable<? extends T> other) {
         Requires.notNull(other, "other");
         //Contract.Ensures(Contract.Result<ImmutableSortedSet<T>>() != null);
 
@@ -438,7 +475,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
         return this.unionIncremental(other);
     }
 
-    public final ImmutableTreeSet<T> withComparator(Comparator<? super T> comparator) {
+    @Nonnull
+    @CheckReturnValue
+    public final ImmutableTreeSet<T> withComparator(@Nullable Comparator<? super T> comparator) {
         //Contract.Ensures(Contract.Result<ImmutableSortedSet<T>>() != null);
         if (comparator == null) {
             comparator = Comparators.anyComparator();
@@ -460,7 +499,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @return A value indicating whether the sets are equal.
      */
     @Override
-    public final boolean setEquals(Iterable<? extends T> other) {
+    public final boolean setEquals(@Nonnull Iterable<? extends T> other) {
         Requires.notNull(other, "other");
 
         if (this == other) {
@@ -491,7 +530,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @return {@code true} if the current set is a correct subset of other; otherwise, {@code false}.
      */
     @Override
-    public final boolean isProperSubsetOf(Iterable<? extends T> other) {
+    public final boolean isProperSubsetOf(@Nonnull Iterable<? extends T> other) {
         Requires.notNull(other, "other");
 
         if (this.isEmpty()) {
@@ -535,7 +574,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @return {@code true} if the current set is a correct superset of other; otherwise, {@code false}.
      */
     @Override
-    public final boolean isProperSupersetOf(Iterable<? extends T> other) {
+    public final boolean isProperSupersetOf(@Nonnull Iterable<? extends T> other) {
         Requires.notNull(other, "other");
 
         if (this.isEmpty()) {
@@ -560,7 +599,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @return {@code true} if the current set is a subset of other; otherwise, {@code false}.
      */
     @Override
-    public final boolean isSubsetOf(Iterable<? extends T> other) {
+    public final boolean isSubsetOf(@Nonnull Iterable<? extends T> other) {
         Requires.notNull(other, "other");
 
         if (this.isEmpty()) {
@@ -593,7 +632,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @return {@code true} if the current set is a superset of other; otherwise, {@code false}.
      */
     @Override
-    public final boolean isSupersetOf(Iterable<? extends T> other) {
+    public final boolean isSupersetOf(@Nonnull Iterable<? extends T> other) {
         Requires.notNull(other, "other");
 
         for (T item : other) {
@@ -612,7 +651,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @return {@code true} if the current set and other share at least one common element; otherwise, {@code false}.
      */
     @Override
-    public final boolean overlaps(Iterable<? extends T> other) {
+    public final boolean overlaps(@Nonnull Iterable<? extends T> other) {
         Requires.notNull(other, "other");
 
         if (this.isEmpty()) {
@@ -633,6 +672,8 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      *
      * @return An enumerator that iterates over the {@link ImmutableTreeSet} in reverse order.
      */
+    @Nonnull
+    @CheckReturnValue
     public final Iterable<T> reverse() {
         return new ReverseIterable<T>(_root);
     }
@@ -647,7 +688,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * {@code item} is greater than any of the elements in the set, a negative number which is the bitwise complement of
      * (the index of the last element plus 1).
      */
-    public final int indexOf(T item) {
+    public final int indexOf(@Nonnull T item) {
         Requires.notNull(item, "item");
         return _root.indexOf(item, _comparator);
     }
@@ -660,7 +701,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * {@inheritDoc}
      */
     @Override
-    public final boolean contains(T value) {
+    public final boolean contains(@Nonnull T value) {
         Requires.notNull(value, "value");
         return _root.contains(value, _comparator);
     }
@@ -1044,6 +1085,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      *
      * @return A {@link Iterator} that can be used to iterate through the collection.
      */
+    @Nonnull
     @Override
     public final Itr<T> iterator() {
         return _root.iterator();
@@ -1052,7 +1094,8 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
     /**
      * Discovers an immutable sorted set for a given value, if possible.
      */
-    private static <T> ImmutableTreeSet<T> tryCastToImmutableTreeSet(Iterable<T> sequence) {
+    @Nullable
+    private static <T> ImmutableTreeSet<T> tryCastToImmutableTreeSet(@Nonnull Iterable<T> sequence) {
         if (sequence instanceof ImmutableTreeSet<?>) {
             return (ImmutableTreeSet<T>)sequence;
         }
@@ -1072,7 +1115,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param comparator The comparator used to build the tree.
      * @return The immutable sorted set instance.
      */
-    private static <T> ImmutableTreeSet<T> wrap(Node<T> root, Comparator<? super T> comparator) {
+    @Nonnull
+    @CheckReturnValue
+    private static <T> ImmutableTreeSet<T> wrap(@Nonnull Node<T> root, @Nonnull Comparator<? super T> comparator) {
         return root.isEmpty()
             ? ImmutableTreeSet.<T>empty().withComparator(comparator)
             : new ImmutableTreeSet<T>(root, comparator);
@@ -1088,7 +1133,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param items The items to add.
      * @return The new collection.
      */
-    private ImmutableTreeSet<T> unionIncremental(Iterable<? extends T> items) {
+    @Nonnull
+    @CheckReturnValue
+    private ImmutableTreeSet<T> unionIncremental(@Nonnull Iterable<? extends T> items) {
         Requires.notNull(items, "items");
         //Contract.Ensures(Contract.Result<ImmutableSortedSet<T>>() != null);
 
@@ -1108,7 +1155,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param root The root node to wrap.
      * @return A wrapping collection type for the new tree.
      */
-    private ImmutableTreeSet<T> wrap(Node<T> root) {
+    @Nonnull
+    @CheckReturnValue
+    private ImmutableTreeSet<T> wrap(@Nonnull Node<T> root) {
         if (root != _root) {
             return root.isEmpty() ? this.clear() : new ImmutableTreeSet<T>(root, _comparator);
         } else {
@@ -1122,7 +1171,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
      * @param addedItems The sequence of elements to add to this set.
      * @return The immutable sorted set.
      */
-    private ImmutableTreeSet<T> leafToRootRefill(Iterable<? extends T> addedItems) {
+    @Nonnull
+    @CheckReturnValue
+    private ImmutableTreeSet<T> leafToRootRefill(@Nonnull Iterable<? extends T> addedItems) {
         Requires.notNull(addedItems, "addedItems");
         //Contract.Ensures(Contract.Result<ImmutableSortedSet<T>>() != null);
 
@@ -1141,7 +1192,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
         return this.wrap(root);
     }
 
-    private static <T> ImmutableArrayList<T> toSortedSet(Iterable<T> items, Comparator<? super T> comparator) {
+    @Nonnull
+    @CheckReturnValue
+    private static <T> ImmutableArrayList<T> toSortedSet(@Nonnull Iterable<T> items, @Nonnull Comparator<? super T> comparator) {
         ImmutableArrayList.Builder<T> builder = ImmutableArrayList.createBuilder();
         builder.addAll(items);
         builder.sort(comparator);
@@ -1229,7 +1282,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @param root The root of the set to be iterated.
          */
-        Itr(Node<T> root) {
+        Itr(@Nonnull Node<T> root) {
             this(root, null, false);
         }
 
@@ -1239,7 +1292,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param root The root of the set to be iterated.
          * @param builder The builder, if applicable.
          */
-        Itr(Node<T> root, Builder<T> builder) {
+        Itr(@Nonnull Node<T> root, @Nullable Builder<T> builder) {
             this(root, builder, false);
         }
 
@@ -1250,7 +1303,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param builder The builder, if applicable.
          * @param reverse {@code true} to enumerate the collection in reverse.
          */
-        Itr(Node<T> root, Builder<T> builder, boolean reverse) {
+        Itr(@Nonnull Node<T> root, @Nullable Builder<T> builder, boolean reverse) {
             Requires.notNull(root, "root");
 
             _root = root;
@@ -1400,7 +1453,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @param node The starting node to push onto the stack.
          */
-        private void pushNext(Node<T> node) {
+        private void pushNext(@Nonnull Node<T> node) {
             Requires.notNull(node, "node");
             while (!node.isEmpty()) {
                 _stack.push(node);
@@ -1417,6 +1470,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
         /**
          * The root node to iterate.
          */
+        @Nonnull
         private final Node<T> _root;
 
         /**
@@ -1424,7 +1478,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @param root The root of the data structure to reverse iterate.
          */
-        ReverseIterable(Node<T> root) {
+        ReverseIterable(@Nonnull Node<T> root) {
             Requires.notNull(root, "root");
             _root = root;
         }
@@ -1434,6 +1488,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @return An {@link Iterator} that can be used to iterate through the collection.
          */
+        @Nonnull
         @Override
         public final Iterator<T> iterator() {
             return _root.reverse();
@@ -1447,6 +1502,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
         /**
          * The default empty node.
          */
+        @Nonnull
         private static final Node<?> EMPTY_NODE = new Node<Object>();
 
         /**
@@ -1505,7 +1561,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param right The right branch.
          * @param frozen Whether this node is pre-frozen.
          */
-        private Node(T key, Node<T> left, Node<T> right) {
+        private Node(@Nonnull T key, @Nonnull Node<T> left, @Nonnull Node<T> right) {
             this(key, left, right, false);
         }
 
@@ -1517,7 +1573,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param right The right branch.
          * @param frozen Whether this node is pre-frozen.
          */
-        private Node(T key, Node<T> left, Node<T> right, boolean frozen) {
+        private Node(@Nonnull T key, @Nonnull Node<T> left, @Nonnull Node<T> right, boolean frozen) {
             Requires.notNull(key, "key");
             Requires.notNull(left, "left");
             Requires.notNull(right, "right");
@@ -1531,6 +1587,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
             _frozen = frozen;
         }
 
+        @Nonnull
         static <T> Node<T> emptyNode() {
             @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
             Node<T> result = (Node<T>)EMPTY_NODE;
@@ -1599,6 +1656,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @return The maximum value in the set.
          */
+        @Nullable
         final T getMax() {
             if (this.isEmpty()) {
                 return null;
@@ -1617,6 +1675,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @return The minimum value in the set.
          */
+        @Nullable
         final T getMin() {
             if (this.isEmpty()) {
                 return null;
@@ -1657,6 +1716,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @return A {@link Iterator} that can be used to iterate through the collection.
          */
+        @Nonnull
         @Override
         public final Itr<T> iterator() {
             return new Itr<T>(this);
@@ -1670,7 +1730,8 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param builder The builder, if applicable.
          * @return An {@link Iterator} that can be used to iterate through the collection.
          */
-        final Itr<T> iterator(Builder<T> builder) {
+        @Nonnull
+        final Itr<T> iterator(@Nonnull Builder<T> builder) {
             return new Itr<T>(this, builder);
         }
 
@@ -1683,7 +1744,8 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param comparator The comparator.
          * @return The root of the node tree.
          */
-        static <T> Node<T> nodeTreeFromSortedSet(Iterable<T> collection) {
+        @Nonnull
+        static <T> Node<T> nodeTreeFromSortedSet(@Nonnull Iterable<T> collection) {
             Requires.notNull(collection, "collection");
             //Contract.Ensures(Contract.Result<Node>() != null);
 
@@ -1695,7 +1757,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
             return nodeTreeFromList(ordered, 0, ordered.size());
         }
 
-        final void copyTo(T[] array, int arrayIndex) {
+        final void copyTo(@Nonnull T[] array, int arrayIndex) {
             Requires.notNull(array, "array");
             Requires.range(arrayIndex >= 0, "arrayIndex");
             Requires.range(array.length >= arrayIndex + this.size(), "arrayIndex");
@@ -1705,7 +1767,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
             }
         }
 
-        final void copyTo(Object array, int arrayIndex) {
+        final void copyTo(@Nonnull Object array, int arrayIndex) {
             Requires.notNull(array, "array");
             Requires.range(arrayIndex >= 0, "arrayIndex");
             Requires.range(Array.getLength(array) >= arrayIndex + this.size(), "arrayIndex");
@@ -1724,7 +1786,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param comparator The comparator.
          * @return The modified tree if the key was added; otherwise, the current node if the key was already present.
          */
-        final Node<T> add(T key, Comparator<? super T> comparator) {
+        @Nonnull
+        @CheckReturnValue
+        final Node<T> add(@Nonnull T key, @Nonnull Comparator<? super T> comparator) {
             Node<T> result = tryAdd(key, comparator);
             if (result == null) {
                 return this;
@@ -1740,7 +1804,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param comparator The comparator.
          * @return The modified tree if the key was added; otherwise, {@code null} if the key was already present.
          */
-        final Node<T> tryAdd(T key, Comparator<? super T> comparator) {
+        @Nullable
+        @CheckReturnValue
+        final Node<T> tryAdd(@Nonnull T key, @Nonnull Comparator<? super T> comparator) {
             Requires.notNull(key, "key");
             Requires.notNull(comparator, "comparator");
 
@@ -1777,7 +1843,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param comparator The comparator.
          * @return The modified tree if the key was removed; otherwise, the current node if the key was not present.
          */
-        final Node<T> remove(T key, Comparator<? super T> comparator) {
+        @Nonnull
+        @CheckReturnValue
+        final Node<T> remove(@Nonnull T key, @Nonnull Comparator<? super T> comparator) {
             Node<T> result = tryRemove(key, comparator);
             if (result == null) {
                 return this;
@@ -1793,7 +1861,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param comparator The comparator.
          * @return The modified tree if the key was removed; otherwise, {@code null} if the key was not present.
          */
-        final Node<T> tryRemove(T key, Comparator<? super T> comparator) {
+        @Nullable
+        @CheckReturnValue
+        final Node<T> tryRemove(@Nonnull T key, @Nonnull Comparator<? super T> comparator) {
             Requires.notNull(key, "key");
             Requires.notNull(comparator, "comparator");
 
@@ -1857,7 +1927,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param comparator The comparator.
          * @return {@code true} if the tree contains the specified key; otherwise, {@code false}.
          */
-        final boolean contains(T key, Comparator<? super T> comparator) {
+        final boolean contains(@Nonnull T key, @Nonnull Comparator<? super T> comparator) {
             Requires.notNull(key, "key");
             Requires.notNull(comparator, "comparator");
             return !this.search(key, comparator).isEmpty();
@@ -1882,7 +1952,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param comparator The comparator.
          * @return The matching node, or {@link #emptyNode()} if no match was found.
          */
-        final Node<T> search(T key, Comparator<? super T> comparator) {
+        @Nonnull
+        @CheckReturnValue
+        final Node<T> search(@Nonnull T key, @Nonnull Comparator<? super T> comparator) {
             Requires.notNull(key, "key");
             Requires.notNull(comparator, "comparer");
 
@@ -1911,7 +1983,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * and {@code key} is greater than any of the elements in the set, a negative number which is the bitwise
          * complement of (the index of the last element plus 1).
          */
-        final int indexOf(T key, Comparator<? super T> comparator) {
+        final int indexOf(@Nonnull T key, @Nonnull Comparator<? super T> comparator) {
             Requires.notNull(key, "key");
             Requires.notNull(comparator, "comparator");
 
@@ -1945,6 +2017,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @return An iterator that iterates over the {@link ImmutableTreeSet} in reverse order.
          */
+        @Nonnull
         final Iterator<T> reverse() {
             return new Itr<T>(this, null, true);
         }
@@ -1957,7 +2030,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param tree The tree.
          * @return The rotated tree.
          */
-        private static <T> Node<T> rotateLeft(Node<T> tree) {
+        @Nonnull
+        @CheckReturnValue
+        private static <T> Node<T> rotateLeft(@Nonnull Node<T> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
             //Contract.Ensures(Contract.Result<Node>() != null);
@@ -1976,7 +2051,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param tree The tree.
          * @return The rotated tree.
          */
-        private static <T> Node<T> rotateRight(Node<T> tree) {
+        @Nonnull
+        @CheckReturnValue
+        private static <T> Node<T> rotateRight(@Nonnull Node<T> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
             //Contract.Ensures(Contract.Result<Node>() != null);
@@ -1995,7 +2072,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param tree The tree.
          * @return The rotated tree.
          */
-        private static <T> Node<T> doubleLeft(Node<T> tree) {
+        @Nonnull
+        @CheckReturnValue
+        private static <T> Node<T> doubleLeft(@Nonnull Node<T> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
             //Contract.Ensures(Contract.Result<Node>() != null);
@@ -2014,7 +2093,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param tree The tree.
          * @return The rotated tree.
          */
-        private static <T> Node<T> doubleRight(Node<T> tree) {
+        @Nonnull
+        @CheckReturnValue
+        private static <T> Node<T> doubleRight(@Nonnull Node<T> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
             //Contract.Ensures(Contract.Result<Node>() != null);
@@ -2034,7 +2115,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @return 0 if the tree is in balance, a positive integer if the right side is heavy, or a negative integer if
          * the left side is heavy.
          */
-        private static int balance(Node<?> tree) {
+        private static int balance(@Nonnull Node<?> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
 
@@ -2047,7 +2128,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param tree The tree.
          * @return {@code true} if the tree is right heavy; otherwise, {@code false}.
          */
-        private static boolean isRightHeavy(Node<?> tree) {
+        private static boolean isRightHeavy(@Nonnull Node<?> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
             return balance(tree) >= 2;
@@ -2056,7 +2137,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
         /**
          * Determines whether the specified tree is left heavy.
          */
-        private static boolean isLeftHeavy(Node<?> tree) {
+        private static boolean isLeftHeavy(@Nonnull Node<?> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
             return balance(tree) <= -2;
@@ -2068,7 +2149,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param tree The tree.
          * @return A balanced tree.
          */
-        private static <T> Node<T> makeBalanced(Node<T> tree) {
+        @Nonnull
+        @CheckReturnValue
+        private static <T> Node<T> makeBalanced(@Nonnull Node<T> tree) {
             Requires.notNull(tree, "tree");
             assert !tree.isEmpty();
             //Contract.Ensures(Contract.Result<Node>() != null);
@@ -2094,7 +2177,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param length The number of elements from {@code items} that should be captured by the node tree.
          * @return The root of the created node tree.
          */
-        private static <T> Node<T> nodeTreeFromList(OrderedCollection<T> items, int start, int length) {
+        @Nonnull
+        @CheckReturnValue
+        private static <T> Node<T> nodeTreeFromList(@Nonnull OrderedCollection<T> items, int start, int length) {
             Requires.notNull(items, "items");
             assert start >= 0;
             assert length >= 0;
@@ -2117,7 +2202,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param left The left branch of the mutated node.
          * @return The mutated (or created) node.
          */
-        private Node<T> mutateLeft(Node<T> left) {
+        @Nonnull
+        @CheckReturnValue
+        private Node<T> mutateLeft(@Nullable Node<T> left) {
             return mutate(left, null);
         }
 
@@ -2128,7 +2215,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param right The right branch of the mutated node.
          * @return The mutated (or created) node.
          */
-        private Node<T> mutateRight(Node<T> right) {
+        @Nonnull
+        @CheckReturnValue
+        private Node<T> mutateRight(@Nullable Node<T> right) {
             return mutate(null, right);
         }
 
@@ -2140,7 +2229,9 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param right The right branch of the mutated node.
          * @return The mutated (or created) node.
          */
-        private Node<T> mutate(Node<T> left, Node<T> right) {
+        @Nonnull
+        @CheckReturnValue
+        private Node<T> mutate(@Nullable Node<T> left, @Nullable Node<T> right) {
             if (_frozen) {
                 return new Node<T>(_key, left != null ? left : _left, right != null ? right : _right);
             } else {
@@ -2173,11 +2264,13 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
         /**
          * The root of the binary tree that stores the collection. Contents are typically not entirely frozen.
          */
+        @Nonnull
         private ImmutableTreeSet.Node<T> _root = ImmutableTreeSet.Node.<T>emptyNode();
 
         /**
          * The comparator to use for sorting the set.
          */
+        @Nonnull
         private Comparator<? super T> _comparator = Comparators.anyComparator();
 
         /**
@@ -2185,6 +2278,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * <p>{@code null} if no immutable view has been created for the current version.</p>
          */
+        @Nullable
         private ImmutableTreeSet<T> _immutable;
 
         /**
@@ -2202,7 +2296,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @param set A set to act as the basis for a new set.
          */
-        Builder(ImmutableTreeSet<T> set) {
+        Builder(@Nonnull ImmutableTreeSet<T> set) {
             Requires.notNull(set, "set");
             _root = set._root;
             _comparator = set.getKeyComparator();
@@ -2253,6 +2347,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @return The maximum value in the set.
          */
+        @Nullable
         public final T getMax() {
             return _root.getMax();
         }
@@ -2262,6 +2357,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @return The minimum value in the set.
          */
+        @Nullable
         public final T getMin() {
             return _root.getMin();
         }
@@ -2272,6 +2368,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @return The comparator that is used to determine equality for the values in the set.
          */
+        @Nonnull
         @Override
         public final Comparator<? super T> getKeyComparator() {
             return _comparator;
@@ -2287,7 +2384,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @param value The comparator that is used to determine equality for the values in the set.
          */
-        public final void setKeyComparator(Comparator<T> value) {
+        public final void setKeyComparator(@Nonnull Comparator<T> value) {
             Requires.notNull(value, "value");
 
             if (value != _comparator) {
@@ -2312,6 +2409,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
         /**
          * Gets the root node that represents the data in this collection.
          */
+        @Nonnull
         private Node<T> getRoot() {
             return _root;
         }
@@ -2319,7 +2417,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
         /**
          * Sets the root node that represents the data in this collection.
          */
-        private void setRoot(Node<T> value) {
+        private void setRoot(@Nonnull Node<T> value) {
             // We *always* increment the version number because some mutations
             // may not create a new value of root, although the existing root
             // instance may have mutated.
@@ -2342,7 +2440,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @return {@code true} if the element is added to the set; {@code false} if the element is already in the set.
          */
         @Override
-        public final boolean add(T item) {
+        public final boolean add(@Nonnull T item) {
             Node<T> newRoot = this.getRoot().tryAdd(item, _comparator);
             if (newRoot == null) {
                 return false;
@@ -2357,7 +2455,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @param other The collection of items to remove from the set.
          */
-        public final void exceptWith(Iterable<? extends T> other) {
+        public final void exceptWith(@Nonnull Iterable<? extends T> other) {
             Requires.notNull(other, "other");
 
             for (T item : other) {
@@ -2366,7 +2464,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
         }
 
         @Override
-        public final boolean removeAll(Collection<?> c) {
+        public final boolean removeAll(@Nonnull Collection<?> c) {
             boolean changed = false;
             for (Object item : c) {
                 @SuppressWarnings("unchecked")
@@ -2382,7 +2480,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @param other The collection to compare to the current set.
          */
-        public final void intersectWith(Iterable<? extends T> other) {
+        public final void intersectWith(@Nonnull Iterable<? extends T> other) {
             Requires.notNull(other, "other");
 
             Node<T> result = Node.emptyNode();
@@ -2396,7 +2494,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
         }
 
         @Override
-        public final boolean retainAll(Collection<?> c) {
+        public final boolean retainAll(@Nonnull Collection<?> c) {
             int version = getVersion();
             @SuppressWarnings("unchecked")
             Iterable<? extends T> typedOther = (Iterable<? extends T>)c;
@@ -2410,7 +2508,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param other The collection to compare to the current set.
          * @return {@code true} if the current set is a correct subset of {@code other}; otherwise, {@code false}.
          */
-        public final boolean isProperSubsetOf(Iterable<? extends T> other) {
+        public final boolean isProperSubsetOf(@Nonnull Iterable<? extends T> other) {
             return this.toImmutable().isProperSubsetOf(other);
         }
 
@@ -2420,7 +2518,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param other The collection to compare to the current set.
          * @return {@code true} if the current set is a superset of {@code other}; otherwise, {@code false}.
          */
-        public final boolean isProperSupersetOf(Iterable<? extends T> other) {
+        public final boolean isProperSupersetOf(@Nonnull Iterable<? extends T> other) {
             return this.toImmutable().isProperSupersetOf(other);
         }
 
@@ -2430,7 +2528,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param other The collection to compare to the current set.
          * @return {@code true} if the current set is a subset of {@code other}; otherwise, {@code false}.
          */
-        public final boolean isSubsetOf(Iterable<? extends T> other) {
+        public final boolean isSubsetOf(@Nonnull Iterable<? extends T> other) {
             return this.toImmutable().isSubsetOf(other);
         }
 
@@ -2440,12 +2538,12 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param other The collection to compare to the current set.
          * @return {@code true} if the current set is a superset of {@code other}; otherwise, {@code false}.
          */
-        public final boolean isSupersetOf(Iterable<? extends T> other) {
+        public final boolean isSupersetOf(@Nonnull Iterable<? extends T> other) {
             return this.toImmutable().isSupersetOf(other);
         }
 
         @Override
-        public final boolean containsAll(Collection<?> c) {
+        public final boolean containsAll(@Nonnull Collection<?> c) {
             @SuppressWarnings("unchecked")
             Iterable<? extends T> typedOther = (Iterable<? extends T>)c;
             return isSupersetOf(typedOther);
@@ -2458,7 +2556,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @return {@code true} if the current set and {@code other} share at least one common element; otherwise,
          * {@code false}.
          */
-        public final boolean overlaps(Iterable<? extends T> other) {
+        public final boolean overlaps(@Nonnull Iterable<? extends T> other) {
             return this.toImmutable().overlaps(other);
         }
 
@@ -2468,7 +2566,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          * @param other The collection to compare to the current set.
          * @return {@code true} if the current set is equal to {@code other}; otherwise, {@code false}.
          */
-        public final boolean setEquals(Iterable<? extends T> other) {
+        public final boolean setEquals(@Nonnull Iterable<? extends T> other) {
             return this.toImmutable().setEquals(other);
         }
 
@@ -2503,7 +2601,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @param other The collection to compare to the current set.
          */
-        public final void symmetricExceptWith(Iterable<? extends T> other) {
+        public final void symmetricExceptWith(@Nonnull Iterable<? extends T> other) {
             this.setRoot(this.toImmutable().symmetricExcept(other)._root);
         }
 
@@ -2513,7 +2611,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @param other The collection to compare to the current set.
          */
-        public final void unionWith(Iterable<? extends T> other) {
+        public final void unionWith(@Nonnull Iterable<? extends T> other) {
             Requires.notNull(other, "other");
 
             for (T item : other) {
@@ -2522,7 +2620,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
         }
 
         @Override
-        public final boolean addAll(Collection<? extends T> c) {
+        public final boolean addAll(@Nonnull Collection<? extends T> c) {
             int version = getVersion();
             unionWith(c);
             return getVersion() > version;
@@ -2567,13 +2665,15 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
 //                _root.CopyTo(array, arrayIndex);
 //            }
 
+        @Nonnull
         @Override
         public final Object[] toArray() {
             return toArray(new Object[size()]);
         }
 
+        @Nonnull
         @Override
-        public final <U> U[] toArray(U[] a) {
+        public final <U> U[] toArray(@Nonnull U[] a) {
             if (a.length < size()) {
                 @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
                 U[] resized = (U[])Array.newInstance(a.getClass().getComponentType(), size());
@@ -2609,6 +2709,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @return A iterator that can be used to iterate through the collection.
          */
+        @Nonnull
         @Override
         public final Itr<T> iterator() {
             return this.getRoot().iterator(this);
@@ -2639,6 +2740,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @return An iterator that iterates over the {@link Builder} in reverse order.
          */
+        @Nonnull
         public final Iterable<T> reverse() {
             return new ReverseIterable<T>(_root);
         }
@@ -2651,6 +2753,7 @@ public class ImmutableTreeSet<T> implements ImmutableSet<T>, SortKeyCollection<T
          *
          * @return An immutable set.
          */
+        @Nonnull
         public final ImmutableTreeSet<T> toImmutable() {
             // Creating an instance of ImmutableSortedSet<T> with our root node automatically freezes our tree,
             // ensuring that the returned instance is immutable.  Any further mutations made to this builder

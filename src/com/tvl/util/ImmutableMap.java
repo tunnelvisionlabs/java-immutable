@@ -2,6 +2,9 @@
 package com.tvl.util;
 
 import java.util.Map;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * An immutable key-value map.
@@ -16,6 +19,8 @@ public interface ImmutableMap<K, V> extends ReadOnlyMap<K, V> {
      *
      * @return The empty map.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableMap<K, V> clear();
 
     /**
@@ -28,7 +33,9 @@ public interface ImmutableMap<K, V> extends ReadOnlyMap<K, V> {
      * @return The new map containing the additional key-value pair.
      * @throws IllegalArgumentException if the given key already exists in the map, but has a different value.
      */
-    ImmutableMap<K, V> add(K key, V value);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableMap<K, V> add(@Nonnull K key, V value);
 
     /**
      * Adds the specified key-value pairs to the map.
@@ -38,7 +45,9 @@ public interface ImmutableMap<K, V> extends ReadOnlyMap<K, V> {
      * @exception IllegalArgumentException if one of the given keys already exists in the map, but has a different
      * value.
      */
-    ImmutableMap<K, V> addAll(Iterable<? extends Map.Entry<K, V>> entries);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableMap<K, V> addAll(@Nonnull Iterable<? extends Map.Entry<K, V>> entries);
 
     /**
      * Sets the specified key and value in the map, possibly overwriting an existing value for the given key.
@@ -50,7 +59,9 @@ public interface ImmutableMap<K, V> extends ReadOnlyMap<K, V> {
      * @param value The value of the entry to add.
      * @return The new map containing the additional key-value pair.
      */
-    ImmutableMap<K, V> put(K key, V value);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableMap<K, V> put(@Nonnull K key, V value);
 
     /**
      * Applies a given set of key=value pairs to an immutable map, replacing any conflicting keys in the resulting map.
@@ -59,7 +70,9 @@ public interface ImmutableMap<K, V> extends ReadOnlyMap<K, V> {
      * the previous values.
      * @return The new map.
      */
-    ImmutableMap<K, V> putAll(Iterable<? extends Map.Entry<K, V>> entries);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableMap<K, V> putAll(@Nonnull Iterable<? extends Map.Entry<K, V>> entries);
 
     /**
      * Removes the specified key from the map with its associated value.
@@ -67,7 +80,9 @@ public interface ImmutableMap<K, V> extends ReadOnlyMap<K, V> {
      * @param key The key to remove.
      * @return A new map with the matching entry removed; or this instance if the key is not in the map.
      */
-    ImmutableMap<K, V> remove(K key);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableMap<K, V> remove(@Nonnull K key);
 
     /**
      * Removes the specified keys from the map with their associated values.
@@ -75,7 +90,9 @@ public interface ImmutableMap<K, V> extends ReadOnlyMap<K, V> {
      * @param keys The keys to remove.
      * @return A new map with those keys removed; or this instance if those keys are not in the map.
      */
-    ImmutableMap<K, V> removeAll(Iterable<? extends K> keys);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableMap<K, V> removeAll(@Nonnull Iterable<? extends K> keys);
 
     /**
      * Determines whether this map contains the specified key-value pair.
@@ -83,7 +100,7 @@ public interface ImmutableMap<K, V> extends ReadOnlyMap<K, V> {
      * @param pair The key-value pair.
      * @return {@code true} if this map contains the key-value pair; otherwise, {@code false}.
      */
-    boolean contains(Map.Entry<K, V> pair);
+    boolean contains(@Nonnull Map.Entry<K, V> pair);
 
     /**
      * Searches the map for a given key and returns the equal key it finds, if any.
@@ -93,8 +110,9 @@ public interface ImmutableMap<K, V> extends ReadOnlyMap<K, V> {
      * data than the value you currently have, although their comparator functions indicate they are equal.
      *
      * @param equalKey The key to search for.
-     * @return The key from the map that the search found, or {@code equalKey} if the search yielded no match.
+     * @return The key from the map that the search found, or {@code null} if the search yielded no match.
      */
-    K getKey(K equalKey);
+    @Nullable
+    K getKey(@Nonnull K equalKey);
 
 }

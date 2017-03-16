@@ -1,6 +1,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 package com.tvl.util;
 
+import javax.annotation.Nonnull;
+
 public abstract class EqualityComparators {
 
     /**
@@ -8,6 +10,7 @@ public abstract class EqualityComparators {
      *
      * @return A default {@link EqualityComparator} for instances of type {@code T}.
      */
+    @Nonnull
     public static EqualityComparator<Object> defaultComparator() {
         return ObjectEqualityComparator.INSTANCE;
     }
@@ -19,7 +22,8 @@ public abstract class EqualityComparators {
      * @param clazz The type of objects to compare.
      * @return A default {@link EqualityComparator} for instances of type {@code T}.
      */
-    public static <T> EqualityComparator<T> defaultComparator(Class<T> clazz) {
+    @Nonnull
+    public static <T> EqualityComparator<T> defaultComparator(@Nonnull Class<T> clazz) {
         if (clazz.isPrimitive()) {
             throw new UnsupportedOperationException("Cannot create a generic comparator for primitive types.");
         }

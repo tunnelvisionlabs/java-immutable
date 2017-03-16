@@ -2,6 +2,8 @@
 package com.tvl.util;
 
 import com.tvl.util.function.Predicate;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 
 /**
  * A list of elements that can only be modified by creating a new instance of the list.
@@ -19,6 +21,8 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      *
      * @return The empty list.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableList<T> clear();
 
     /**
@@ -34,7 +38,7 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * from {@code startIndex} through (but not including) {@code toIndex}, if found;
      * otherwise, -1.
      */
-    int indexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator);
+    int indexOf(T item, int fromIndex, int toIndex, @Nonnull EqualityComparator<? super T> equalityComparator);
 
     /**
      * Searches for the specified object and returns the zero-based index of the last occurrence within the range of
@@ -47,7 +51,7 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * @return The zero-based index of the last occurrence of {@code item} within the range of elements in the immutable
      * list that extends from {@code startIndex} through (but not including) {@code toIndex}.
      */
-    int lastIndexOf(T item, int fromIndex, int toIndex, EqualityComparator<? super T> equalityComparator);
+    int lastIndexOf(T item, int fromIndex, int toIndex, @Nonnull EqualityComparator<? super T> equalityComparator);
 
     /**
      * Adds the specified value to this list.
@@ -55,6 +59,8 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * @param value The value to add.
      * @return A new list with the element added.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableList<T> add(T value);
 
     /**
@@ -63,7 +69,9 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * @param items The values to add.
      * @return A new list with the elements added.
      */
-    ImmutableList<T> addAll(Iterable<? extends T> items);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableList<T> addAll(@Nonnull Iterable<? extends T> items);
 
     /**
      * Inserts the specified value at the specified index.
@@ -72,6 +80,8 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * @param element The element to insert.
      * @return The new immutable list.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableList<T> add(int index, T element);
 
     /**
@@ -81,7 +91,9 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * @param items The elements to insert.
      * @return The new immutable list.
      */
-    ImmutableList<T> addAll(int index, Iterable<? extends T> items);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableList<T> addAll(int index, @Nonnull Iterable<? extends T> items);
 
     /**
      * Removes the specified value from the list.
@@ -90,7 +102,9 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * @param equalityComparator The equality comparator to use in the search.
      * @return A new list with the element removed, or this list if the element is not in this list.
      */
-    ImmutableList<T> remove(T value, EqualityComparator<? super T> equalityComparator);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableList<T> remove(T value, @Nonnull EqualityComparator<? super T> equalityComparator);
 
     /**
      * Removes all the elements that match the conditions defined by the specified predicate.
@@ -98,7 +112,9 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * @param predicate The {@link Predicate} that defines the conditions of the elements to remove.
      * @return The new list.
      */
-    ImmutableList<T> removeIf(Predicate<? super T> predicate);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableList<T> removeIf(@Nonnull Predicate<? super T> predicate);
 
     /**
      * Removes the specified values from this list.
@@ -107,7 +123,9 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * @param equalityComparator The equality comparator to use in the search.
      * @return A new list with the elements removed.
      */
-    ImmutableList<T> removeAll(Iterable<? extends T> items, EqualityComparator<? super T> equalityComparator);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableList<T> removeAll(@Nonnull Iterable<? extends T> items, @Nonnull EqualityComparator<? super T> equalityComparator);
 
     /**
      * Removes the element at the specified index.
@@ -115,6 +133,8 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * @param index The index.
      * @return A new list with the element removed.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableList<T> remove(int index);
 
     /**
@@ -124,6 +144,8 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * @param toIndex The index of the last element (exclusive) to be removed.
      * @return A new list with the elements removed.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableList<T> removeAll(int fromIndex, int toIndex);
 
     /**
@@ -133,6 +155,8 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * @param value The element to replace the old element with.
      * @return The new list, even if the value being replaced is equal to the new value for that position.
      */
+    @Nonnull
+    @CheckReturnValue
     ImmutableList<T> set(int index, T value);
 
     /**
@@ -144,6 +168,8 @@ public interface ImmutableList<T> extends ReadOnlyList<T> {
      * @return The new list, even if the value being replaced is equal to the new value for that position.
      * @throws IllegalArgumentException if the old value does not exist in the list.
      */
-    ImmutableList<T> replace(T oldValue, T newValue, EqualityComparator<? super T> equalityComparator);
+    @Nonnull
+    @CheckReturnValue
+    ImmutableList<T> replace(T oldValue, T newValue, @Nonnull EqualityComparator<? super T> equalityComparator);
 
 }

@@ -2,6 +2,8 @@
 package com.tvl.util;
 
 import java.util.Map;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public interface ReadOnlyMap<K, V> {
 
@@ -22,12 +24,16 @@ public interface ReadOnlyMap<K, V> {
 
     boolean containsKey(K key);
 
+    @Nullable
     V get(K key);
 
+    @Nonnull
     Iterable<K> keySet();
 
+    @Nonnull
     Iterable<V> values();
 
+    @Nonnull
     Iterable<Map.Entry<K, V>> entrySet();
 
 }

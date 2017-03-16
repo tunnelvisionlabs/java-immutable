@@ -1,6 +1,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 package com.tvl.util;
 
+import javax.annotation.Nonnull;
+
 /**
  * Defined on a generic collection that hashes its contents using an {@link EqualityComparator}.
  *
@@ -12,5 +14,6 @@ interface HashKeyCollection<K> {
      *
      * @return The comparator used to obtain hash codes for the keys and check equality.
      */
+    @Nonnull
     EqualityComparator<? super K> getKeyComparator();
 }

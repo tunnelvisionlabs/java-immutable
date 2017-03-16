@@ -3,6 +3,8 @@ package com.tvl.util;
 
 import java.util.Collection;
 import java.util.Comparator;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Provides static utility methods for working with immutable collection instances.
@@ -17,7 +19,8 @@ public enum Immutables {
      * @param source The sequence to iterate.
      * @return An {@link ImmutableArrayList}.
      */
-    public static <T> ImmutableArrayList<T> toImmutableArrayList(Iterable<T> source) {
+    @Nonnull
+    public static <T> ImmutableArrayList<T> toImmutableArrayList(@Nonnull Iterable<T> source) {
         return ImmutableArrayList.createAll(source);
     }
 
@@ -28,7 +31,8 @@ public enum Immutables {
      * @param source The sequence to iterate.
      * @return An {@link ImmutableTreeList}.
      */
-    public static <T> ImmutableTreeList<T> toImmutableTreeList(Iterable<T> source) {
+    @Nonnull
+    public static <T> ImmutableTreeList<T> toImmutableTreeList(@Nonnull Iterable<T> source) {
         return ImmutableTreeList.createAll(source);
     }
 
@@ -40,7 +44,8 @@ public enum Immutables {
      * @param comparator The comparator to use for initializing and adding members to the sorted set.
      * @return An immutable set.
      */
-    public static <T> ImmutableTreeSet<T> toImmutableTreeSet(Iterable<? extends T> source, Comparator<? super T> comparator) {
+    @Nonnull
+    public static <T> ImmutableTreeSet<T> toImmutableTreeSet(@Nonnull Iterable<? extends T> source, @Nonnull Comparator<? super T> comparator) {
         if (source instanceof ImmutableTreeSet<?>) {
             ImmutableTreeSet<? extends T> existingSet = (ImmutableTreeSet<? extends T>)source;
 
@@ -61,11 +66,13 @@ public enum Immutables {
      * @param source The sequence to iterate.
      * @return An immutable set.
      */
-    public static <T> ImmutableTreeSet<T> toImmutableTreeSet(Iterable<? extends T> source) {
+    @Nonnull
+    public static <T> ImmutableTreeSet<T> toImmutableTreeSet(@Nonnull Iterable<? extends T> source) {
         return toImmutableTreeSet(source, null);
     }
 
-    static <T> ImmutableArrayList<T> asImmutableArrayList(Iterable<T> source) {
+    @Nullable
+    static <T> ImmutableArrayList<T> asImmutableArrayList(@Nonnull Iterable<T> source) {
         if (source instanceof ImmutableArrayList<?>) {
             return (ImmutableArrayList<T>)source;
         }
@@ -79,7 +86,8 @@ public enum Immutables {
      * @param iterable The iterable source.
      * @return The number of elements in the iterable, if it could be determined; otherwise, {@code null}.
      */
-    static Integer tryGetCount(Iterable<?> iterable) {
+    @Nullable
+    static Integer tryGetCount(@Nonnull Iterable<?> iterable) {
         if (iterable instanceof Collection<?>) {
             return ((Collection<?>)iterable).size();
         }

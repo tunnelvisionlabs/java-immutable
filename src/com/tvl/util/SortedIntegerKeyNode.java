@@ -7,6 +7,9 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * A node in the AVL tree storing key/value pairs with integer keys.
@@ -23,6 +26,7 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
     /**
      * The default empty node.
      */
+    @Nonnull
     private static final SortedIntegerKeyNode<?> EMPTY_NODE = new SortedIntegerKeyNode<Object>();
 
     /**
@@ -64,18 +68,13 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         frozen = true;
     }
 
-    private SortedIntegerKeyNode(int key, T value, SortedIntegerKeyNode<T> left, SortedIntegerKeyNode<T> right) {
+    private SortedIntegerKeyNode(int key, T value, @Nonnull SortedIntegerKeyNode<T> left, @Nonnull SortedIntegerKeyNode<T> right) {
         this(key, value, left, right, false);
     }
 
-    private SortedIntegerKeyNode(int key, T value, SortedIntegerKeyNode<T> left, SortedIntegerKeyNode<T> right, boolean frozen) {
-        if (left == null) {
-            throw new NullPointerException("left");
-        }
-
-        if (right == null) {
-            throw new NullPointerException("right");
-        }
+    private SortedIntegerKeyNode(int key, T value, @Nonnull SortedIntegerKeyNode<T> left, @Nonnull SortedIntegerKeyNode<T> right, boolean frozen) {
+        Requires.notNull(left, "left");
+        Requires.notNull(right, "right");
 
         assert !frozen || (left.frozen && right.frozen);
         this.key = key;
@@ -86,6 +85,7 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         this.height = (byte)(1 + Math.max(left.height, right.height));
     }
 
+    @Nonnull
     public static <T> SortedIntegerKeyNode<T> emptyNode() {
         @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         SortedIntegerKeyNode<T> result = (SortedIntegerKeyNode<T>)EMPTY_NODE;
@@ -117,6 +117,7 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         throw new UnsupportedOperationException("Not supported by this type.");
     }
 
+    @Nonnull
     @Override
     public IntegerKeyEntry<T> getValue() {
         return new IntegerKeyEntry<T>(key, value);
@@ -126,20 +127,26 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Nonnull
     @Override
     public Itr<T> iterator() {
         return new Itr<T>(this);
     }
 
-    SetItemResult<T> setItem(int key, T value, EqualityComparator<? super T> valueComparator) {
+    @Nonnull
+    @CheckReturnValue
+    SetItemResult<T> setItem(int key, T value, @Nonnull EqualityComparator<? super T> valueComparator) {
         Requires.notNull(valueComparator, "valueComparator");
         return setOrAdd(key, value, valueComparator, true);
     }
 
+    @Nonnull
+    @CheckReturnValue
     MutationResult<T> remove(int key) {
         return removeRecursive(key);
     }
 
+    @Nullable
     T getValueOrDefault(int key) {
         SortedIntegerKeyNode<T> match = search(key);
         return match.isEmpty() ? null : match.value;
@@ -149,7 +156,7 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         freeze(null);
     }
 
-    void freeze(FreezeAction<? super T> freezeAction) {
+    void freeze(@Nullable FreezeAction<? super T> freezeAction) {
         // If this node is frozen, all its descendants must already be frozen
         if (!frozen) {
             if (freezeAction != null) {
@@ -162,7 +169,9 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         }
     }
 
-    private static <T> SortedIntegerKeyNode<T> rotateLeft(SortedIntegerKeyNode<T> tree) {
+    @Nonnull
+    @CheckReturnValue
+    private static <T> SortedIntegerKeyNode<T> rotateLeft(@Nonnull SortedIntegerKeyNode<T> tree) {
         Requires.notNull(tree, "tree");
         assert !tree.isEmpty();
 
@@ -174,7 +183,9 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         return right.mutateLeft(tree.mutateRight(right.left));
     }
 
-    private static <T> SortedIntegerKeyNode<T> rotateRight(SortedIntegerKeyNode<T> tree) {
+    @Nonnull
+    @CheckReturnValue
+    private static <T> SortedIntegerKeyNode<T> rotateRight(@Nonnull SortedIntegerKeyNode<T> tree) {
         Requires.notNull(tree, "tree");
         assert !tree.isEmpty();
 
@@ -186,7 +197,9 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         return left.mutateRight(tree.mutateLeft(left.right));
     }
 
-    private static <T> SortedIntegerKeyNode<T> doubleLeft(SortedIntegerKeyNode<T> tree) {
+    @Nonnull
+    @CheckReturnValue
+    private static <T> SortedIntegerKeyNode<T> doubleLeft(@Nonnull SortedIntegerKeyNode<T> tree) {
         Requires.notNull(tree, "tree");
         assert !tree.isEmpty();
 
@@ -198,7 +211,9 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         return rotateLeft(rotatedRightChild);
     }
 
-    private static <T> SortedIntegerKeyNode<T> doubleRight(SortedIntegerKeyNode<T> tree) {
+    @Nonnull
+    @CheckReturnValue
+    private static <T> SortedIntegerKeyNode<T> doubleRight(@Nonnull SortedIntegerKeyNode<T> tree) {
         Requires.notNull(tree, "tree");
         assert !tree.isEmpty();
 
@@ -210,28 +225,30 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         return rotateRight(rotatedLeftChild);
     }
 
-    private static <T> int balance(SortedIntegerKeyNode<T> tree) {
+    private static <T> int balance(@Nonnull SortedIntegerKeyNode<T> tree) {
         Requires.notNull(tree, "tree");
         assert !tree.isEmpty();
 
         return tree.right.height - tree.left.height;
     }
 
-    private static <T> boolean isRightHeavy(SortedIntegerKeyNode<T> tree) {
+    private static <T> boolean isRightHeavy(@Nonnull SortedIntegerKeyNode<T> tree) {
         Requires.notNull(tree, "tree");
         assert !tree.isEmpty();
 
         return balance(tree) >= 2;
     }
 
-    private static <T> boolean isLeftHeavy(SortedIntegerKeyNode<T> tree) {
+    private static <T> boolean isLeftHeavy(@Nonnull SortedIntegerKeyNode<T> tree) {
         Requires.notNull(tree, "tree");
         assert !tree.isEmpty();
 
         return balance(tree) <= -2;
     }
 
-    private static <T> SortedIntegerKeyNode<T> makeBalanced(SortedIntegerKeyNode<T> tree) {
+    @Nonnull
+    @CheckReturnValue
+    private static <T> SortedIntegerKeyNode<T> makeBalanced(@Nonnull SortedIntegerKeyNode<T> tree) {
         Requires.notNull(tree, "tree");
         assert !tree.isEmpty();
 
@@ -250,7 +267,9 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
     //    throw new UnsupportedOperationException();
     //}
 
-    private SetItemResult<T> setOrAdd(int key, T value, EqualityComparator<? super T> valueComparator, boolean overwriteExistingValue) {
+    @Nonnull
+    @CheckReturnValue
+    private SetItemResult<T> setOrAdd(int key, T value, @Nonnull EqualityComparator<? super T> valueComparator, boolean overwriteExistingValue) {
         // Arg validation skipped in this private method because it's recursive and the tax
         // of revalidating arguments on each recursive call is significant.
         // All our callers are therefore required to have done input validation.
@@ -294,6 +313,8 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         }
     }
 
+    @Nonnull
+    @CheckReturnValue
     private MutationResult<T> removeRecursive(int key) {
         if (isEmpty()) {
             return new MutationResult<T>(this, false);
@@ -340,15 +361,21 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         return new MutationResult<T>(result.isEmpty() ? result : makeBalanced(result), mutated);
     }
 
-    private SortedIntegerKeyNode<T> mutateLeft(SortedIntegerKeyNode<T> left) {
+    @Nonnull
+    @CheckReturnValue
+    private SortedIntegerKeyNode<T> mutateLeft(@Nullable SortedIntegerKeyNode<T> left) {
         return mutate(left, null);
     }
 
-    private SortedIntegerKeyNode<T> mutateRight(SortedIntegerKeyNode<T> right) {
+    @Nonnull
+    @CheckReturnValue
+    private SortedIntegerKeyNode<T> mutateRight(@Nullable SortedIntegerKeyNode<T> right) {
         return mutate(null, right);
     }
 
-    private SortedIntegerKeyNode<T> mutate(SortedIntegerKeyNode<T> left, SortedIntegerKeyNode<T> right) {
+    @Nonnull
+    @CheckReturnValue
+    private SortedIntegerKeyNode<T> mutate(@Nullable SortedIntegerKeyNode<T> left, @Nullable SortedIntegerKeyNode<T> right) {
         if (frozen) {
             return new SortedIntegerKeyNode<T>(key, value, left != null ? left : this.left, right != null ? right : this.right);
         } else {
@@ -365,6 +392,7 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
         }
     }
 
+    @Nonnull
     private SortedIntegerKeyNode<T> search(int key) {
         if (isEmpty() || key == this.key) {
             return this;
@@ -384,7 +412,7 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
 
         private SortedIntegerKeyNode<T> current;
 
-        Itr(SortedIntegerKeyNode<T> root) {
+        Itr(@Nonnull SortedIntegerKeyNode<T> root) {
             Requires.notNull(root, "root");
 
             this.root = root;
@@ -417,7 +445,7 @@ final class SortedIntegerKeyNode<T> implements BinaryTree<SortedIntegerKeyNode.I
             throw new UnsupportedOperationException("This iterator is read-only.");
         }
 
-        private void pushLeft(SortedIntegerKeyNode<T> node) {
+        private void pushLeft(@Nonnull SortedIntegerKeyNode<T> node) {
             Requires.notNull(node, "node");
             while (!node.isEmpty()) {
                 stack.push(node);

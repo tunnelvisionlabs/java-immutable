@@ -4,6 +4,8 @@ package com.tvl.util;
 import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 
 /**
  * An immutable queue backed by singly-linked lists.
@@ -38,7 +40,7 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
      * @param forward The forward stack.
      * @param backward The backward stack.
      */
-    private ImmutableLinkedQueue(ImmutableLinkedStack<T> forward, ImmutableLinkedStack<T> backward) {
+    private ImmutableLinkedQueue(@Nonnull ImmutableLinkedStack<T> forward, @Nonnull ImmutableLinkedStack<T> backward) {
         Requires.notNull(forward, "forward");
         Requires.notNull(backward, "backward");
 
@@ -53,6 +55,7 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
      * @param <T> The type of items stored by the collection.
      * @return The immutable collection.
      */
+    @Nonnull
     public static <T> ImmutableLinkedQueue<T> create() {
         return empty();
     }
@@ -64,6 +67,7 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
      * @param item The item to pre-populate.
      * @return The immutable collection.
      */
+    @Nonnull
     public static <T> ImmutableLinkedQueue<T> create(T item) {
         return ImmutableLinkedQueue.<T>empty().add(item);
     }
@@ -75,7 +79,8 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
      * @param items The items to pre-populate.
      * @return The immutable collection.
      */
-    public static <T> ImmutableLinkedQueue<T> create(T... items) {
+    @Nonnull
+    public static <T> ImmutableLinkedQueue<T> create(@Nonnull T... items) {
         Requires.notNull(items, "items");
 
         ImmutableLinkedQueue<T> queue = empty();
@@ -93,7 +98,8 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
      * @param items The items to pre-populate.
      * @return The immutable collection.
      */
-    public static <T> ImmutableLinkedQueue<T> createAll(Iterable<? extends T> items) {
+    @Nonnull
+    public static <T> ImmutableLinkedQueue<T> createAll(@Nonnull Iterable<? extends T> items) {
         Requires.notNull(items, "items");
 
         ImmutableLinkedQueue<T> queue = empty();
@@ -104,6 +110,7 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
         return queue;
     }
 
+    @Nonnull
     public static <T> ImmutableLinkedQueue<T> empty() {
         @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
         ImmutableLinkedQueue<T> result = (ImmutableLinkedQueue<T>)EMPTY_QUEUE;
@@ -113,6 +120,8 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableLinkedQueue<T> clear() {
         return empty();
@@ -141,6 +150,8 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableLinkedQueue<T> add(T value) {
         if (isEmpty()) {
@@ -153,6 +164,8 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @CheckReturnValue
     @Override
     public ImmutableLinkedQueue<T> poll() {
         if (isEmpty()) {
@@ -172,11 +185,14 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public Iterator<T> iterator() {
         return new Itr<T>(this);
     }
 
+    @Nonnull
+    @CheckReturnValue
     private ImmutableLinkedStack<T> getBackwardsReversed() {
         if (backwardsReversed == null) {
             backwardsReversed = backwards.reverse();
@@ -190,6 +206,7 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
         /**
          * The original queue being enumerated.
          */
+        @Nonnull
         private final ImmutableLinkedQueue<T> originalQueue;
         /**
          * The remaining forwards queue not yet enumerated.
@@ -205,7 +222,7 @@ public class ImmutableLinkedQueue<T> implements ImmutableQueue<T> {
          *
          * @param originalQueue The queue to enumerate.
          */
-        public Itr(ImmutableLinkedQueue<T> originalQueue) {
+        public Itr(@Nonnull ImmutableLinkedQueue<T> originalQueue) {
             this.originalQueue = originalQueue;
         }
 
