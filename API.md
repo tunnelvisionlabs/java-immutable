@@ -422,12 +422,14 @@ These members of `ImmutableQueue<T>` have no equivalent mapping in the Java prog
 | `AddOrUpdate<TKey, TValue>(ref ImmutableDictionary<TKey, TValue>, TKey, Func<TKey, TValue>, Func<TKey, TValue, TValue>)` | `<K, V>addOrUpdate(AtomicReference<ImmutableHashMap<K, V>>, K, Function<? super K, ? extends V>, BiFunction<? super K, ? super V, ? extends V>)` | &check; |
 | `AddOrUpdate<TKey, TValue>(ref ImmutableDictionary<TKey, TValue>, TKey, TValue, Func<TKey, TValue, TValue>)` | `<K, V>addOrUpdate(AtomicReference<ImmutableHashMap<K, V>>, K, V, BiFunction<? super K, ? super V, ? extends V>)` | &check; |
 | `TryAdd<TKey, TValue>(ref ImmutableDictionary<TKey, TValue>, TKey, TValue)` | `<K, V>tryAdd(AtomicReference<ImmutableHashMap<K, V>>, K, V)` | &check; |
-| `TryUpdate<TKey, TValue>(ref ImmutableDictionary<TKey, TValue>, TKey, TValue, TValue)` | `<K, V>tryUpdate(AtomicReference<ImmutableHashMap<K, V>>, K, V, V)` | &check; |
+| `TryUpdate<TKey, TValue>(ref ImmutableDictionary<TKey, TValue>, TKey, TValue newValue, TValue comparisonValue)` | `<K, V>tryUpdate(AtomicReference<ImmutableHashMap<K, V>>, K, V expectValue, V updateValue)` | &check; 3 |
 | `TryRemove<TKey, TValue>(ref ImmutableDictionary<TKey, TValue>, TKey, out TValue)` | `<K, V>tryRemove(AtomicReference<ImmutableHashMap<K, V>>, K)` | &check; |
 | `TryPop<T>(ref ImmutableStack<T>, out T)` | `<T>tryPop(AtomicReference<ImmutableLinkedStack<T>>)` | &check; |
 | `Push<T>(ref ImmutableStack<T>, T)` | `<T>push(AtomicReference<ImmutableLinkedStack<T>>, T)` | &check; |
 | `TryDequeue<T>(ref ImmutableQueue<T>, out T)` | `<T>tryPoll(AtomicReference<ImmutableLinkedQueue<T>>)` | &check; |
 | `Enqueue<T>(ref ImmutableQueue<T>, T)` | `<T>add(AtomicReference<ImmutableLinkedQueue<T>>, T)` | &check; |
+
+:bulb: For each of the above methods which takes an `AtomicReference<T>` argument, an overload of the method which takes an `AtomicReferenceFieldUpdater<T, V>` argument is provided as well.
 
 #### `ImmutableInterlocked` &rarr; No mapping
 
@@ -443,5 +445,6 @@ These members of `ImmutableInterlocked` have no equivalent mapping in the Java p
 
 &check; The API is implemented and documented as described.
 
-1. Java convention is to use fromIndex/toIndex instead of start/length for ranges.<br>
+1. Java convention is to use fromIndex/toIndex instead of start/length for ranges.
 2. These methods were renamed to `createAll` to avoid conflicts with `create(T...)`.
+3. Java convention is to use expect/update instead of value/comparand for compare-and-set operations.

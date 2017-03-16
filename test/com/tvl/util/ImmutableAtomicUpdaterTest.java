@@ -434,17 +434,17 @@ public class ImmutableAtomicUpdaterTest {
 
         // missing
         ImmutableHashMap<Integer, String> before = map.get();
-        assertFalse(ImmutableAtomic.tryUpdate(map.updater(), map, 1, "a", "b"));
+        assertFalse(ImmutableAtomic.tryUpdate(map.updater(), map, 1, "b", "a"));
         assertSame(before, map.get());
 
         // mismatched existing value
         map.set(map.get().put(1, "b"));
         before = map.get();
-        assertFalse(ImmutableAtomic.tryUpdate(map.updater(), map, 1, "a", "c"));
+        assertFalse(ImmutableAtomic.tryUpdate(map.updater(), map, 1, "c", "a"));
         assertSame(before, map.get());
 
         // match
-        assertTrue(ImmutableAtomic.tryUpdate(map.updater(), map, 1, "c", "b"));
+        assertTrue(ImmutableAtomic.tryUpdate(map.updater(), map, 1, "b", "c"));
         assertNotSame(before, map.get());
         assertEquals("c", map.get().get(1));
     }

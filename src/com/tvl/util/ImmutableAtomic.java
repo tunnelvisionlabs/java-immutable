@@ -561,12 +561,12 @@ public enum ImmutableAtomic {
      * @param <V> The type of value stored by the dictionary.
      * @param location The variable or field to atomically update if the specified {@code key} is not in the dictionary.
      * @param key The key to update.
-     * @param newValue The new value to set.
-     * @param comparisonValue The value that must already be set in the dictionary in order for the update to succeed.
+     * @param expectValue The value that must already be set in the dictionary in order for the update to succeed.
+     * @param updateValue The new value to set.
      * @return {@code true} if the key and comparison value were present in the dictionary and the update was made;
      * {@code false} otherwise.
      */
-    public static <K, V> boolean tryUpdate(AtomicReference<ImmutableHashMap<K, V>> location, K key, V newValue, V comparisonValue) {
+    public static <K, V> boolean tryUpdate(AtomicReference<ImmutableHashMap<K, V>> location, K key, V expectValue, V updateValue) {
         boolean successful;
         do {
             ImmutableHashMap<K, V> priorCollection = location.get();
@@ -578,12 +578,12 @@ public enum ImmutableAtomic {
             }
 
             V priorValue = priorCollection.get(key);
-            if (!EqualityComparators.defaultComparator().equals(priorValue, comparisonValue)) {
+            if (!EqualityComparators.defaultComparator().equals(priorValue, expectValue)) {
                 // The current value doesn't match what the caller expected
                 return false;
             }
 
-            ImmutableHashMap<K, V> updatedCollection = priorCollection.put(key, newValue);
+            ImmutableHashMap<K, V> updatedCollection = priorCollection.put(key, updateValue);
             successful = location.compareAndSet(priorCollection, updatedCollection);
         } while (!successful);
 
@@ -600,12 +600,12 @@ public enum ImmutableAtomic {
      * dictionary.
      * @param obj The object whose field to update.
      * @param key The key to update.
-     * @param newValue The new value to set.
-     * @param comparisonValue The value that must already be set in the dictionary in order for the update to succeed.
+     * @param expectValue The value that must already be set in the dictionary in order for the update to succeed.
+     * @param updateValue The new value to set.
      * @return {@code true} if the key and comparison value were present in the dictionary and the update was made;
      * {@code false} otherwise.
      */
-    public static <C, K, V> boolean tryUpdate(AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, C obj, K key, V newValue, V comparisonValue) {
+    public static <C, K, V> boolean tryUpdate(AtomicReferenceFieldUpdater<? super C, ImmutableHashMap<K, V>> updater, C obj, K key, V expectValue, V updateValue) {
         Requires.notNull(updater, "updater");
         Requires.notNull(obj, "obj");
 
@@ -620,12 +620,12 @@ public enum ImmutableAtomic {
             }
 
             V priorValue = priorCollection.get(key);
-            if (!EqualityComparators.defaultComparator().equals(priorValue, comparisonValue)) {
+            if (!EqualityComparators.defaultComparator().equals(priorValue, expectValue)) {
                 // The current value doesn't match what the caller expected
                 return false;
             }
 
-            ImmutableHashMap<K, V> updatedCollection = priorCollection.put(key, newValue);
+            ImmutableHashMap<K, V> updatedCollection = priorCollection.put(key, updateValue);
             successful = updater.compareAndSet(obj, priorCollection, updatedCollection);
         } while (!successful);
 
