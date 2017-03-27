@@ -377,7 +377,7 @@ public abstract class ImmutableSetTest extends ImmutablesTestBase {
 
     protected abstract <T> Set<T> emptyMutable();
 
-    abstract <T> BinaryTree<T> getRootNode(ImmutableSet<T> set);
+    abstract <T> BinaryTree<?> getRootNode(ImmutableSet<T> set);
 
     protected final void tryGetValueTestHelper(ImmutableSet<String> set) {
         Requires.notNull(set, "set");
@@ -411,9 +411,9 @@ public abstract class ImmutableSetTest extends ImmutablesTestBase {
 
         assertEquals(expectedValues.length, set.size());
         if (matchOrder) {
-            assertThat(set, containsInAnyOrder(expectedValues));
-        } else {
             assertThat(set, contains(expectedValues));
+        } else {
+            assertThat(set, containsInAnyOrder(expectedValues));
         }
     }
 
@@ -724,7 +724,7 @@ public abstract class ImmutableSetTest extends ImmutablesTestBase {
     }
 
     private <T> void verifyAvlTreeState(ImmutableSet<T> set) {
-        BinaryTree<T> rootNode = this.getRootNode(set);
+        BinaryTree<?> rootNode = this.getRootNode(set);
         TestExtensionMethods.verifyBalanced(rootNode);
         TestExtensionMethods.verifyHeightIsWithinTolerance(rootNode, set.size());
     }

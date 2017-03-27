@@ -33,6 +33,40 @@ public enum Immutables {
     }
 
     /**
+     * Enumerates a sequence exactly once and produces an immutable set of its contents.
+     *
+     * @param <T> The type of element in the sequence.
+     * @param source The sequence to enumerate.
+     * @param equalityComparator The equality comparer to use for initializing and adding members to the hash set.
+     * @return An immutable set.
+     */
+    public static <T> ImmutableHashSet<T> toImmutableHashSet(Iterable<? extends T> source, EqualityComparator<? super T> equalityComparator) {
+        if (source instanceof ImmutableHashSet<?>) {
+            ImmutableHashSet<? extends T> existingSet = (ImmutableHashSet<? extends T>)source;
+            ImmutableHashSet<? extends T> updatedSet = existingSet.withComparator(equalityComparator);
+
+            // This cast is safe since we updated the comparator
+            @SuppressWarnings(Suppressions.UNCHECKED_SAFE)
+            ImmutableHashSet<T> upcast = (ImmutableHashSet<T>)updatedSet;
+
+            return upcast;
+        }
+
+        return ImmutableHashSet.<T>empty().withComparator(equalityComparator).union(source);
+    }
+
+    /**
+     * Enumerates a sequence exactly once and produces an immutable set of its contents.
+     *
+     * @param <T> The type of element in the sequence.
+     * @param source The sequence to enumerate.
+     * @return An immutable set.
+     */
+    public static <T> ImmutableHashSet<T> toImmutableHashSet(Iterable<? extends T> source) {
+        return toImmutableHashSet(source, null);
+    }
+
+    /**
      * Iterates a sequence exactly once and produces an immutable set of its contents.
      *
      * @param <T> The type of element in the sequence.
