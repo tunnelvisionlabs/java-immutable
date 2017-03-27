@@ -782,6 +782,10 @@ public final class ImmutableHashSet<T> implements ImmutableSet<T>, HashKeyCollec
         for (T item : other) {
             int hashCode = origin.getEqualityComparator().hashCode(item);
             HashBucket<T> bucket = newRoot.getValueOrDefault(hashCode);
+            if (bucket == null) {
+                bucket = HashBucket.empty();
+            }
+
             StrongBox<OperationResult> result = new StrongBox<OperationResult>();
             HashBucket<T> newBucket = bucket.add(item, origin.getEqualityComparator(), result);
             if (result.value == OperationResult.SIZE_CHANGED) {
